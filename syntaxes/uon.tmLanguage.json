@@ -10,57 +10,35 @@
 		}
 	],
 	"repository": {
-		"comment": {
-			"begin": "(?:(^[ \\t]*)|[ \\t]+)(?=#\\p{Print}*$)",
+		"comment" : {
+			"begin": "#",
 			"beginCaptures": {
-				"1": {
-					"name": "punctuation.whitespace.comment.leading.uon"
+				"0": {
+					"name": "punctuation.definition.comment.begin.uon"
 				}
 			},
-			"end": "(?!\\G)",
-			"patterns": [
-				{
-					"begin": "#",
-					"beginCaptures": {
-						"0": {
-							"name": "punctuation.definition.comment.uon"
-						}
-					},
-					"end": "\\n",
-					"name": "comment.line.number-sign.uon"
+			"end": "\\n",
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.definition.comment.end.uon"
 				}
-			]
+			},
+			"name": "comment.line.number-sign.uon"
 		},
 		"mapping" : {
 			"begin": "\\{",
 			"beginCaptures": {
 				"0": {
-					"name": "punctuation.definition.mapping.begin.yaml"
+					"name": "punctuation.definition.mapping.begin.uon"
 				}
 			},
 			"end": "\\}",
 			"endCaptures": {
 				"0": {
-					"name": "punctuation.definition.mapping.end.yaml"
+					"name": "punctuation.definition.mapping.end.uon"
 				}
 			},
-			"name": "meta.flow-mapping.yaml",
-			"patterns": [
-				{
-					"begin": "\\{",
-					"beginCaptures": {
-						"0": {
-							"name": "punctuation.definition.mapping.begin.uon"
-						}
-					},
-					"end": "\\}",
-					"endCaptures": {
-						"0": {
-							"name": "punctuation.definition.mapping.end.uon"
-						}
-					}
-				}
-			]
+			"name": "meta.flow-mapping.uon"
 		}
 	}
 }
