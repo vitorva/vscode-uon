@@ -4,6 +4,20 @@
 
 import * as vscode from 'vscode';
 
+import * as fs from "fs";
+import * as path from "path";
+
+import { ExprParser } from "./generated/ExprParser";
+import { ExprLexer } from "./generated/ExprLexer";
+import { CPP14Parser } from "./generated/CPP14Parser";
+import { CPP14Lexer } from "./generated/CPP14Lexer";
+
+import { CompletionItem, CompletionItemKind, InsertTextFormat } from 'vscode-languageserver';
+
+import { CommonTokenStream, Parser, ParserRuleContext, Token, TokenStream } from 'antlr4ts';
+
+import * as c3 from 'antlr4-c3';
+
 export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
@@ -12,7 +26,6 @@ export function activate(context: vscode.ExtensionContext) {
             new UonConfigDocumentSymbolProvider()
         )
     );
-
 
 	const provider1 = vscode.languages.registerCompletionItemProvider({scheme: "file", language: "uon"}, {
 
