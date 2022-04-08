@@ -71,20 +71,33 @@ export function activate(context: vscode.ExtensionContext) {
 			];
             */
 
-            const inputStream = CharStreams.fromString("var c = a + b()");
+            //Chaine de texte de l'éditeur
+            //console.log("POSITION", position);
+            //console.log("EDITEUR", document.getText());
+            const inputStream = CharStreams.fromString(document.getText());
+
+
+            const splitted = document.getText().split(/(\s+)/);
+            console.log(splitted);
+
+            //console.log("inputStream", inputStream);
             const lexer = new ExprLexer(inputStream);
             const tokenStream = new CommonTokenStream(lexer);
+            console.log("tokenStream.size", tokenStream.size);
+            //console.log("position", position);
 
             const parser = new ExprParser(tokenStream);
-            
+
             parser.expression();
 
             const core = new c3.CodeCompletionCore(parser);
-
+            core.collectCandidates;
+        
             // 1) At the input start.
-            let candidates = core.collectCandidates(0);
+            //Position du curseur au lieu de 0
+            let candidates = core.collectCandidates(splitted.length -1);
 
-            //console.log("candidates", candidates);
+            console.log("candidates", candidates);
 
             let keywords : vscode.CompletionItem[] = [];
             for (let candidate of candidates.tokens) {
@@ -96,9 +109,9 @@ export function activate(context: vscode.ExtensionContext) {
 
             console.log("keywords", keywords);
 
-           return keywords;
+            return keywords;
 		}
-	});
+	}, " ");
 
     const provider2 = vscode.languages.registerCompletionItemProvider(
 		'plaintext',
