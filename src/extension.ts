@@ -14,7 +14,9 @@ import { CPP14Lexer } from "./generated/CPP14Lexer";
 
 import { CompletionItem, CompletionItemKind, InsertTextFormat } from 'vscode-languageserver';
 
-import { CommonTokenStream, Parser, ParserRuleContext, Token, TokenStream } from 'antlr4ts';
+import {
+    ANTLRErrorListener, CharStreams, CommonToken, CommonTokenStream, RecognitionException, Recognizer, Token,
+} from "antlr4ts";
 
 import * as c3 from 'antlr4-c3';
 
@@ -31,6 +33,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 		provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, context: vscode.CompletionContext) {
 
+            /*
 			// a simple completion item which inserts `Hello World!`
 			const simpleCompletion = new vscode.CompletionItem('Hello World!');
 
@@ -66,6 +69,34 @@ export function activate(context: vscode.ExtensionContext) {
 				commitCharacterCompletion,
 				commandCompletion
 			];
+            */
+
+            const inputStream = CharStreams.fromString("var c = a + b()");
+            const lexer = new ExprLexer(inputStream);
+            const tokenStream = new CommonTokenStream(lexer);
+
+            const parser = new ExprParser(tokenStream);
+            
+            parser.expression();
+
+            const core = new c3.CodeCompletionCore(parser);
+
+            // 1) At the input start.
+            let candidates = core.collectCandidates(0);
+
+            //console.log("candidates", candidates);
+
+            let keywords : vscode.CompletionItem[] = [];
+            for (let candidate of candidates.tokens) {
+                    //keywords.push(parser.vocabulary.getDisplayName(candidate[0]));
+                    let test = new vscode.CompletionItem(parser.vocabulary.getDisplayName(candidate[0]), vscode.CompletionItemKind.Keyword);
+
+                    keywords.push(test);
+                }
+
+            console.log("keywords", keywords);
+
+           return keywords;
 		}
 	});
 
