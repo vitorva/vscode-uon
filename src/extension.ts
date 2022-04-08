@@ -15,10 +15,46 @@ import { CPP14Lexer } from "./generated/CPP14Lexer";
 import { CompletionItem, CompletionItemKind, InsertTextFormat } from 'vscode-languageserver';
 
 import {
-    ANTLRErrorListener, CharStreams, CommonToken, CommonTokenStream, RecognitionException, Recognizer, Token,
+    ANTLRErrorListener, CharStreams, CommonToken, CommonTokenStream, RecognitionException, Recognizer, Token, TokenStream
 } from "antlr4ts";
 
 import * as c3 from 'antlr4-c3';
+
+const possibleIdentifierPrefix = /[\w]$/;
+const lineSeparator = /\n|\r|\r\n/g;
+export type CursorPosition = { line: number; column: number };
+
+
+
+export function findCursorTokenIndex(tokenStream: TokenStream, cursor: CursorPosition): number {
+    // NOTE: cursor position is 1-based, while token's charPositionInLine is 0-based
+    const cursorCol = cursor.column - 1;
+    for (let i = 0; i < tokenStream.size; i++) {
+      const t = tokenStream.get(i);
+  
+      const tokenStartCol = t.charPositionInLine;
+      const tokenEndCol = tokenStartCol + (t.text as string).length;
+      const tokenStartLine = t.line;
+      const tokenEndLine =
+        t.type !== ExprLexer.WS || !t.text ? tokenStartLine : tokenStartLine + (t.text.match(lineSeparator)?.length || 0);
+  
+      // NOTE: tokenEndCol makes sense only of tokenStartLine === tokenEndLine
+      if (tokenEndLine > cursor.line || (tokenStartLine === cursor.line && tokenEndCol > cursorCol)) {
+        if (
+          i > 0 &&
+          tokenStartLine === cursor.line &&
+          tokenStartCol === cursorCol &&
+          possibleIdentifierPrefix.test(tokenStream.get(i - 1).text as string)
+        ) {
+          return i - 1;
+        } else if (tokenStream.get(i).type === ExprLexer.WS) {
+          return i + 1;
+        } else return i;
+      }
+    }
+    return 0;
+  }
+
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -88,16 +124,29 @@ export function activate(context: vscode.ExtensionContext) {
 
             const parser = new ExprParser(tokenStream);
 
-            parser.expression();
+            let tree = parser.expression();
 
             const core = new c3.CodeCompletionCore(parser);
             core.collectCandidates;
+
+            let line = position.line;
+            let column = position.character;
+
+            const completionTokenIndex = findCursorTokenIndex(tokenStream, {
+                line ,
+                column,
+              });
+              
         
             // 1) At the input start.
             //Position du curseur au lieu de 0
-            let candidates = core.collectCandidates(splitted.length -1);
+            //let candidates = core.collectCandidates(splitted.length -1);
 
-            console.log("candidates", candidates);
+            console.log("completionTokenIndex", completionTokenIndex)
+
+            let candidates = core.collectCandidates(completionTokenIndex);
+
+            //console.log("candidates", candidates);
 
             let keywords : vscode.CompletionItem[] = [];
             for (let candidate of candidates.tokens) {
@@ -107,11 +156,12 @@ export function activate(context: vscode.ExtensionContext) {
                     keywords.push(test);
                 }
 
-            console.log("keywords", keywords);
+            //console.log("keywords", keywords);
+            
 
             return keywords;
 		}
-	}, " ");
+	}, ".");
 
     const provider2 = vscode.languages.registerCompletionItemProvider(
 		'plaintext',
