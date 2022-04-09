@@ -11,6 +11,8 @@ import { ExprParser } from "./generated/ExprParser";
 import { ExprLexer } from "./generated/ExprLexer";
 import { CPP14Parser } from "./generated/CPP14Parser";
 import { CPP14Lexer } from "./generated/CPP14Lexer";
+import { UONParser } from "./generated/UONParser";
+import { UONLexer } from "./generated/UONLexer";
 
 import { CompletionItem, CompletionItemKind, InsertTextFormat } from 'vscode-languageserver';
 
@@ -19,6 +21,7 @@ import {
 } from "antlr4ts";
 
 import * as c3 from 'antlr4-c3';
+import { ScopedSymbol, Symbol } from 'antlr4-c3';
 
 const possibleIdentifierPrefix = /[\w]$/;
 const lineSeparator = /\n|\r|\r\n/g;
@@ -36,7 +39,7 @@ export function findCursorTokenIndex(tokenStream: TokenStream, cursor: CursorPos
       const tokenEndCol = tokenStartCol + (t.text as string).length;
       const tokenStartLine = t.line;
       const tokenEndLine =
-        t.type !== ExprLexer.WS || !t.text ? tokenStartLine : tokenStartLine + (t.text.match(lineSeparator)?.length || 0);
+        t.type !== UONLexer.WS || !t.text ? tokenStartLine : tokenStartLine + (t.text.match(lineSeparator)?.length || 0);
   
       // NOTE: tokenEndCol makes sense only of tokenStartLine === tokenEndLine
       if (tokenEndLine > cursor.line || (tokenStartLine === cursor.line && tokenEndCol > cursorCol)) {
@@ -47,7 +50,7 @@ export function findCursorTokenIndex(tokenStream: TokenStream, cursor: CursorPos
           possibleIdentifierPrefix.test(tokenStream.get(i - 1).text as string)
         ) {
           return i - 1;
-        } else if (tokenStream.get(i).type === ExprLexer.WS) {
+        } else if (tokenStream.get(i).type === UONLexer.WS) {
           return i + 1;
         } else return i;
       }
@@ -67,7 +70,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const provider1 = vscode.languages.registerCompletionItemProvider({scheme: "file", language: "uon"}, {
 
-		provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, context: vscode.CompletionContext) {
+		async provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, context: vscode.CompletionContext) {
 
             /*
 			// a simple completion item which inserts `Hello World!`
@@ -117,14 +120,16 @@ export function activate(context: vscode.ExtensionContext) {
             console.log(splitted);
 
             //console.log("inputStream", inputStream);
-            const lexer = new ExprLexer(inputStream);
+            const lexer = new UONLexer(inputStream);
             const tokenStream = new CommonTokenStream(lexer);
-            console.log("tokenStream.size", tokenStream.size);
+            
             //console.log("position", position);
 
-            const parser = new ExprParser(tokenStream);
+            const parser = new UONParser(tokenStream);
 
-            let tree = parser.expression();
+            let tree = parser.uon();
+
+            console.log("tokenStream.size", tokenStream.size);
 
             const core = new c3.CodeCompletionCore(parser);
             core.collectCandidates;
@@ -137,19 +142,32 @@ export function activate(context: vscode.ExtensionContext) {
                 column,
               });
               
+              
+              //core.preferredRules = new Set([
+              //  UONParser.RULE_obj,
+              //  UONParser.RULE_arr
+              //]);
+              
+
         
             // 1) At the input start.
             //Position du curseur au lieu de 0
-            //let candidates = core.collectCandidates(splitted.length -1);
+            let candidates = core.collectCandidates(splitted.length -1, tree);
 
-            console.log("completionTokenIndex", completionTokenIndex)
+            //console.log("completionTokenIndex", completionTokenIndex)
+            //let candidates = core.collectCandidates(completionTokenIndex);
 
-            let candidates = core.collectCandidates(completionTokenIndex);
-
-            //console.log("candidates", candidates);
 
             let keywords : vscode.CompletionItem[] = [];
             for (let candidate of candidates.tokens) {
+                    
+                for (let candidateWHAT of candidate[1]) {
+                    console.log("xxxxx", parser.vocabulary.getDisplayName(candidateWHAT))
+                    let uuuu = new vscode.CompletionItem(parser.vocabulary.getDisplayName(candidateWHAT), vscode.CompletionItemKind.Keyword);
+
+                    keywords.push(uuuu);
+                }
+
                     //keywords.push(parser.vocabulary.getDisplayName(candidate[0]));
                     let test = new vscode.CompletionItem(parser.vocabulary.getDisplayName(candidate[0]), vscode.CompletionItemKind.Keyword);
 
@@ -157,11 +175,37 @@ export function activate(context: vscode.ExtensionContext) {
                 }
 
             //console.log("keywords", keywords);
+            const symbolTable = new c3.SymbolTable("test", { allowDuplicateSymbols: false });
+
+            const lol = symbolTable.getSymbolsOfType(c3.Symbol);
+            console.log("lol", lol);
+
+            //console.log("symbolTable.getAllSymbols", symbolTable.getAllSymbols.length);
+
+            
+            for (let candidate of candidates.rules) {
+
+                 console.log("ICIIIIIIIII", parser.vocabulary.getDisplayName(candidate[0]));
+                switch (candidate[0]) {
+
+
+              
+                  case UONParser.RULE_obj: {
+                      console.log("SUPER", parser.vocabulary.getDisplayName(candidate[0]));
+                    
+                    let variables = await symbolTable.getSymbolsOfType(c3.VariableSymbol);
+                    for (let variable of variables)
+                      {keywords.push(new vscode.CompletionItem(variable.name, vscode.CompletionItemKind.Keyword));}
+                    break;
+                    
+                  }
+                }
+              }
             
 
             return keywords;
 		}
-	}, ".");
+	}, "."," ");
 
     const provider2 = vscode.languages.registerCompletionItemProvider(
 		'plaintext',
