@@ -111,25 +111,18 @@ export function activate(context: vscode.ExtensionContext) {
             */
 
             //Chaine de texte de l'éditeur
-            //console.log("POSITION", position);
-            //console.log("EDITEUR", document.getText());
             const inputStream = CharStreams.fromString(document.getText());
 
 
             const splitted = document.getText().split(/(\s+)/);
             console.log(splitted);
 
-            //console.log("inputStream", inputStream);
             const lexer = new UONLexer(inputStream);
             const tokenStream = new CommonTokenStream(lexer);
             
-            //console.log("position", position);
 
             const parser = new UONParser(tokenStream);
-
             let tree = parser.uon();
-
-            console.log("tokenStream.size", tokenStream.size);
 
             const core = new c3.CodeCompletionCore(parser);
             core.collectCandidates;
@@ -141,55 +134,35 @@ export function activate(context: vscode.ExtensionContext) {
                 line ,
                 column,
               });
-              
-              
-              //core.preferredRules = new Set([
-              //  UONParser.RULE_obj,
-              //  UONParser.RULE_arr
-              //]);
-              
 
-        
+            //core.preferredRules = new Set([
+            //  UONParser.RULE_obj,
+            //  UONParser.RULE_arr
+            //]);
+              
             // 1) At the input start.
             //Position du curseur au lieu de 0
-            let candidates = core.collectCandidates(splitted.length -1, tree);
-
-            //console.log("completionTokenIndex", completionTokenIndex)
-            //let candidates = core.collectCandidates(completionTokenIndex);
+            console.log("splitted.length", splitted.length -1);
+            let candidates = core.collectCandidates(splitted.length -1);
 
 
             let keywords : vscode.CompletionItem[] = [];
             for (let candidate of candidates.tokens) {
                     
-                for (let candidateWHAT of candidate[1]) {
-                    console.log("xxxxx", parser.vocabulary.getDisplayName(candidateWHAT))
-                    let uuuu = new vscode.CompletionItem(parser.vocabulary.getDisplayName(candidateWHAT), vscode.CompletionItemKind.Keyword);
+                //for (let moreCandidates of candidate[1]) {
+                //    keywords.push(new vscode.CompletionItem(parser.vocabulary.getDisplayName(moreCandidates), vscode.CompletionItemKind.Keyword));
+                //}
 
-                    keywords.push(uuuu);
-                }
+                keywords.push( new vscode.CompletionItem(parser.vocabulary.getDisplayName(candidate[0]), vscode.CompletionItemKind.Keyword));
+            }
 
-                    //keywords.push(parser.vocabulary.getDisplayName(candidate[0]));
-                    let test = new vscode.CompletionItem(parser.vocabulary.getDisplayName(candidate[0]), vscode.CompletionItemKind.Keyword);
+    
+            //const symbolTable = new c3.SymbolTable("test", { allowDuplicateSymbols: false });
+            //const lol = symbolTable.getSymbolsOfType(c3.Symbol);
 
-                    keywords.push(test);
-                }
-
-            //console.log("keywords", keywords);
-            const symbolTable = new c3.SymbolTable("test", { allowDuplicateSymbols: false });
-
-            const lol = symbolTable.getSymbolsOfType(c3.Symbol);
-            console.log("lol", lol);
-
-            //console.log("symbolTable.getAllSymbols", symbolTable.getAllSymbols.length);
-
-            
+            /*
             for (let candidate of candidates.rules) {
-
-                 console.log("ICIIIIIIIII", parser.vocabulary.getDisplayName(candidate[0]));
                 switch (candidate[0]) {
-
-
-              
                   case UONParser.RULE_obj: {
                       console.log("SUPER", parser.vocabulary.getDisplayName(candidate[0]));
                     
@@ -201,8 +174,7 @@ export function activate(context: vscode.ExtensionContext) {
                   }
                 }
               }
-            
-
+            */
             return keywords;
 		}
 	}, "."," ");
