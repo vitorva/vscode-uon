@@ -11,8 +11,8 @@ import { ExprParser } from "./generated/ExprParser";
 import { ExprLexer } from "./generated/ExprLexer";
 import { CPP14Parser } from "./generated/CPP14Parser";
 import { CPP14Lexer } from "./generated/CPP14Lexer";
+import { UONLexer } from './generated/UONLexer';
 import { UONParser } from "./generated/UONParser";
-import { UONLexer } from "./generated/UONLexer";
 
 import { CompletionItem, CompletionItemKind, InsertTextFormat } from 'vscode-languageserver';
 
@@ -153,7 +153,12 @@ export function activate(context: vscode.ExtensionContext) {
                 //    keywords.push(new vscode.CompletionItem(parser.vocabulary.getDisplayName(moreCandidates), vscode.CompletionItemKind.Keyword));
                 //}
 
-                keywords.push( new vscode.CompletionItem(parser.vocabulary.getDisplayName(candidate[0]), vscode.CompletionItemKind.Keyword));
+                let str = parser.vocabulary.getDisplayName(candidate[0]);
+
+                //https://stackoverflow.com/questions/19156148/i-want-to-remove-double-quotes-from-a-string
+                str = str.replace(/'/g,"");
+
+                keywords.push( new vscode.CompletionItem(str, vscode.CompletionItemKind.Keyword));
             }
 
     
@@ -177,7 +182,7 @@ export function activate(context: vscode.ExtensionContext) {
             */
             return keywords;
 		}
-	}, "."," ");
+	}, "("," ");
 
     const provider2 = vscode.languages.registerCompletionItemProvider(
 		'plaintext',
@@ -209,11 +214,11 @@ export function activate(context: vscode.ExtensionContext) {
             const range = document.getWordRangeAtPosition(position);
             const word = document.getText(range);
 
-            if (word == "HELLO") {
+            if (word == "!str") {
 
                 return new vscode.Hover({
-                    language: "Hello language",
-                    value: "Hello Value"
+                    language: "String encoded in UTF-8",
+                    value: "String encoded in UTF-8"
                 });
             }
         }

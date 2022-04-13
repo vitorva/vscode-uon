@@ -1,44 +1,213 @@
 {
+	"information_for_contributors": [
+		"This file has been converted from https://github.com/microsoft/vscode-uon.tmLanguage/blob/master/uon.tmLanguage",
+		"If you want to provide a fix or improvement, please create a pull request against the original repository.",
+		"Once accepted there, we are happy to receive an update request."
+	],
+	"version": "https://github.com/microsoft/vscode-uon.tmLanguage/commit/9bd83f1c252b375e957203f21793316203f61f70",
 	"name": "UON",
 	"scopeName": "source.uon",
 	"patterns": [
 		{
-			"include": "#comment"
-		},
-		{
-			"include": "#mapping"
+			"include": "#value"
 		}
 	],
 	"repository": {
-		"comment" : {
-			"begin": "#",
+		"array": {
+			"begin": "\\[",
 			"beginCaptures": {
 				"0": {
-					"name": "punctuation.definition.comment.begin.uon"
+					"name": "punctuation.definition.array.begin.uon"
 				}
 			},
-			"end": "\\n",
+			"end": "\\]",
 			"endCaptures": {
 				"0": {
-					"name": "punctuation.definition.comment.end.uon"
+					"name": "punctuation.definition.array.end.uon"
 				}
 			},
-			"name": "comment.line.number-sign.uon"
+			"name": "meta.structure.array.uon",
+			"patterns": [
+				{
+					"include": "#value"
+				},
+				{
+					"match": ",",
+					"name": "punctuation.separator.array.uon"
+				},
+				{
+					"match": "[^\\s\\]]",
+					"name": "invalid.illegal.expected-array-separator.uon"
+				}
+			]
 		},
-		"mapping" : {
+		"comments": {
+			"patterns": [
+				{
+					"begin": "/\\*\\*(?!/)",
+					"captures": {
+						"0": {
+							"name": "punctuation.definition.comment.uon"
+						}
+					},
+					"end": "\\*/",
+					"name": "comment.block.documentation.uon"
+				},
+				{
+					"begin": "/\\*",
+					"captures": {
+						"0": {
+							"name": "punctuation.definition.comment.uon"
+						}
+					},
+					"end": "\\*/",
+					"name": "comment.block.uon"
+				},
+				{
+					"captures": {
+						"1": {
+							"name": "punctuation.definition.comment.uon"
+						}
+					},
+					"match": "(//).*$\\n?",
+					"name": "comment.line.double-slash.js"
+				}
+			]
+		},
+		"constant": {
+			"match": "\\b(?:true|false|null)\\b",
+			"name": "constant.language.uon"
+		},
+		"number": {
+			"match": "(?x)        # turn on extended mode\n  -?        # an optional minus\n  (?:\n    0       # a zero\n    |       # ...or...\n    [1-9]   # a 1-9 character\n    \\d*     # followed by zero or more digits\n  )\n  (?:\n    (?:\n      \\.    # a period\n      \\d+   # followed by one or more digits\n    )?\n    (?:\n      [eE]  # an e character\n      [+-]? # followed by an option +/-\n      \\d+   # followed by one or more digits\n    )?      # make exponent optional\n  )?        # make decimal portion optional",
+			"name": "constant.numeric.uon"
+		},
+		"object": {
 			"begin": "\\{",
 			"beginCaptures": {
 				"0": {
-					"name": "punctuation.definition.mapping.begin.uon"
+					"name": "punctuation.definition.dictionary.begin.uon"
 				}
 			},
 			"end": "\\}",
 			"endCaptures": {
 				"0": {
-					"name": "punctuation.definition.mapping.end.uon"
+					"name": "punctuation.definition.dictionary.end.uon"
 				}
 			},
-			"name": "meta.flow-mapping.uon"
+			"name": "meta.structure.dictionary.uon",
+			"patterns": [
+				{
+					"comment": "the uon object key",
+					"include": "#objectkey"
+				},
+				{
+					"include": "#comments"
+				},
+				{
+					"begin": ":",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.separator.dictionary.key-value.uon"
+						}
+					},
+					"end": "(,)|(?=\\})",
+					"endCaptures": {
+						"1": {
+							"name": "punctuation.separator.dictionary.pair.uon"
+						}
+					},
+					"name": "meta.structure.dictionary.value.uon",
+					"patterns": [
+						{
+							"comment": "the uon object value",
+							"include": "#value"
+						},
+						{
+							"match": "[^\\s,]",
+							"name": "invalid.illegal.expected-dictionary-separator.uon"
+						}
+					]
+				},
+				{
+					"match": "[^\\s\\}]",
+					"name": "invalid.illegal.expected-dictionary-separator.uon"
+				}
+			]
+		},
+		"string": {
+			"begin": "\"",
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.definition.string.begin.uon"
+				}
+			},
+			"end": "\"",
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.definition.string.end.uon"
+				}
+			},
+			"name": "string.quoted.double.uon",
+			"patterns": [
+				{
+					"include": "#stringcontent"
+				}
+			]
+		},
+		"objectkey": {
+			"begin": "\"",
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.support.type.property-name.begin.uon"
+				}
+			},
+			"end": "\"",
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.support.type.property-name.end.uon"
+				}
+			},
+			"name": "string.uon support.type.property-name.uon",
+			"patterns": [
+				{
+					"include": "#stringcontent"
+				}
+			]
+		},
+		"stringcontent": {
+			"patterns": [
+				{
+					"match": "(?x)                # turn on extended mode\n  \\\\                # a literal backslash\n  (?:               # ...followed by...\n    [\"\\\\/bfnrt]     # one of these characters\n    |               # ...or...\n    u               # a u\n    [0-9a-fA-F]{4}) # and four hex digits",
+					"name": "constant.character.escape.uon"
+				},
+				{
+					"match": "\\\\.",
+					"name": "invalid.illegal.unrecognized-string-escape.uon"
+				}
+			]
+		},
+		"value": {
+			"patterns": [
+				{
+					"include": "#constant"
+				},
+				{
+					"include": "#number"
+				},
+				{
+					"include": "#string"
+				},
+				{
+					"include": "#array"
+				},
+				{
+					"include": "#object"
+				},
+				{
+					"include": "#comments"
+				}
+			]
 		}
 	}
 }
