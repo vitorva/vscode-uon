@@ -36,6 +36,10 @@
 					"name": "punctuation.separator.array.uon"
 				},
 				{
+					"match": "[a-zA-Z]",
+					"name": "string.array.uon"
+				},
+				{
 					"match": "[^\\s\\]]",
 					"name": "invalid.illegal.expected-array-separator.uon"
 				}
@@ -124,10 +128,39 @@
 							"include": "#value"
 						},
 						{
+							"match": "[a-zA-Z]",
+							"name": "string.array.uon"
+						},
+						{
 							"match": "[^\\s,]",
 							"name": "invalid.illegal.expected-dictionary-separator.uon"
 						}
 					]
+				},
+				{
+					"begin": "!str\\(",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.definition.str.begin.uon"
+						}
+					},
+					"end": "\\)",
+					"endCaptures": {
+						"1": {
+							"name": "punctuation.definition.str.end.uon"
+						}
+					},
+					"name": "meta.structure.str.value.uon",
+					"patterns": [
+						{
+							"comment": "the uon object value",
+							"include": "#value"
+						}
+					]
+				},
+				{
+					"match": "[a-zA-Z]",
+					"name": "string.array.uon"
 				},
 				{
 					"match": "[^\\s\\}]",
