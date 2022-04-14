@@ -7,10 +7,6 @@ import * as vscode from 'vscode';
 import * as fs from "fs";
 import * as path from "path";
 
-import { ExprParser } from "./generated/ExprParser";
-import { ExprLexer } from "./generated/ExprLexer";
-import { CPP14Parser } from "./generated/CPP14Parser";
-import { CPP14Lexer } from "./generated/CPP14Lexer";
 import { UONLexer } from './generated/UONLexer';
 import { UONParser } from "./generated/UONParser";
 
@@ -26,7 +22,6 @@ import { ScopedSymbol, Symbol } from 'antlr4-c3';
 const possibleIdentifierPrefix = /[\w]$/;
 const lineSeparator = /\n|\r|\r\n/g;
 export type CursorPosition = { line: number; column: number };
-
 
 
 export function findCursorTokenIndex(tokenStream: TokenStream, cursor: CursorPosition): number {
@@ -139,7 +134,20 @@ export function activate(context: vscode.ExtensionContext) {
             //  UONParser.RULE_obj,
             //  UONParser.RULE_arr
             //]);
-              
+
+            
+            core.ignoredTokens = new Set([
+                UONLexer.OPEN_C_BRA,
+                UONLexer.CLOSE_C_BRA,
+                UONLexer.OPEN_S_BRA,
+                UONLexer.CLOSE_S_BRA,
+                UONLexer.OPEN_PAR,
+                UONLexer.CLOSE_PAR,
+                UONLexer.COMMA,
+                UONLexer.COLON,
+              ]);
+            
+         
             // 1) At the input start.
             //Position du curseur au lieu de 0
             console.log("splitted.length", splitted.length -1);
@@ -182,7 +190,7 @@ export function activate(context: vscode.ExtensionContext) {
             */
             return keywords;
 		}
-	}, "("," ");
+	}, "!", "("," ");
 
     const provider2 = vscode.languages.registerCompletionItemProvider(
 		'plaintext',

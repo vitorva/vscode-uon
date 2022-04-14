@@ -9,14 +9,14 @@ uon
    ;
 
 obj
-   : open_c_bra pair (comma pair)* close_c_bra
-   | open_c_bra close_c_bra
+   : OPEN_C_BRA pair (COMMA pair)* CLOSE_C_BRA
+   | OPEN_C_BRA CLOSE_C_BRA
    ;
 
 pair
-   : STRING colon value
-   | STRING open_par 'description' colon STRING close_par colon value
-   | '!str(' string_property close_par colon STRING
+   : STRING COLON value
+   | STRING OPEN_PAR 'description' COLON STRING CLOSE_PAR COLON value
+   | '!str(' string_property CLOSE_PAR COLON STRING
    ;
    
 string_property 
@@ -24,12 +24,12 @@ string_property
 		|   string_min
 		;
 		
-string_max: 'max' colon STRING;
-string_min: 'min' colon STRING;
+string_max: 'max' COLON STRING;
+string_min: 'min' COLON STRING;
 
 arr
-   : open_s_bra value (comma value)* close_s_bra
-   | open_s_bra close_s_bra
+   : OPEN_S_BRA value (COMMA value)* CLOSE_S_BRA
+   | OPEN_S_BRA CLOSE_S_BRA
    ;
 
 value
@@ -89,11 +89,11 @@ WS
    : [ \t\n\r] + -> skip
    ;
    
-open_c_bra:  '{';
-close_c_bra: '}';
-open_s_bra:  '[';
-close_s_bra: ']';  
-open_par:    '(';
-close_par:   ')';
-colon:       ':';
-comma:		 ',';
+OPEN_PAR:    '(';
+CLOSE_PAR:   ')';
+OPEN_C_BRA:  '{';
+CLOSE_C_BRA: '}';
+OPEN_S_BRA:  '[';
+CLOSE_S_BRA: ']';
+COMMA:		 ',';
+COLON:		 ':';
