@@ -9,14 +9,14 @@ uon
    ;
 
 obj
-   : '{' pair (',' pair)* '}'
-   | '{' '}'
+   : open_c_bra pair (comma pair)* close_c_bra
+   | open_c_bra close_c_bra
    ;
 
 pair
-   : STRING ':' value
-   | STRING '(' 'description' ':' STRING ')' ':' value
-   | '!str(' string_property ')' ':' STRING
+   : STRING colon value
+   | STRING open_par 'description' colon STRING close_par colon value
+   | '!str(' string_property close_par colon STRING
    ;
    
 string_property 
@@ -24,12 +24,12 @@ string_property
 		|   string_min
 		;
 		
-string_max: 'max' ':' STRING;
-string_min: 'min' ':' STRING;
+string_max: 'max' colon STRING;
+string_min: 'min' colon STRING;
 
 arr
-   : '[' value (',' value)* ']'
-   | '[' ']'
+   : open_s_bra value (comma value)* close_s_bra
+   | open_s_bra close_s_bra
    ;
 
 value
@@ -88,3 +88,12 @@ fragment EXP
 WS
    : [ \t\n\r] + -> skip
    ;
+   
+open_c_bra:  '{';
+close_c_bra: '}';
+open_s_bra:  '[';
+close_s_bra: ']';  
+open_par:    '(';
+close_par:   ')';
+colon:       ':';
+comma:		 ',';
