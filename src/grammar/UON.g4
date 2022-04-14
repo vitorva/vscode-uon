@@ -1,7 +1,3 @@
-
-/** Taken from "The Definitive ANTLR 4 Reference" by Terence Parr */
-
-// Derived from http://json.org
 grammar UON;
 
 uon
@@ -14,9 +10,9 @@ obj
    ;
 
 pair
-   : STRING COLON value
-   | STRING OPEN_PAR 'description' COLON STRING CLOSE_PAR COLON value
-   | '!str(' string_property CLOSE_PAR COLON STRING
+   : WORD COLON value
+   | WORD OPEN_PAR 'description' COLON WORD CLOSE_PAR COLON value
+   | '!str(' string_property CLOSE_PAR COLON WORD
    ;
    
 string_property 
@@ -24,8 +20,8 @@ string_property
 		|   string_min
 		;
 		
-string_max: 'max' COLON STRING;
-string_min: 'min' COLON STRING;
+string_max: 'max' COLON WORD;
+string_min: 'min' COLON WORD;
 
 arr
    : OPEN_S_BRA value (COMMA value)* CLOSE_S_BRA
@@ -33,8 +29,7 @@ arr
    ;
 
 value
-   : STRING
-   | NUMBER
+   : WORD
    | obj
    | arr
    | 'true'
@@ -43,46 +38,10 @@ value
    ;
 
 
-STRING
-   : '"' (ESC | SAFECODEPOINT)* '"'
-   | ~[ \t\r\n[\]{}=,|&]+
+WORD
+   : [a-zA-z1-9]+
    ;
    
-fragment ESC
-   : '\\' (["\\/bfnrt] | UNICODE)
-   ;
-
-
-fragment UNICODE
-   : 'u' HEX HEX HEX HEX
-   ;
-
-
-fragment HEX
-   : [0-9a-fA-F]
-   ;
-
-
-fragment SAFECODEPOINT
-   : ~ ["\\\u0000-\u001F]
-   ;
-
-
-NUMBER
-   : '-'? INT ('.' [0-9] +)? EXP?
-   ;
-
-
-fragment INT
-   : '0' | [1-9] [0-9]*
-   ;
-
-// no leading zeros
-
-fragment EXP
-   : [Ee] [+\-]? INT
-   ;
-
 // \- since - means "range" inside [...]
 
 WS
