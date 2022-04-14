@@ -12,7 +12,6 @@ obj
 pair
    : key COLON value
    | key OPEN_PAR 'description' COLON key CLOSE_PAR COLON value
-   | key COLON '!str(' string_property CLOSE_PAR COLON key
    ;
 
 key
@@ -40,6 +39,7 @@ value
    | 'true'
    | 'false'
    | 'null'
+   | '!str(' string_property CLOSE_PAR key
    ;
 
 STRING
