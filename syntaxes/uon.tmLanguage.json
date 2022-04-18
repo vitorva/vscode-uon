@@ -88,6 +88,10 @@
 					"include": "#objectkey"
 				},
 				{
+					"comment": "the uon object unquoted key",
+					"include": "#unquotedObjectKey"
+				},
+				{
 					"include": "#comments"
 				},
 				{
@@ -110,8 +114,7 @@
 							"include": "#value"
 						},
 						{
-							"match": "[a-zA-Z]",
-							"name": "string.array.uon"
+							"include": "#unquotedString"
 						},
 						{
 							"match": "[^\\s,]",
@@ -120,8 +123,7 @@
 					]
 				},
 				{
-					"match": "[a-zA-Z]",
-					"name": "string.array.uon"
+					"include": "#unquotedString"
 				},
 				{
 					"match": "[^\\s\\}]",
@@ -169,6 +171,10 @@
 				}
 			]
 		},
+		"unquotedObjectKey": {
+			"match": "[a-zA-Z]",
+			"name": "string.uon support.type.property-name.uon"
+		},
 		"stringcontent": {
 			"patterns": [
 				{
@@ -190,7 +196,7 @@
 			},
 			"end": "\\)",
 			"endCaptures": {
-				"1": {
+				"0": {
 					"name": "punctuation.definition.str.end.uon"
 				}
 			},
@@ -199,8 +205,16 @@
 				{
 					"comment": "the uon object value",
 					"include": "#value"
+				},
+				{
+					"match": "max|min",
+					"name": "punctuation.definition.str.property.uon"
 				}
 			]
+		},
+		"unquotedString" : {
+			"match": "[a-zA-Z]",
+			"name": "string.unquoted.uon"
 		},
 		"value": {
 			"patterns": [
