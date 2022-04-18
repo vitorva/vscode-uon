@@ -46,37 +46,19 @@
 			]
 		},
 		"comments": {
-			"patterns": [
-				{
-					"begin": "/\\*\\*(?!/)",
-					"captures": {
-						"0": {
-							"name": "punctuation.definition.comment.uon"
-						}
-					},
-					"end": "\\*/",
-					"name": "comment.block.documentation.uon"
-				},
-				{
-					"begin": "/\\*",
-					"captures": {
-						"0": {
-							"name": "punctuation.definition.comment.uon"
-						}
-					},
-					"end": "\\*/",
-					"name": "comment.block.uon"
-				},
-				{
-					"captures": {
-						"1": {
-							"name": "punctuation.definition.comment.uon"
-						}
-					},
-					"match": "(//).*$\\n?",
-					"name": "comment.line.double-slash.js"
+			"begin": "#",
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.definition.comment.begin.uon"
 				}
-			]
+			},
+			"end": "\\n",
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.definition.comment.end.uon"
+				}
+			},
+			"name": "comment.line.number-sign.uon"
 		},
 		"constant": {
 			"match": "\\b(?:true|false|null)\\b",
@@ -134,27 +116,6 @@
 						{
 							"match": "[^\\s,]",
 							"name": "invalid.illegal.expected-dictionary-separator.uon"
-						}
-					]
-				},
-				{
-					"begin": "!str\\(",
-					"beginCaptures": {
-						"0": {
-							"name": "punctuation.definition.str.begin.uon"
-						}
-					},
-					"end": "\\)",
-					"endCaptures": {
-						"1": {
-							"name": "punctuation.definition.str.end.uon"
-						}
-					},
-					"name": "meta.structure.str.value.uon",
-					"patterns": [
-						{
-							"comment": "the uon object value",
-							"include": "#value"
 						}
 					]
 				},
@@ -220,6 +181,27 @@
 				}
 			]
 		},
+		"typeStr" : {
+			"begin": "!str\\(",
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.definition.str.begin.uon"
+				}
+			},
+			"end": "\\)",
+			"endCaptures": {
+				"1": {
+					"name": "punctuation.definition.str.end.uon"
+				}
+			},
+			"name": "meta.structure.str.value.uon",
+			"patterns": [
+				{
+					"comment": "the uon object value",
+					"include": "#value"
+				}
+			]
+		},
 		"value": {
 			"patterns": [
 				{
@@ -239,6 +221,9 @@
 				},
 				{
 					"include": "#comments"
+				},
+				{
+					"include": "#typeStr"
 				}
 			]
 		}
