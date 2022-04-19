@@ -1,48 +1,73 @@
 grammar UON;
 
 uon
-   : value
+   : root_value
    ;
 
-obj
-   : OPEN_C_BRA pair (COMMA pair)* CLOSE_C_BRA
-   | OPEN_C_BRA CLOSE_C_BRA
+map
+   : (MAPPING_TYPE)? OPEN_C_BRA (json_pair (COMMA json_pair)*)? CLOSE_C_BRA
    ;
 
-pair
-   : key COLON value
-   | key OPEN_PAR 'description' COLON key CLOSE_PAR COLON value
-   ;
-
-key
-   : STRING
-   | IDENTIFIER
-   ;
-   
-string_property 
-		:	string_max 
-		|   string_min
-		;
-		
-string_max: 'max' COLON key;
-string_min: 'min' COLON key;
-
-arr
+seq
    : OPEN_S_BRA value (COMMA value)* CLOSE_S_BRA
    | OPEN_S_BRA CLOSE_S_BRA
    ;
 
+schema : 'shema';
+   
+pair_key
+   : string (presentation_properties)?
+   ;
+
+json_pair: pair_key COLON value;
+
+presentation_properties: OPEN_PAR presentation_property ((COMMA presentation_property)*)? CLOSE_PAR;
+
+presentation_property : optional | description;
+description: 'description' COLON string;
+optional: 'optional' COLON boolean;
+
+boolean: 'true' | 'false';
+
+string
+   : QUOTED_STRING
+   | UNQUOTED_STRING
+   ;
+   
+string_property 
+		:	string_max 
+		|  string_min
+		;
+		
+string_max: 'max' COLON string;
+string_min: 'min' COLON string;
+
+custom_type: '!!' UNQUOTED_STRING;
+
+json_user_type: custom_type map;
+
+scalar
+   : 'scalar'
+   ;
+
+root_value
+   : map
+   | seq
+   | schema
+   ;
+
 value
-   : key
-   | obj
-   | arr
+   : map 
+   | seq
+   | scalar
+   | json_user_type 
+   |'!str(' string_property CLOSE_PAR string
    | 'true'
    | 'false'
    | 'null'
-   | '!str(' string_property CLOSE_PAR key
    ;
 
-STRING
+QUOTED_STRING
    : '"' DOUBLE_QUOTE_CHAR* '"'
    | '\'' SINGLE_QUOTE_CHAR* '\''
    ;
@@ -68,7 +93,7 @@ fragment ESCAPE_SEQUENCE
    )
    ;
    
-IDENTIFIER
+UNQUOTED_STRING
    : IDENTIFIER_START IDENTIFIER_PART*
    ;
 fragment IDENTIFIER_START
@@ -114,3 +139,5 @@ OPEN_S_BRA:  '[';
 CLOSE_S_BRA: ']';
 COMMA:		 ',';
 COLON:		 ':';
+MAPPING_TYPE: '!map';
+SEQUENCE_TYPE: '!seq';
