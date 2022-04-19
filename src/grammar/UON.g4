@@ -47,9 +47,38 @@ custom_type: '!!' UNQUOTED_STRING;
 json_user_type: custom_type map;
 
 scalar
-   : 'scalar'
+   : quantity_scalar
+   | string_scalar
    ;
 
+string_scalar: (STR_TYPE)? string;
+
+quantity_scalar: numeric_scalar (quantity)?;
+numeric_scalar: coercible_numeric_scalar | number;
+
+coercible_numeric_scalar : number_type (coercible_numeric_scalar | number);
+
+
+quantity: length | mass | time | temperature;
+
+length: METERS | KILOMETERS;
+METERS: 'm';
+KILOMETERS: 'km';
+
+mass: GRAMS | KILOGRAMS;
+GRAMS: 'g';
+KILOGRAMS: 'kg';
+
+time: SECOND  | MINUTE;
+SECOND: 's';
+MINUTE: 'min';
+
+temperature: CELSIUS | KELVIN;
+CELSIUS: 'C';
+KELVIN: 'K';
+
+number: UNQUOTED_STRING;
+  
 root_value
    : map
    | seq
@@ -61,7 +90,6 @@ value
    | seq
    | scalar
    | json_user_type 
-   |'!str(' string_property CLOSE_PAR string
    | 'true'
    | 'false'
    | 'null'
@@ -71,6 +99,30 @@ QUOTED_STRING
    : '"' DOUBLE_QUOTE_CHAR* '"'
    | '\'' SINGLE_QUOTE_CHAR* '\''
    ;
+
+number_type: FLOAT_128_TYPE | FLOAT_64_TYPE | FLOAT_32_TYPE
+               | INT_128_TYPE | INT_64_TYPE | INT_32_TYPE
+               | UINT_128_TYPE | UINT_64_TYPE | UINT_32_TYPE
+               | FLOAT_TYPE | INT_TYPE | UINT_TYPE;
+
+STR_TYPE: '!str';
+BOOL_TYPE: '!bool';
+URL_TYPE: '!url';
+
+FLOAT_TYPE: '!float';
+FLOAT_128_TYPE: '!float128';
+FLOAT_64_TYPE: '!float64';
+FLOAT_32_TYPE: '!float32';
+
+INT_TYPE: '!int';
+INT_128_TYPE: '!int128';
+INT_64_TYPE: '!int6';
+INT_32_TYPE: '!int32';
+
+UINT_TYPE: '!uint';
+UINT_128_TYPE: '!uint128';
+UINT_64_TYPE: '!uint64';
+UINT_32_TYPE: '!uint32';
 
 fragment DOUBLE_QUOTE_CHAR
    : ~["\\\r\n]
@@ -101,6 +153,11 @@ fragment IDENTIFIER_START
    | '$'
    | '_'
    | '\\' UNICODE_SEQUENCE
+   | [\p{M}]
+   | [\p{N}]
+   | [\p{Pc}]
+   | '\u200C'
+   | '\u200D'
    | '"'
    ;
 fragment IDENTIFIER_PART
