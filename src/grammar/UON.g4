@@ -4,20 +4,35 @@ uon
    : root_value
    ;
 
-map
+json_collection : json_map | json_seq;
+
+json_map
    : (MAPPING_TYPE)? OPEN_C_BRA (json_pair (COMMA json_pair)*)? CLOSE_C_BRA
    ;
 
-seq
-   : (SEQUENCE_TYPE)? OPEN_S_BRA value (COMMA value)* CLOSE_S_BRA
-   | OPEN_S_BRA CLOSE_S_BRA
+json_seq
+   : (SEQUENCE_TYPE)? OPEN_S_BRA (json_value (COMMA json_value)*)? CLOSE_S_BRA
    ;
+
+yaml_collection : yaml_map | yaml_seq;
+
+yaml_map
+   : (MAPPING_TYPE)? pair+
+   ;
+
+yaml_seq
+   : (SEQUENCE_TYPE)? seq_item+
+   ;
+
+seq_item: '-' yaml_value;
+
+pair: pair_key COLON yaml_value;
    
 pair_key
    : string (presentation_properties)?
    ;
 
-json_pair: pair_key COLON value;
+json_pair: pair_key COLON json_value;
 
 presentation_properties: OPEN_PAR (presentation_property (COMMA presentation_property)*)? CLOSE_PAR;
 
@@ -32,7 +47,9 @@ string
    
 custom_type: '!!' UNQUOTED_STRING;
 
-json_user_type: custom_type map;
+json_user_type: custom_type json_map;
+
+yaml_user_type: custom_type yaml_map;
 
 scalar
    : quantity_scalar
@@ -75,18 +92,27 @@ KELVIN: 'K';
 number: UNQUOTED_STRING;
   
 root_value
-   : map
-   | seq
+   : json_collection
+   | yaml_collection
    | schema
    ;
 
-value
-   : map 
-   | seq
+json_value
+   : json_map 
+   | json_seq
    | scalar
    | json_user_type 
    | null
    ;
+
+yaml_value
+   : yaml_map 
+   | yaml_seq
+   | scalar
+   | yaml_user_type 
+   | null
+   ;
+
 
 QUOTED_STRING
    : '"' DOUBLE_QUOTE_CHAR* '"'
