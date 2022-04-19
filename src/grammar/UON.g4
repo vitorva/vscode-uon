@@ -9,11 +9,9 @@ map
    ;
 
 seq
-   : OPEN_S_BRA value (COMMA value)* CLOSE_S_BRA
+   : (SEQUENCE_TYPE)? OPEN_S_BRA value (COMMA value)* CLOSE_S_BRA
    | OPEN_S_BRA CLOSE_S_BRA
    ;
-
-schema : 'shema';
    
 pair_key
    : string (presentation_properties)?
@@ -21,27 +19,17 @@ pair_key
 
 json_pair: pair_key COLON value;
 
-presentation_properties: OPEN_PAR presentation_property ((COMMA presentation_property)*)? CLOSE_PAR;
+presentation_properties: OPEN_PAR (presentation_property (COMMA presentation_property)*)? CLOSE_PAR;
 
 presentation_property : optional | description;
 description: 'description' COLON string;
 optional: 'optional' COLON boolean;
-
-boolean: 'true' | 'false';
 
 string
    : QUOTED_STRING
    | UNQUOTED_STRING
    ;
    
-string_property 
-		:	string_max 
-		|  string_min
-		;
-		
-string_max: 'max' COLON string;
-string_min: 'min' COLON string;
-
 custom_type: '!!' UNQUOTED_STRING;
 
 json_user_type: custom_type map;
@@ -49,9 +37,16 @@ json_user_type: custom_type map;
 scalar
    : quantity_scalar
    | string_scalar
+   | boolean_scalar
+   | url
    ;
 
 string_scalar: (STR_TYPE)? string;
+
+// string ?
+boolean_scalar: (BOOL_TYPE)? boolean;
+url: (URL_TYPE)? string;
+
 
 quantity_scalar: numeric_scalar (quantity)?;
 numeric_scalar: coercible_numeric_scalar | number;
@@ -90,9 +85,7 @@ value
    | seq
    | scalar
    | json_user_type 
-   | 'true'
-   | 'false'
-   | 'null'
+   | null
    ;
 
 QUOTED_STRING
@@ -123,6 +116,54 @@ UINT_TYPE: '!uint';
 UINT_128_TYPE: '!uint128';
 UINT_64_TYPE: '!uint64';
 UINT_32_TYPE: '!uint32';
+
+schema: custom_type COLON SCHEMA_TYPE (schema_presentations)? OPEN_C_BRA (attributes)? CLOSE_C_BRA;
+attributes: attribute (COMMA attribute)*;
+attribute: pair_key COLON validation_properties;
+
+schema_presentations: OPEN_PAR (schema_presentation (COMMA schema_presentation)*)? CLOSE_PAR;
+schema_presentation: schema_name | schema_uuid | description;
+
+schema_name: 'name' COLON string;
+schema_uuid: 'uuid' COLON url;
+
+validation_properties: string_validation 
+                      | number_validation 
+                      | boolean_validation
+                      | url_validation;
+                      
+string_validation: STR_TYPE (string_properties)?;
+string_properties: OPEN_PAR (string_property (COMMA string_property)*)? CLOSE_PAR;
+string_property 
+		:	string_max 
+		|  string_min
+		;
+		
+string_max: 'max' COLON string;
+string_min: 'min' COLON string;
+
+url_validation: URL_TYPE;
+
+// boolean validation
+boolean_validation: BOOL_TYPE;
+
+number_validation: number_validation_type (number_properties)?;
+number_properties: OPEN_PAR (number_property (COMMA number_property)*)? CLOSE_PAR;
+
+number_property: number_max | number_min | quantity_validation;
+
+number_max: 'max' COLON number;
+number_min: 'min' COLON number;
+number_validation_type: FLOAT_TYPE | INT_TYPE | UINT_TYPE;
+
+quantity_validation: 'quantity' COLON quantity_validation_types;
+
+quantity_validation_types: 'length' | 'mass' | 'temperature' | 'time';
+
+boolean: (true | false);
+true : 'true' | 'True';
+false : 'false' | 'False';
+null: 'null' | 'none' | 'None';
 
 fragment DOUBLE_QUOTE_CHAR
    : ~["\\\r\n]
@@ -198,3 +239,4 @@ COMMA:		 ',';
 COLON:		 ':';
 MAPPING_TYPE: '!map';
 SEQUENCE_TYPE: '!seq';
+SCHEMA_TYPE: '!schema';
