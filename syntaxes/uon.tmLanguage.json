@@ -32,6 +32,9 @@
 					"include": "#value"
 				},
 				{
+					"include": "#typeStr"
+				},
+				{
 					"match": ",",
 					"name": "punctuation.separator.array.uon"
 				},
@@ -112,6 +115,9 @@
 						{
 							"comment": "the uon object value",
 							"include": "#value"
+						},
+						{
+							"include": "#typeStr"
 						},
 						{
 							"include": "#unquotedString"
@@ -235,9 +241,6 @@
 				},
 				{
 					"include": "#comments"
-				},
-				{
-					"include": "#typeStr"
 				}
 			]
 		}

@@ -110,7 +110,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 
             const splitted = document.getText().split(/(\s+)/);
-            console.log(splitted);
+            console.log("splitted", splitted);
 
             const lexer = new UONLexer(inputStream);
             const tokenStream = new CommonTokenStream(lexer);
@@ -135,7 +135,7 @@ export function activate(context: vscode.ExtensionContext) {
             //  UONParser.RULE_arr
             //]);
 
-            
+            /*
             core.ignoredTokens = new Set([
                 UONLexer.OPEN_C_BRA,
                 UONLexer.CLOSE_C_BRA,
@@ -145,8 +145,10 @@ export function activate(context: vscode.ExtensionContext) {
                 UONLexer.CLOSE_PAR,
                 UONLexer.COMMA,
                 UONLexer.COLON,
+                UONLexer.QUOTED_STRING,
+                UONLexer.UNQUOTED_STRING
               ]);
-            
+            */  
          
             // 1) At the input start.
             //Position du curseur au lieu de 0
@@ -190,7 +192,7 @@ export function activate(context: vscode.ExtensionContext) {
             */
             return keywords;
 		}
-	}, "!", "("," ");
+	}, "!", ":"," ");
 
     const provider2 = vscode.languages.registerCompletionItemProvider(
 		'plaintext',
@@ -262,7 +264,7 @@ class UonConfigDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
 
                 let tokens = line.text.split(" ")
 
-                if (line.text.startsWith("#BEGIN")) {
+                if (line.text.startsWith("{")) {
 					console.log("line.range", line.range)
 
                     let marker_symbol = new vscode.DocumentSymbol(
@@ -279,7 +281,7 @@ class UonConfigDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
                     }
                     // marker_symbol.children.push(_boot)
                 }
-                else if (line.text.startsWith("#END")) {
+                else if (line.text.startsWith("}")) {
                     // TODO check if nodes has length 1 before popping.
                     if (inside_marker) {
                         nodes.pop()

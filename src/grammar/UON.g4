@@ -45,7 +45,8 @@ string
    | UNQUOTED_STRING
    ;
    
-custom_type: '!!' UNQUOTED_STRING;
+CT : '!!';   
+custom_type: CT UNQUOTED_STRING;
 
 json_user_type: custom_type json_map;
 
@@ -213,29 +214,23 @@ fragment ESCAPE_SEQUENCE
    ;
    
 UNQUOTED_STRING
-   : IDENTIFIER_START IDENTIFIER_PART*
+   : IDENTIFIER*
    ;
-fragment IDENTIFIER_START
+fragment IDENTIFIER
    : [\p{L}]
+   | [\p{M}]
+   | [\p{N}]
+   | [\p{Pc}]
+   | '\\' UNICODE_SEQUENCE
+   | '\u200C'
+   | '\u200D'
    | '$'
    | '_'
-   | '\\' UNICODE_SEQUENCE
-   | [\p{M}]
-   | [\p{N}]
-   | [\p{Pc}]
-   | '\u200C'
-   | '\u200D'
    | '"'
+   | '\''
+   | '?'
    ;
-fragment IDENTIFIER_PART
-   : IDENTIFIER_START
-   | [\p{M}]
-   | [\p{N}]
-   | [\p{Pc}]
-   | '\u200C'
-   | '\u200D'
-   | '"'
-   ;
+
    
 fragment HEX
    : [0-9a-fA-F]
