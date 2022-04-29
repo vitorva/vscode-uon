@@ -92,7 +92,11 @@ export function activate(context: vscode.ExtensionContext) {
 
             //console.log("document.getText()", document.getText().slice(0,  document.getText().length -1));
 
-            const inputStream = CharStreams.fromString("!seq [ ");
+            const inputStream = CharStreams.fromString("!seq[ !float 420 ]");
+
+            //const inputStream = CharStreams.fromString(document.getText());
+
+            //const inputStream = CharStreams.fromString("!!ok  : ");
 
             let splitted = document.getText().split(/(\s+)/);
             //splitted = splitted.slice(0, splitted.length -1);
@@ -152,7 +156,8 @@ export function activate(context: vscode.ExtensionContext) {
             //Position du curseur au lieu de 0
             console.log("splitted.length", splitted.length -1);
             //let candidates = core.collectCandidates(splitted.length -1);
-            let candidates = core.collectCandidates(3);
+            //let candidates = core.collectCandidates(4);
+            let candidates = core.collectCandidates(7);
 
             let keywords : vscode.CompletionItem[] = [];
             for (let candidate of candidates.tokens) {
@@ -167,7 +172,7 @@ export function activate(context: vscode.ExtensionContext) {
             console.log("LA MON AMIII")
             return keywords;
 		}
-	});
+	}," ");
 
 
 	context.subscriptions.push(provider1);
