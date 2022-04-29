@@ -72,7 +72,7 @@
 			"name": "constant.numeric.uon"
 		},
 		"object": {
-			"begin": "\\{",
+			"begin": "(!map( *))?\\{",
 			"beginCaptures": {
 				"0": {
 					"name": "punctuation.definition.dictionary.begin.uon"
@@ -194,7 +194,7 @@
 			]
 		},
 		"typeStr" : {
-			"begin": "!str\\(",
+			"begin": "!str( *)?\\(",
 			"beginCaptures": {
 				"0": {
 					"name": "punctuation.definition.str.begin.uon"

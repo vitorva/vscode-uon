@@ -7,10 +7,33 @@ import { UONParser } from "./generated/UONParser";
 
 
 import {
-    CharStreams, CommonTokenStream, TokenStream
+  ANTLRErrorListener, CharStreams, CommonToken, CommonTokenStream, TokenStream, RecognitionException, Recognizer, Token, Parser
 } from "antlr4ts";
 
+import { DefaultErrorStrategy } from 'antlr4ts/DefaultErrorStrategy';
+import { IntervalSet } from 'antlr4ts/misc/IntervalSet';
+
 import * as c3 from 'antlr4-c3';
+import { Console } from 'console';
+
+class UonCompletionErrorStrategy extends DefaultErrorStrategy {
+  protected singleTokenDeletion(recognizer: Parser): Token | undefined {
+    return undefined;
+  }
+
+  protected getErrorRecoverySet(recognizer: Parser): IntervalSet {
+    const defaultRecoverySet = super.getErrorRecoverySet(recognizer);
+
+      const soqlFieldFollowSet = new IntervalSet();
+      soqlFieldFollowSet.add(UONLexer.FLOAT_TYPE);
+      const intersection = defaultRecoverySet.and(soqlFieldFollowSet);
+      if (soqlFieldFollowSet.size > 0) {
+        return soqlFieldFollowSet;
+      }
+      
+    return soqlFieldFollowSet;
+  }
+}
 
 const possibleIdentifierPrefix = /[\w]$/;
 const lineSeparator = /\n|\r|\r\n/g;
@@ -46,6 +69,17 @@ export function findCursorTokenIndex(tokenStream: TokenStream, cursor: CursorPos
     return 0;
   }
 
+  export class ErrorListener implements ANTLRErrorListener<CommonToken> {
+    public errorCount = 0;
+
+    public syntaxError<T extends Token>(recognizer: Recognizer<T, any>, offendingSymbol: T | undefined, line: number,
+        charPositionInLine: number, msg: string, e: RecognitionException | undefined): void {
+        ++this.errorCount;
+          console.log("ERROR",this.errorCount );
+    }
+    
+}  
+
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -54,15 +88,27 @@ export function activate(context: vscode.ExtensionContext) {
 		async provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, context: vscode.CompletionContext) {
 
             //Chaine de texte de l'éditeur
-            const inputStream = CharStreams.fromString(document.getText());
+            //const inputStream = CharStreams.fromString(document.getText().slice(0,  document.getText().length -1));
 
-            const splitted = document.getText().split(/(\s+)/);
+            //console.log("document.getText()", document.getText().slice(0,  document.getText().length -1));
+
+            const inputStream = CharStreams.fromString("!seq [ ");
+
+            let splitted = document.getText().split(/(\s+)/);
+            //splitted = splitted.slice(0, splitted.length -1);
             console.log("splitted", splitted);
 
             const lexer = new UONLexer(inputStream);
             const tokenStream = new CommonTokenStream(lexer);
             
             const parser = new UONParser(tokenStream);
+
+            //let errorListener = new ErrorListener();
+            //parser.addErrorListener(errorListener);
+
+            parser.removeErrorListeners();
+            parser.errorHandler = new UonCompletionErrorStrategy();
+
             let tree = parser.uon();
 
             const core = new c3.CodeCompletionCore(parser);
@@ -71,10 +117,16 @@ export function activate(context: vscode.ExtensionContext) {
             let line = position.line;
             let column = position.character;
 
+            console.log("line", line);
+            console.log("column", column);
+
+
             const completionTokenIndex = findCursorTokenIndex(tokenStream, {
                 line ,
                 column,
               });
+
+            console.log("completionTokenIndex", completionTokenIndex);  
 
             //core.preferredRules = new Set([
             //  UONParser.RULE_obj,
@@ -99,7 +151,8 @@ export function activate(context: vscode.ExtensionContext) {
             // 1) At the input start.
             //Position du curseur au lieu de 0
             console.log("splitted.length", splitted.length -1);
-            let candidates = core.collectCandidates(splitted.length -1);
+            //let candidates = core.collectCandidates(splitted.length -1);
+            let candidates = core.collectCandidates(3);
 
             let keywords : vscode.CompletionItem[] = [];
             for (let candidate of candidates.tokens) {
@@ -108,31 +161,30 @@ export function activate(context: vscode.ExtensionContext) {
                 //https://stackoverflow.com/questions/19156148/i-want-to-remove-double-quotes-from-a-string
                 str = str.replace(/'/g,"");
 
-                keywords.push( new vscode.CompletionItem(str, vscode.CompletionItemKind.Keyword));
+                keywords.    push( new vscode.CompletionItem(str, vscode.CompletionItemKind.Keyword));
             }
 
+            console.log("LA MON AMIII")
             return keywords;
 		}
-	}, "!", ":"," ");
+	});
 
 
 	context.subscriptions.push(provider1);
 
-    const hover = vscode.languages.registerHoverProvider({scheme: "file", language: "uon"}, {
-        provideHover(document, position, token) {
+  const hover = vscode.languages.registerHoverProvider({scheme: "file", language: "uon"}, {
+    provideHover(document, position, token) {
+      const range = document.getWordRangeAtPosition(position);
+      const word = document.getText(range);
 
-            const range = document.getWordRangeAtPosition(position);
-            const word = document.getText(range);
+      if (word === "!str") {
+        return new vscode.Hover({
+          language: "String encoded in UTF-8",
+          value: "String encoded in UTF-8"
+        });
+      }
+    }
+  });
 
-            if (word === "!str") {
-
-                return new vscode.Hover({
-                    language: "String encoded in UTF-8",
-                    value: "String encoded in UTF-8"
-                });
-            }
-        }
-    });
-
-    context.subscriptions.push(hover);
+  context.subscriptions.push(hover);
 }

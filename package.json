@@ -28,13 +28,6 @@
         "configuration": "./language-configuration.json"
       }
     ],
-    "grammars": [
-      {
-        "language": "uon",
-        "scopeName": "source.uon",
-        "path": "./syntaxes/uon.tmLanguage.json"
-      }
-    ],
     "configurationDefaults": {
       "editor.tokenColorCustomizations": {
         "textMateRules": [
