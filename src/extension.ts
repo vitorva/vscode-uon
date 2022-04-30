@@ -5,7 +5,6 @@ import * as vscode from 'vscode';
 import { UONLexer } from './generated/UONLexer';
 import { UONParser } from "./generated/UONParser";
 
-
 import {
   ANTLRErrorListener, CharStreams, CommonToken, CommonTokenStream, TokenStream, RecognitionException, Recognizer, Token, Parser
 } from "antlr4ts";
@@ -20,6 +19,7 @@ class UonCompletionErrorStrategy extends DefaultErrorStrategy {
     return undefined;
   }
 
+  /*
   protected getErrorRecoverySet(recognizer: Parser): IntervalSet {
     const defaultRecoverySet = super.getErrorRecoverySet(recognizer);
 
@@ -32,6 +32,7 @@ class UonCompletionErrorStrategy extends DefaultErrorStrategy {
 
     return soqlFieldFollowSet;
   }
+ */
 }
 
 export class ErrorListener implements ANTLRErrorListener<CommonToken> {
@@ -53,7 +54,6 @@ export function activate(context: vscode.ExtensionContext) {
       //let line = position.line;
       //let column = position.character;
 
-
       // https://stackoverflow.com/questions/65261663/vscode-how-to-get-position-of-cursor-in-the-document
       // Alternative :
       // https://stackoverflow.com/questions/64561781/vscode-api-get-position-of-last-character-of-line
@@ -64,7 +64,8 @@ export function activate(context: vscode.ExtensionContext) {
       //console.log(offset);
 
       const text = document.getText().slice(0, offset);
-      //console.log(text);
+      console.log(text);
+      console.log(text.length);
 
       const inputStream = CharStreams.fromString(text);
       const lexer = new UONLexer(inputStream);
@@ -80,11 +81,14 @@ export function activate(context: vscode.ExtensionContext) {
 
       let tree = parser.uon();
 
-      console.log("tokenStream", tokenStream);
+      console.log("tokenStream");
+      console.log("tokenStreamSize", tokenStream.size);
       for (let i = 0; i < tokenStream.size; i++) {
         const t = tokenStream.get(i);
         console.log(t.text);
       }
+
+      const index = tokenStream.get(tokenStream.size-1).type === UONLexer.EOF ? tokenStream.size : 0;
 
       const core = new c3.CodeCompletionCore(parser);
       core.collectCandidates;
@@ -109,7 +113,7 @@ export function activate(context: vscode.ExtensionContext) {
         ]);
       */
 
-      let candidates = core.collectCandidates(tokenStream.size);
+      let candidates = core.collectCandidates(index);
 
       let keywords: vscode.CompletionItem[] = [];
       for (let candidate of candidates.tokens) {
@@ -121,9 +125,10 @@ export function activate(context: vscode.ExtensionContext) {
         keywords.push(new vscode.CompletionItem(str, vscode.CompletionItemKind.Keyword));
       }
 
+      console.log(keywords);
       return keywords;
     }
-  }, " ");
+  });
 
   context.subscriptions.push(provider1);
 
