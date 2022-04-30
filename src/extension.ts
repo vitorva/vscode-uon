@@ -19,20 +19,30 @@ class UonCompletionErrorStrategy extends DefaultErrorStrategy {
     return undefined;
   }
 
-  /*
+  public getOK(){
+    return this.ok;
+  }
+
+  private ok = false;
+  protected consumeUntil(recognizer: Parser, set: IntervalSet): void {
+      
+      let test = recognizer.currentToken;
+      
+      this.ok = true;
+     
+  }
+
+  
   protected getErrorRecoverySet(recognizer: Parser): IntervalSet {
     const defaultRecoverySet = super.getErrorRecoverySet(recognizer);
 
     const soqlFieldFollowSet = new IntervalSet();
-    soqlFieldFollowSet.add(UONLexer.FLOAT_TYPE);
-    const intersection = defaultRecoverySet.and(soqlFieldFollowSet);
-    if (soqlFieldFollowSet.size > 0) {
-      return soqlFieldFollowSet;
-    }
+    
+    soqlFieldFollowSet.add(UONLexer.COLON);
 
     return soqlFieldFollowSet;
   }
- */
+ 
 }
 
 export class ErrorListener implements ANTLRErrorListener<CommonToken> {
@@ -77,9 +87,15 @@ export function activate(context: vscode.ExtensionContext) {
       //parser.addErrorListener(errorListener);
 
       parser.removeErrorListeners();
-      parser.errorHandler = new UonCompletionErrorStrategy();
+      
+      const lol = new UonCompletionErrorStrategy();
+      parser.errorHandler = lol ;
 
       let tree = parser.uon();
+
+      if(lol.getOK()){
+        console.log("ICI");
+      }
 
       console.log("tokenStream");
       console.log("tokenStreamSize", tokenStream.size);
@@ -128,7 +144,7 @@ export function activate(context: vscode.ExtensionContext) {
       console.log(keywords);
       return keywords;
     }
-  });
+  }, " ");
 
   context.subscriptions.push(provider1);
 
