@@ -25,11 +25,7 @@ class UonCompletionErrorStrategy extends DefaultErrorStrategy {
 
   private ok = false;
   protected consumeUntil(recognizer: Parser, set: IntervalSet): void {
-      
-      let test = recognizer.currentToken;
-      
       this.ok = true;
-     
   }
 
   
@@ -93,21 +89,53 @@ export function activate(context: vscode.ExtensionContext) {
 
       let tree = parser.uon();
 
+      console.log(tree);
+
+
       if(lol.getOK()){
         console.log("ICI");
       }
 
       console.log("tokenStream");
       console.log("tokenStreamSize", tokenStream.size);
+      let testArr = []
       for (let i = 0; i < tokenStream.size; i++) {
         const t = tokenStream.get(i);
-        console.log(t.text);
+        //console.log(t.text);
+        testArr.push(t.text);
       }
 
-      const index = tokenStream.get(tokenStream.size-1).type === UONLexer.EOF ? tokenStream.size : 0;
+      let index = 0;
+      if(tokenStream.get(tokenStream.size-1).type === UONLexer.EOF){
+      console.log(testArr);
+      // si pas d'erreurs alors on veut la position du curseur actuelle
+      index = tokenStream.size -2;
+      console.log(index);
+      }else{
+        console.log(testArr);
+        console.log(testArr.lastIndexOf(''));
+        //let  newArra =testArr.slice(0, testArr.lastIndexOf(''));
+        let  newArra =testArr;
+        //newArra.push(parser.vocabulary.getDisplayName(UONLexer.EOF));
+        console.log(newArra.length);
+
+        for (let i =  newArra.length-1 ; i >= 0; i--) {
+          if(newArra[i] === ''){
+            newArra =testArr.slice(0, i);
+          } else {
+            index = newArra.length;
+            break;
+          }
+        }
+
+        //index = newArra.length- 1;
+        index = newArra.length;
+      }
+
+      //const index = tokenStream.get(tokenStream.size-1).type === UONLexer.EOF ? tokenStream.size : 0;
 
       const core = new c3.CodeCompletionCore(parser);
-      core.collectCandidates;
+
 
       //core.preferredRules = new Set([
       //  UONParser.RULE_obj,
@@ -138,7 +166,11 @@ export function activate(context: vscode.ExtensionContext) {
         //https://stackoverflow.com/questions/19156148/i-want-to-remove-double-quotes-from-a-string
         str = str.replace(/'/g, "");
 
-        keywords.push(new vscode.CompletionItem(str, vscode.CompletionItemKind.Keyword));
+        let item = new vscode.CompletionItem(str, vscode.CompletionItemKind.Keyword)
+        const range = document.getWordRangeAtPosition(position);
+        item.range= range;
+
+        keywords.push(item);
       }
 
       console.log(keywords);
