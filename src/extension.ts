@@ -14,31 +14,65 @@ import { IntervalSet } from 'antlr4ts/misc/IntervalSet';
 
 import * as c3 from 'antlr4-c3';
 
+import { CompletionItem, CompletionItemKind, InsertTextFormat } from 'vscode-languageserver';
+
 class UonCompletionErrorStrategy extends DefaultErrorStrategy {
   protected singleTokenDeletion(recognizer: Parser): Token | undefined {
     return undefined;
   }
 
-  public getOK(){
+  public getOK() {
     return this.ok;
   }
 
   private ok = false;
   protected consumeUntil(recognizer: Parser, set: IntervalSet): void {
-      this.ok = true;
+    console.log(set);
+    this.ok = true;
   }
 
-  
+  public recover(recognizer: Parser, e: RecognitionException): void {
+              //		System.out.println("recover in "+recognizer.getRuleInvocationStack()+
+        //						   " index="+recognizer.inputStream.index+
+        //						   ", lastErrorIndex="+
+        //						   lastErrorIndex+
+        //						   ", states="+lastErrorStates);
+
+        console.log(this.lastErrorStates);
+        if (this.lastErrorIndex === recognizer.inputStream.index &&
+          this.lastErrorStates &&
+          this.lastErrorStates.contains(recognizer.state)) {
+          // uh oh, another error at same token index and previously-visited
+          // state in ATN; must be a case where LT(1) is in the recovery
+          // token set so nothing got consumed. Consume a single token
+          // at least to prevent an infinite loop; this is a failsafe.
+          //			System.err.println("seen error condition before index="+
+          //							   lastErrorIndex+", states="+lastErrorStates);
+          //			System.err.println("FAILSAFE consumes "+recognizer.getTokenNames()[recognizer.inputStream.LA(1)]);
+          //recognizer.consume();
+      }
+    this.lastErrorIndex = recognizer.inputStream.index;
+    console.log("lastErrorIndex", this.lastErrorIndex);
+  }
+
   protected getErrorRecoverySet(recognizer: Parser): IntervalSet {
     const defaultRecoverySet = super.getErrorRecoverySet(recognizer);
 
     const soqlFieldFollowSet = new IntervalSet();
-    
+
     soqlFieldFollowSet.add(UONLexer.COLON);
+
+    let temp = []
+    for (let i = 0; i < recognizer.inputStream.size; i++) {
+      temp.push(recognizer.inputStream.get(i).text);
+    }
+    console.log(temp);
+
+    console.log(super.lastErrorIndex);
 
     return soqlFieldFollowSet;
   }
- 
+
 }
 
 export class ErrorListener implements ANTLRErrorListener<CommonToken> {
@@ -75,6 +109,7 @@ export function activate(context: vscode.ExtensionContext) {
 
       const inputStream = CharStreams.fromString(text);
       const lexer = new UONLexer(inputStream);
+      
       const tokenStream = new CommonTokenStream(lexer);
 
       const parser = new UONParser(tokenStream);
@@ -83,16 +118,17 @@ export function activate(context: vscode.ExtensionContext) {
       //parser.addErrorListener(errorListener);
 
       parser.removeErrorListeners();
-      
+
       const lol = new UonCompletionErrorStrategy();
-      parser.errorHandler = lol ;
+      parser.errorHandler = lol;
 
       let tree = parser.uon();
 
+      
       console.log(tree);
 
 
-      if(lol.getOK()){
+      if (lol.getOK()) {
         console.log("ICI");
       }
 
@@ -106,22 +142,22 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       let index = 0;
-      if(tokenStream.get(tokenStream.size-1).type === UONLexer.EOF){
-      console.log(testArr);
-      // si pas d'erreurs alors on veut la position du curseur actuelle
-      index = tokenStream.size -2;
-      console.log(index);
-      }else{
+      if (tokenStream.get(tokenStream.size - 1).type === UONLexer.EOF) {
+        console.log(testArr);
+        // si pas d'erreurs alors on veut la position du curseur actuelle
+        index = tokenStream.size - 2;
+        console.log(index);
+      } else {
         console.log(testArr);
         console.log(testArr.lastIndexOf(''));
         //let  newArra =testArr.slice(0, testArr.lastIndexOf(''));
-        let  newArra =testArr;
+        let newArra = testArr;
         //newArra.push(parser.vocabulary.getDisplayName(UONLexer.EOF));
         console.log(newArra.length);
 
-        for (let i =  newArra.length-1 ; i >= 0; i--) {
-          if(newArra[i] === ''){
-            newArra =testArr.slice(0, i);
+        for (let i = newArra.length - 1; i >= 0; i--) {
+          if (newArra[i] === '') {
+            newArra = testArr.slice(0, i);
           } else {
             index = newArra.length;
             break;
@@ -159,6 +195,23 @@ export function activate(context: vscode.ExtensionContext) {
 
       let candidates = core.collectCandidates(index);
 
+      const newCompletionItem = (
+        text: string,
+        kind: CompletionItemKind,
+        extraOptions?: Partial<CompletionItem>
+      ): CompletionItem => ({
+        label: text,
+        kind,
+        ...extraOptions,
+      });
+
+      const newSnippetItem = (label: string, snippet: string, extraOptions?: Partial<CompletionItem>): CompletionItem =>
+        newCompletionItem(label, CompletionItemKind.Snippet, {
+          insertText: snippet,
+          insertTextFormat: InsertTextFormat.Snippet,
+          ...extraOptions,
+        });
+
       let keywords: vscode.CompletionItem[] = [];
       for (let candidate of candidates.tokens) {
         let str = parser.vocabulary.getDisplayName(candidate[0]);
@@ -166,12 +219,19 @@ export function activate(context: vscode.ExtensionContext) {
         //https://stackoverflow.com/questions/19156148/i-want-to-remove-double-quotes-from-a-string
         str = str.replace(/'/g, "");
 
-        let item = new vscode.CompletionItem(str, vscode.CompletionItemKind.Keyword)
+        let item = new vscode.CompletionItem(str, vscode.CompletionItemKind.Keyword);
         const range = document.getWordRangeAtPosition(position);
-        item.range= range;
+        item.range = range;
 
         keywords.push(item);
       }
+
+      const snippetCompletion = new vscode.CompletionItem('description : ... , name : ... , uuid : ... ');
+      snippetCompletion.insertText = new vscode.SnippetString('description ${1}, name ${2}, uuid ${3}');
+      
+      //snippetCompletion.insertText = new vscode.SnippetString('Good ${1|morning,afternoon,evening|}. It is ${1}, right?');
+      //keywords.push(new vscode.newS('(SELECT ... FROM ...)', '(SELECT $2 FROM $1)'));
+      keywords.push(snippetCompletion);
 
       console.log(keywords);
       return keywords;
