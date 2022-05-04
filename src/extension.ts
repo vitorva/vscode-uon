@@ -21,14 +21,8 @@ class UonCompletionErrorStrategy extends DefaultErrorStrategy {
     return undefined;
   }
 
-  public getOK() {
-    return this.ok;
-  }
-
-  private ok = false;
   protected consumeUntil(recognizer: Parser, set: IntervalSet): void {
     console.log(set);
-    this.ok = true;
   }
 
   public recover(recognizer: Parser, e: RecognitionException): void {
@@ -127,11 +121,6 @@ export function activate(context: vscode.ExtensionContext) {
       
       console.log(tree);
 
-
-      if (lol.getOK()) {
-        console.log("ICI");
-      }
-
       console.log("tokenStream");
       console.log("tokenStreamSize", tokenStream.size);
       let testArr = []
@@ -163,12 +152,9 @@ export function activate(context: vscode.ExtensionContext) {
             break;
           }
         }
-
         //index = newArra.length- 1;
         index = newArra.length;
       }
-
-      //const index = tokenStream.get(tokenStream.size-1).type === UONLexer.EOF ? tokenStream.size : 0;
 
       const core = new c3.CodeCompletionCore(parser);
 
@@ -178,7 +164,7 @@ export function activate(context: vscode.ExtensionContext) {
       //  UONParser.RULE_arr
       //]);
 
-      /*
+      
       core.ignoredTokens = new Set([
           UONLexer.OPEN_C_BRA,
           UONLexer.CLOSE_C_BRA,
@@ -191,7 +177,7 @@ export function activate(context: vscode.ExtensionContext) {
           UONLexer.QUOTED_STRING,
           UONLexer.UNQUOTED_STRING
         ]);
-      */
+      
 
       let candidates = core.collectCandidates(index);
 
@@ -226,12 +212,14 @@ export function activate(context: vscode.ExtensionContext) {
         keywords.push(item);
       }
 
-      const snippetCompletion = new vscode.CompletionItem('description : ... , name : ... , uuid : ... ');
-      snippetCompletion.insertText = new vscode.SnippetString('description ${1}, name ${2}, uuid ${3}');
+      //TODO        
+      //const snippetCompletion = new vscode.CompletionItem('description : ... , name : ... , uuid : ... ');
+      //snippetCompletion.insertText = new vscode.SnippetString('description ${1}, name ${2}, uuid ${3}');
       
       //snippetCompletion.insertText = new vscode.SnippetString('Good ${1|morning,afternoon,evening|}. It is ${1}, right?');
       //keywords.push(new vscode.newS('(SELECT ... FROM ...)', '(SELECT $2 FROM $1)'));
-      keywords.push(snippetCompletion);
+
+      //keywords.push(snippetCompletion);
 
       console.log(keywords);
       return keywords;

@@ -13,8 +13,8 @@
 		}
 	],
 	"repository": {
-		"array": {
-			"begin": "\\[",
+		"seq": {
+			"begin": "(!seq( *))?\\[",
 			"beginCaptures": {
 				"0": {
 					"name": "punctuation.definition.array.begin.uon"
@@ -32,15 +32,8 @@
 					"include": "#value"
 				},
 				{
-					"include": "#typeStr"
-				},
-				{
 					"match": ",",
 					"name": "punctuation.separator.array.uon"
-				},
-				{
-					"match": "[a-zA-Z]",
-					"name": "string.array.uon"
 				},
 				{
 					"match": "[^\\s\\]]",
@@ -48,30 +41,7 @@
 				}
 			]
 		},
-		"comments": {
-			"begin": "#",
-			"beginCaptures": {
-				"0": {
-					"name": "punctuation.definition.comment.begin.uon"
-				}
-			},
-			"end": "\\n",
-			"endCaptures": {
-				"0": {
-					"name": "punctuation.definition.comment.end.uon"
-				}
-			},
-			"name": "comment.line.number-sign.uon"
-		},
-		"constant": {
-			"match": "\\b(?:true|false|null)\\b",
-			"name": "constant.language.uon"
-		},
-		"number": {
-			"match": "(?x)        # turn on extended mode\n  -?        # an optional minus\n  (?:\n    0       # a zero\n    |       # ...or...\n    [1-9]   # a 1-9 character\n    \\d*     # followed by zero or more digits\n  )\n  (?:\n    (?:\n      \\.    # a period\n      \\d+   # followed by one or more digits\n    )?\n    (?:\n      [eE]  # an e character\n      [+-]? # followed by an option +/-\n      \\d+   # followed by one or more digits\n    )?      # make exponent optional\n  )?        # make decimal portion optional",
-			"name": "constant.numeric.uon"
-		},
-		"object": {
+		"map": {
 			"begin": "(!map( *))?\\{",
 			"beginCaptures": {
 				"0": {
@@ -93,6 +63,27 @@
 				{
 					"comment": "the uon object unquoted key",
 					"include": "#unquotedObjectKey"
+				},
+				{
+					"begin": "\\(",
+					"beginCaptures": {
+						"0": {
+							"name": "test1.uon"
+						}
+					},
+					"end": "\\)",
+					"endCaptures": {
+						"0": {
+							"name": "test3.uon"
+						}
+					},
+					"name": "test2.uon",
+					"patterns": [
+						{
+							"match": "description|optional",
+							"name": "punctuation.definition.str.property.uon"
+						}
+					]
 				},
 				{
 					"include": "#comments"
@@ -117,19 +108,10 @@
 							"include": "#value"
 						},
 						{
-							"include": "#typeStr"
-						},
-						{
-							"include": "#unquotedString"
-						},
-						{
 							"match": "[^\\s,]",
 							"name": "invalid.illegal.expected-dictionary-separator.uon"
 						}
 					]
-				},
-				{
-					"include": "#unquotedString"
 				},
 				{
 					"match": "[^\\s\\}]",
@@ -137,25 +119,137 @@
 				}
 			]
 		},
-		"string": {
-			"begin": "\"",
+		"schema": {
+			"begin": "!!([a-zA-Z]*)( *)?:",
 			"beginCaptures": {
 				"0": {
-					"name": "punctuation.definition.string.begin.uon"
+					"name": "punctuation.definition.str.begin.uon"
 				}
 			},
-			"end": "\"",
-			"endCaptures": {
-				"0": {
-					"name": "punctuation.definition.string.end.uon"
-				}
-			},
-			"name": "string.quoted.double.uon",
+			"name": "meta.structure.str.value.uon",
 			"patterns": [
 				{
-					"include": "#stringcontent"
+					"begin": "!schema",
+					"beginCaptures": {
+						"0": {
+							"name": "test.sema"
+						}
+					},
+					"patterns": [
+						{
+							"begin": "\\(",
+							"beginCaptures": {
+								"0": {
+									"name": "test1.uon"
+								}
+							},
+							"end": "\\)",
+							"endCaptures": {
+								"0": {
+									"name": "test3.uon"
+								}
+							},
+							"name": "test2.uon",
+							"patterns": [
+								{
+									"match": "description|name|uuid",
+									"name": "punctuation.definition.str.property.uon"
+								}
+							]
+						},
+						{
+							"begin": "\\{",
+							"beginCaptures": {
+								"0": {
+									"name": "ouii.uon"
+								}
+							},
+							"end": "\\}",
+							"endCaptures": {
+								"0": {
+									"name": "non.uon"
+								}
+							},
+							"name": "test2.uon",
+							"patterns": [
+								{
+									"comment": "the uon object key",
+									"include": "#objectkey"
+								},
+								{
+									"comment": "the uon object unquoted key",
+									"include": "#unquotedObjectKey"
+								},
+								{
+									"begin": "\\(",
+									"beginCaptures": {
+										"0": {
+											"name": "test1.uon"
+										}
+									},
+									"end": "\\)",
+									"endCaptures": {
+										"0": {
+											"name": "test3.uon"
+										}
+									},
+									"name": "test2.uon",
+									"patterns": [
+										{
+											"match": "description|optional",
+											"name": "punctuation.definition.str.property.uon"
+										}
+									]
+								},
+								{
+									"include": "#comments"
+								},
+								{
+									"begin": ":",
+									"beginCaptures": {
+										"0": {
+											"name": "punctuation.separator.dictionary.key-value.uon"
+										}
+									},
+									"end": "(,)|(?=\\})",
+									"endCaptures": {
+										"1": {
+											"name": "punctuation.separator.dictionary.pair.uon"
+										}
+									},
+									"name": "meta.structure.dictionary.value.uon",
+									"patterns": [
+										{
+											"comment": "the uon object value",
+											"include": "#validationProperties"
+										},
+										{
+											"match": "[^\\s,]",
+											"name": "invalid.illegal.expected-dictionary-separator.uon"
+										}
+									]
+								},
+								{
+									"match": "[^\\s\\}]",
+									"name": "invalid.illegal.expected-dictionary-separator.uon"
+								}
+							]
+						}
+					]
+				},
+				{
+					"match": "[^\\s\\}]",
+					"name": "invalid.illegal.expected-dictionary-separator.uon"
 				}
 			]
+		},
+		"constant": {
+			"match": "\\b(?:true|false|null)\\b",
+			"name": "constant.language.uon"
+		},
+		"number": {
+			"match": "(?x)        # turn on extended mode\n  -?        # an optional minus\n  (?:\n    0       # a zero\n    |       # ...or...\n    [1-9]   # a 1-9 character\n    \\d*     # followed by zero or more digits\n  )\n  (?:\n    (?:\n      \\.    # a period\n      \\d+   # followed by one or more digits\n    )?\n    (?:\n      [eE]  # an e character\n      [+-]? # followed by an option +/-\n      \\d+   # followed by one or more digits\n    )?      # make exponent optional\n  )?        # make decimal portion optional",
+			"name": "constant.numeric.uon"
 		},
 		"objectkey": {
 			"begin": "\"",
@@ -181,6 +275,30 @@
 			"match": "[a-zA-Z]",
 			"name": "string.uon support.type.property-name.uon"
 		},
+		"quotedString": {
+			"begin": "\"",
+			"beginCaptures": {
+				"0": {
+					"name": "string.unquoted.begin.uon"
+				}
+			},
+			"end": "\"",
+			"endCaptures": {
+				"0": {
+					"name": "string.unquoted.end.uon"
+				}
+			},
+			"name": "string.uon",
+			"patterns": [
+				{
+					"include": "#stringcontent"
+				}
+			]
+		},
+		"unquotedString": {
+			"match": "[a-zA-Z]",
+			"name": "string.unquoted.uon"
+		},
 		"stringcontent": {
 			"patterns": [
 				{
@@ -193,34 +311,166 @@
 				}
 			]
 		},
-		"typeStr" : {
-			"begin": "!str( *)?\\(",
-			"beginCaptures": {
-				"0": {
-					"name": "punctuation.definition.str.begin.uon"
-				}
-			},
-			"end": "\\)",
-			"endCaptures": {
-				"0": {
-					"name": "punctuation.definition.str.end.uon"
-				}
-			},
-			"name": "meta.structure.str.value.uon",
+		"strType": {
+			"match": "!str",
+			"name": "string.uon support.type.property-name.uon"
+		},
+		"boolType": {
+			"match": "!bool",
+			"name": "string.uon support.type.property-name.uon"
+		},
+		"urlType": {
+			"match": "!url",
+			"name": "string.uon support.type.property-name.uon"
+		},
+		"numberType": {
+			"match": "!float(128|64|32)?|!int(128|64|32)?|!uint(128|64|32)?",
+			"name": "string.uon support.type.property-name.uon"
+		},
+		"quantity": {
+			"name": "quantity.uon",
 			"patterns": [
 				{
-					"comment": "the uon object value",
-					"include": "#value"
+					"include": "#length"
 				},
 				{
-					"match": "max|min",
-					"name": "punctuation.definition.str.property.uon"
+					"include": "#mass"
+				},
+				{
+					"include": "#time"
+				},
+				{
+					"include": "#temperature"
 				}
 			]
 		},
-		"unquotedString" : {
-			"match": "[a-zA-Z]",
-			"name": "string.unquoted.uon"
+		"length": {
+			"match": "m|km",
+			"name": "string.uon support.type.property-name.uon"
+		},
+		"mass": {
+			"match": "g|kg",
+			"name": "string.uon support.type.property-name.uon"
+		},
+		"time": {
+			"match": "s|min",
+			"name": "string.uon support.type.property-name.uon"
+		},
+		"temperature": {
+			"match": "C|K",
+			"name": "string.uon support.type.property-name.uon"
+		},
+		"boolean": {
+			"patterns": [
+				{
+					"include": "#true"
+				},
+				{
+					"include": "#false"
+				}
+			]
+		},
+		"true": {
+			"match": "true|True",
+			"name": "string.uon support.type.property-name.uon"
+		},
+		"false": {
+			"match": "false|False",
+			"name": "string.uon support.type.property-name.uon"
+		},
+		"null": {
+			"match": "null|none|None",
+			"name": "string.uon support.type.property-name.uon"
+		},
+		"comments": {
+			"begin": "#",
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.definition.comment.begin.uon"
+				}
+			},
+			"end": "\\n",
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.definition.comment.end.uon"
+				}
+			},
+			"name": "comment.line.number-sign.uon"
+		},
+		"validationProperties": {
+			"patterns": [
+				{
+					"include": "#stringValidation"
+				},
+				{
+					"include": "#numberValidation"
+				},
+				{
+					"include": "#boolType"
+				},
+				{
+					"include": "#urlType"
+				}
+			]
+		},
+		"stringValidation": {
+			"begin": "!str",
+			"beginCaptures": {
+				"0": {
+					"name": "xxxxx.uon"
+				}
+			},
+			"patterns": [
+				{
+					"begin": "\\(",
+					"beginCaptures": {
+						"0": {
+							"name": "what1"
+						}
+					},
+					"end": "\\)",
+					"endCaptures": {
+						"0": {
+							"name": "what2"
+						}
+					},
+					"name": "meta.structure.str.value.uon",
+					"patterns": [
+						{
+							"match": "max|min",
+							"name": "punctuation.definition.str.property.uon"
+						}
+					]
+				}
+			]
+		},
+		"numberValidation": {
+			"patterns": [
+				{
+					"include": "#numberType"
+				},
+				{
+					"begin": "\\(",
+					"beginCaptures": {
+						"0": {
+							"name": "test1"
+						}
+					},
+					"end": "\\)",
+					"endCaptures": {
+						"0": {
+							"name": "test2"
+						}
+					},
+					"name": "meta.structure.str.value.uon",
+					"patterns": [
+						{
+							"match": "max|min|quantity",
+							"name": "punctuation.definition.str.property.uon"
+						}
+					]
+				}
+			]
 		},
 		"value": {
 			"patterns": [
@@ -231,13 +481,31 @@
 					"include": "#number"
 				},
 				{
-					"include": "#string"
+					"include": "#numberType"
 				},
 				{
-					"include": "#array"
+					"include": "#strType"
 				},
 				{
-					"include": "#object"
+					"include": "#boolType"
+				},
+				{
+					"include": "#urlType"
+				},
+				{
+					"include": "#unquotedString"
+				},
+				{
+					"include": "#quotedString"
+				},
+				{
+					"include": "#seq"
+				},
+				{
+					"include": "#map"
+				},
+				{
+					"include": "#schema"
 				},
 				{
 					"include": "#comments"

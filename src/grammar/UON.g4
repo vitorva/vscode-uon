@@ -136,7 +136,7 @@ FLOAT_32_TYPE: '!float32';
 
 INT_TYPE: '!int';
 INT_128_TYPE: '!int128';
-INT_64_TYPE: '!int6';
+INT_64_TYPE: '!int64';
 INT_32_TYPE: '!int32';
 
 UINT_TYPE: '!uint';
