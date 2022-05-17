@@ -11,10 +11,36 @@ import {
 
 import { DefaultErrorStrategy } from 'antlr4ts/DefaultErrorStrategy';
 import { IntervalSet } from 'antlr4ts/misc/IntervalSet';
+import {ParseTreeVisitor} from 'antlr4ts/tree/ParseTreeVisitor';
 
 import * as c3 from 'antlr4-c3';
 
 import { CompletionItem, CompletionItemKind, InsertTextFormat } from 'vscode-languageserver';
+
+class Visitor implements ParseTreeVisitor<any> {
+  visit(){
+
+  }
+  visitChildren(ctx: any) {
+    if (!ctx) {
+      return;
+    }
+
+    if (ctx.children) {
+      return ctx.children.map((child : any) => {
+        if (child.children && child.children.length !== 0) {
+          return child.accept(this);
+        } else {
+          console.log(child);
+        }
+      });
+    }
+  }
+
+  visitTerminal(){}
+
+  visitErrorNode(){}
+}
 
 class UonCompletionErrorStrategy extends DefaultErrorStrategy {
   protected singleTokenDeletion(recognizer: Parser): Token | undefined {
@@ -108,6 +134,8 @@ export function activate(context: vscode.ExtensionContext) {
 
       const parser = new UONParser(tokenStream);
 
+
+
       //let errorListener = new ErrorListener();
       //parser.addErrorListener(errorListener);
 
@@ -116,10 +144,12 @@ export function activate(context: vscode.ExtensionContext) {
       const lol = new UonCompletionErrorStrategy();
       parser.errorHandler = lol;
 
+      parser.buildParseTree = true;
       let tree = parser.uon();
 
-      
-      console.log(tree);
+      //let visitor = new Visitor();
+      //tree.accept(visitor);
+      console.log("tree.toStringTree", tree.toStringTree(parser))
 
       console.log("tokenStream");
       console.log("tokenStreamSize", tokenStream.size);
@@ -164,7 +194,7 @@ export function activate(context: vscode.ExtensionContext) {
       //  UONParser.RULE_arr
       //]);
 
-      
+      /*
       core.ignoredTokens = new Set([
           UONLexer.OPEN_C_BRA,
           UONLexer.CLOSE_C_BRA,
@@ -177,7 +207,7 @@ export function activate(context: vscode.ExtensionContext) {
           UONLexer.QUOTED_STRING,
           UONLexer.UNQUOTED_STRING
         ]);
-      
+      */
 
       let candidates = core.collectCandidates(index);
 
