@@ -9,11 +9,14 @@
 	"scopeName": "source.uon",
 	"patterns": [
 		{
-			"include": "#value"
+			"include": "#root_value"
+		},
+		{
+			"include": "#comments"
 		}
 	],
 	"repository": {
-		"seq": {
+		"json_seq": {
 			"begin": "(!seq( *))?\\[",
 			"beginCaptures": {
 				"0": {
@@ -29,7 +32,7 @@
 			"name": "meta.structure.array.uon",
 			"patterns": [
 				{
-					"include": "#value"
+					"include": "#json_value"
 				},
 				{
 					"match": ",",
@@ -41,7 +44,7 @@
 				}
 			]
 		},
-		"map": {
+		"json_map": {
 			"begin": "(!map( *))?\\{",
 			"beginCaptures": {
 				"0": {
@@ -105,7 +108,7 @@
 					"patterns": [
 						{
 							"comment": "the uon object value",
-							"include": "#value"
+							"include": "#json_value"
 						},
 						{
 							"match": "[^\\s,]",
@@ -311,6 +314,22 @@
 				}
 			]
 		},
+		"scalar" : {
+			"patterns": [
+				{
+					"include": "#strType"
+				},
+				{
+					"include": "#boolType"
+				},
+				{
+					"include": "#urlType"
+				},
+				{
+					"include": "#numberType"
+				}
+			]
+		},
 		"strType": {
 			"match": "!str",
 			"name": "string.uon support.type.property-name.uon"
@@ -472,7 +491,46 @@
 				}
 			]
 		},
-		"value": {
+		"root_value" : {
+			"patterns":[
+				{
+					"include": "#json_collection"
+				},
+				{
+					"include": "#yaml_collection"
+				},
+				{
+					"include": "#schema"
+				}
+			]
+		},
+		"json_collection" : {
+			"patterns":[
+				{
+					"include": "#json_seq"
+				},
+				{
+					"include": "#json_map"
+				}
+			]
+		},
+		"json_value": {
+			"patterns": [
+				{
+					"include": "#json_collection"
+				},
+				{
+					"include": "#scalar"
+				},
+				{
+					"include": "#null"
+				},
+				{
+					"include": "#comments"
+				}
+			]
+		},
+		"yaml_value": {
 			"patterns": [
 				{
 					"include": "#constant"
@@ -499,10 +557,10 @@
 					"include": "#quotedString"
 				},
 				{
-					"include": "#seq"
+					"include": "#json_seq"
 				},
 				{
-					"include": "#map"
+					"include": "#json_map"
 				},
 				{
 					"include": "#schema"
