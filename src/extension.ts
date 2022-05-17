@@ -213,13 +213,13 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       //TODO        
-      //const snippetCompletion = new vscode.CompletionItem('description : ... , name : ... , uuid : ... ');
-      //snippetCompletion.insertText = new vscode.SnippetString('description ${1}, name ${2}, uuid ${3}');
+      const snippetCompletion = new vscode.CompletionItem('description : ... , name : ... , uuid : ... ');
+      snippetCompletion.insertText = new vscode.SnippetString('description : ${1}, name : ${2}, uuid : ${3}');
       
       //snippetCompletion.insertText = new vscode.SnippetString('Good ${1|morning,afternoon,evening|}. It is ${1}, right?');
       //keywords.push(new vscode.newS('(SELECT ... FROM ...)', '(SELECT $2 FROM $1)'));
 
-      //keywords.push(snippetCompletion);
+      keywords.push(snippetCompletion);
 
       console.log(keywords);
       return keywords;
