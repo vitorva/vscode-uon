@@ -192,6 +192,11 @@ true : 'true' | 'True';
 false : 'false' | 'False';
 null: 'null' | 'none' | 'None';
 
+number : decimal | signed_decimal | float_number;
+decimal : string
+float_number: string
+signed_decimal: (PLUS|MINUS) string
+
 fragment DOUBLE_QUOTE_CHAR
    : ~["\\\r\n]
    | ESCAPE_SEQUENCE
@@ -259,3 +264,5 @@ COLON:		 ':';
 MAPPING_TYPE: '!map';
 SEQUENCE_TYPE: '!seq';
 SCHEMA_TYPE: '!schema';
+PLUS: '+';
+MINUS: '-';

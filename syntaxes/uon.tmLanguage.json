@@ -281,7 +281,33 @@
 		"quotedString": {
 			"begin": "\"",
 			"beginCaptures": {
+				"1": {
+					"name": "string.uon support.type.property-name.uon"
+				},
+				"2": {
+					"name": "string.unquoted.begin.uon"
+				}
+			},
+			"end": "\"",
+			"endCaptures": {
 				"0": {
+					"name": "string.unquoted.end.uon"
+				}
+			},
+			"name": "string.uon",
+			"patterns": [
+				{
+					"include": "#stringcontent"
+				}
+			]
+		},
+		"quotedString2": {
+			"begin": "(!str( *))?(\")",
+			"beginCaptures": {
+				"1": {
+					"name": "string.uon support.type.property-name.uon"
+				},
+				"2": {
 					"name": "string.unquoted.begin.uon"
 				}
 			},
@@ -302,6 +328,18 @@
 			"match": "[a-zA-Z]",
 			"name": "string.unquoted.uon"
 		},
+		"unquotedString2": {
+			"match": "(!str( *))?(( *)?([a-zA-Z])*)?",
+			"name": "string.unquoted.uon",
+			"captures": {
+				"1": {
+					"name": "string.uon support.type.property-name.zzzzz.uon"
+				},
+				"2": {
+					"name": "string.unquoted.begin.uon"
+				}
+			}
+		},
 		"stringcontent": {
 			"patterns": [
 				{
@@ -317,58 +355,49 @@
 		"scalar" : {
 			"patterns": [
 				{
-					"include": "#string_scalar3"
+					"include": "#quotedString2"
 				},
 				{
-					"include": "#boolType"
+					"include": "#unquotedString2"
 				},
 				{
-					"include": "#urlType"
-				},
-				{
-					"include": "#numberType"
+					"match": "[^\\s\\}]",
+					"name": "test"
 				}
 			]
 		},
 		"string_scalar": {
-			"match" : "(!str)?( *)",
-			"name": "string.uon support.type.property-name.what.uon",
-			"patterns" : {
-				"include": "#quotedString"
-			}
+			"name": "string_scalar.uon",
+			"patterns": [
+				{
+					"include": "#quotedString"
+				},
+				{
+					"include": "#strType"
+				}
+			]
 		},
 		"string_scalar2": {
-			"begin": "( *)(!str)?",
+			"begin": "!str",
 			"beginCaptures": {
 				"0": {
 					"name": "string.uon support.type.property-name.begin.uon"
 				}
 			},
-			"end": "(,)|(?=\\})",
-			"endCaptures": {
-				"0": {
-					"name": "string.uon support.type.property-name.end.uon"
-				}
-			},
 			"patterns": [
 				{
 					"include": "#quotedString"
 				}
 			]
 		},
-		"string_scalar3": {
-			"name": "test2.uon",
+		"boolean_scalar" : {
+			"name": "boolean_scalar.uon",
 			"patterns": [
-				{
-					"match": "[^\\s\\}]",
-					"name": "invalid.illegal.expected-dictionary-separator.uon"
-				},
 				{
 					"include": "#quotedString"
 				},
 				{
-					"match" : "(!str)?( *)",
-					"name": "string.uon support.type.property-name.what.uon"
+					"include": "#boolType"
 				}
 			]
 		},
