@@ -317,7 +317,7 @@
 		"scalar" : {
 			"patterns": [
 				{
-					"include": "#strType"
+					"include": "#string_scalar3"
 				},
 				{
 					"include": "#boolType"
@@ -327,6 +327,48 @@
 				},
 				{
 					"include": "#numberType"
+				}
+			]
+		},
+		"string_scalar": {
+			"match" : "(!str)?( *)",
+			"name": "string.uon support.type.property-name.what.uon",
+			"patterns" : {
+				"include": "#quotedString"
+			}
+		},
+		"string_scalar2": {
+			"begin": "( *)(!str)?",
+			"beginCaptures": {
+				"0": {
+					"name": "string.uon support.type.property-name.begin.uon"
+				}
+			},
+			"end": "(,)|(?=\\})",
+			"endCaptures": {
+				"0": {
+					"name": "string.uon support.type.property-name.end.uon"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#quotedString"
+				}
+			]
+		},
+		"string_scalar3": {
+			"name": "test2.uon",
+			"patterns": [
+				{
+					"match": "[^\\s\\}]",
+					"name": "invalid.illegal.expected-dictionary-separator.uon"
+				},
+				{
+					"include": "#quotedString"
+				},
+				{
+					"match" : "(!str)?( *)",
+					"name": "string.uon support.type.property-name.what.uon"
 				}
 			]
 		},
