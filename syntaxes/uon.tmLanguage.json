@@ -296,56 +296,9 @@
 				}
 			]
 		},
-		"quotedString2": {
-			"begin": "(!str( *))?(\")",
-			"beginCaptures": {
-				"1": {
-					"name": "string.uon support.type.property-name.uon"
-				},
-				"2": {
-					"name": "string.unquoted.begin.uon"
-				}
-			},
-			"end": "\"",
-			"endCaptures": {
-				"0": {
-					"name": "string.unquoted.end.uon"
-				}
-			},
-			"name": "string.uon",
-			"patterns": [
-				{
-					"include": "#stringcontent"
-				}
-			]
-		},
 		"unquotedString": {
 			"match": "[a-zA-Z]",
 			"name": "string.unquoted.uon"
-		},
-		"unquotedString2": {
-			"match": "(!str( *))?(( *)?([a-zA-Z])*)?",
-			"name": "string.unquoted.uon",
-			"captures": {
-				"1": {
-					"name": "string.uon support.type.property-name.zzzzz.uon"
-				},
-				"2": {
-					"name": "string.unquoted.begin.uon"
-				}
-			}
-		},
-		"unquotedString3": {
-			"match": "(!str( *))(( *)?([a-zA-Z])+)",
-			"name": "string.unquoted.uon",
-			"captures": {
-				"1": {
-					"name": "string.uon support.type.property-name.zzzzz.uon"
-				},
-				"2": {
-					"name": "string.unquoted.begin.uon"
-				}
-			}
 		},
 		"stringcontent": {
 			"patterns": [
@@ -388,7 +341,6 @@
 				}
 			]
 		},
-
 		"string_description":{ 
 			"begin": "\\(",
 			"beginCaptures": {
@@ -421,19 +373,6 @@
 				},
 				{
 					"include": "#strType"
-				}
-			]
-		},
-		"string_scalar2": {
-			"begin": "!str",
-			"beginCaptures": {
-				"0": {
-					"name": "string.uon support.type.property-name.begin.uon"
-				}
-			},
-			"patterns": [
-				{
-					"include": "#quotedString"
 				}
 			]
 		},
@@ -661,46 +600,6 @@
 				},
 				{
 					"include": "#null"
-				},
-				{
-					"include": "#comments"
-				}
-			]
-		},
-		"yaml_value": {
-			"patterns": [
-				{
-					"include": "#constant"
-				},
-				{
-					"include": "#number"
-				},
-				{
-					"include": "#numberType"
-				},
-				{
-					"include": "#strType"
-				},
-				{
-					"include": "#boolType"
-				},
-				{
-					"include": "#urlType"
-				},
-				{
-					"include": "#unquotedString"
-				},
-				{
-					"include": "#quotedString"
-				},
-				{
-					"include": "#json_seq"
-				},
-				{
-					"include": "#json_map"
-				},
-				{
-					"include": "#schema"
 				},
 				{
 					"include": "#comments"
