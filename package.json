@@ -34,37 +34,7 @@
         "scopeName": "source.uon",
         "path": "./syntaxes/uon.tmLanguage.json"
       }
-    ],
-    "configurationDefaults": {
-      "editor.tokenColorCustomizations": {
-        "textMateRules": [
-          {
-            "scope": "comment.line.number-sign.uon",
-            "settings": {
-              "foreground": "#b180a9"
-            }
-          },
-          {
-            "scope": "punctuation.definition.str.begin.uon",
-            "settings": {
-              "foreground": "#6f56df"
-            }
-          },
-          {
-            "scope": "punctuation.definition.str.end.uon",
-            "settings": {
-              "foreground": "#6f56df"
-            }
-          },
-          {
-            "scope": "punctuation.definition.str.property.uon",
-            "settings": {
-              "foreground": "#269a2b"
-            }
-          }
-        ]
-      }
-    }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

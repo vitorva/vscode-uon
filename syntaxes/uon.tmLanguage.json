@@ -1,9 +1,4 @@
 {
-	"information_for_contributors": [
-		"This file has been converted from https://github.com/microsoft/vscode-uon.tmLanguage/blob/master/uon.tmLanguage",
-		"If you want to provide a fix or improvement, please create a pull request against the original repository.",
-		"Once accepted there, we are happy to receive an update request."
-	],
 	"version": "https://github.com/microsoft/vscode-uon.tmLanguage/commit/9bd83f1c252b375e957203f21793316203f61f70",
 	"name": "UON",
 	"scopeName": "source.uon",
@@ -45,11 +40,11 @@
 			]
 		},
 		"yaml_seq": {
-			"match": "(-)(?!\\S)",
+			"match": "(!seq( *))?(-)(?!\\S)",
 			"name": "punctuation.definition.yaml.sequence.item.uon"
 		},
 		"yaml_map": {
-			"match": "(( *)([a-zA-Z])*)(( *):( *))",
+			"match": "((!map)?( *)([a-zA-Z])*)(( *):( *))",
 			"name": "punctuation.definition.yaml.map.item.uon",
 			"captures": {
 				"1": {
@@ -121,7 +116,7 @@
 			"begin": "(!!([a-zA-Z]*))(( *)?:)",
 			"beginCaptures": {
 				"1": {
-					"name": "punctuation.definition.schema.begin.uon"
+					"name": "entity.other.attribute-name.uon"
 				}
 			},
 			"name": "meta.structure.schema.value.uon",
@@ -130,7 +125,7 @@
 					"begin": "!schema",
 					"beginCaptures": {
 						"0": {
-							"name": "TODO.uon"
+							"name": "markup.bold.uon"
 						}
 					},
 					"patterns": [
@@ -182,16 +177,16 @@
 									"begin": "\\(",
 									"beginCaptures": {
 										"0": {
-											"name": "test1.uon"
+											"name": "TODO.uon"
 										}
 									},
 									"end": "\\)",
 									"endCaptures": {
 										"0": {
-											"name": "test3.uon"
+											"name": "TODO.uon"
 										}
 									},
-									"name": "test2.uon",
+									"name": "TODO.uon",
 									"patterns": [
 										{
 											"match": "description|optional",
@@ -242,7 +237,7 @@
 			]
 		},
 		"number": {
-			"match": "(?x)-?(?:0|[1-9]\\d*)(?:(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)?([ ])*(m|k|m|g|kg|s|min|C|K)?" ,
+			"match": "(?x)-?(?:0|[1-9]\\d*)(?:(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)?([ ])* (kg|min|m|k|m|g|s|C|K)?" ,
 			"captures" : {
 				"0" : {
 					"name" : "constant.numeric.uon"
@@ -321,10 +316,10 @@
 					"include": "#number"
 				},
 				{
-					"include": "#string_scalar"
+					"include": "#quantityValidation"
 				},
 				{
-					"include": "#quantity"
+					"include": "#string_scalar"
 				},
 				{
 					"include": "#boolean_scalar"
@@ -337,10 +332,6 @@
 				},
 				{
 					"include": "#string_description"
-				},
-				{
-					"match": "[^\\s\\}]",
-					"name": "test"
 				}
 			]
 		},
@@ -348,16 +339,16 @@
 			"begin": "\\(",
 			"beginCaptures": {
 				"0": {
-					"name": "test1.uon"
+					"name": "TODO.uon"
 				}
 			},
 			"end": "\\)",
 			"endCaptures": {
 				"0": {
-					"name": "test3.uon"
+					"name": "TODO.uon"
 				}
 			},
-			"name": "test2.uon",
+			"name": "TODO.uon",
 			"patterns": [
 				{
 					"match": "description|optional",
@@ -380,21 +371,12 @@
 			]
 		},
 		"boolean_scalar": {
-			"name": "boolean_scalar.uon",
-			"patterns": [
-				{
-					"include": "#boolType"
-				},
-				{
-					"include": "#true"
-				},
-				{
-					"include": "#false"
-				},
-				{
-					"include": "#null"
-				}
-			]
+			"match" : "(!bool)?(true|True|false|False)",
+			"name": "boolean_scalar.uon"
+		},
+		"uonType" : {
+			"match": "!str|!bool|!url|!float(128|64|32)?|!int(128|64|32)?|!uint(128|64|32)?",
+			"name": "string.uon support.type.property-name.uon"
 		},
 		"strType": {
 			"match": "!str",
@@ -412,44 +394,13 @@
 			"match": "!float(128|64|32)?|!int(128|64|32)?|!uint(128|64|32)?",
 			"name": "string.uon support.type.property-name.uon"
 		},
-		"quantity": {
-			"name": "quantity.uon",
-			"patterns": [
-				{
-					"include": "#length"
-				},
-				{
-					"include": "#mass"
-				},
-				{
-					"include": "#time"
-				},
-				{
-					"include": "#temperature"
-				}
-			]
-		},
-		"boolean": {
-			"patterns": [
-				{
-					"include": "#true"
-				},
-				{
-					"include": "#false"
-				}
-			]
-		},
-		"true": {
-			"match": "true|True",
-			"name": "constant.language.uon"
-		},
-		"false": {
-			"match": "false|False",
-			"name": "constant.language.uon"
+		"quantityValidation": {
+			"match" : "length|mass|time|temperature",
+			"name": "TODO.uon"
 		},
 		"null": {
 			"match": "null|none|None",
-			"name": "constant.language.uon"
+			"name": "null.language.uon"
 		},
 		"comments": {
 			"begin": "#",
@@ -486,7 +437,7 @@
 			"begin": "!str",
 			"beginCaptures": {
 				"0": {
-					"name": "xxxxx.uon"
+					"name": "TODO.uon"
 				}
 			},
 			"patterns": [
@@ -494,20 +445,20 @@
 					"begin": "\\(",
 					"beginCaptures": {
 						"0": {
-							"name": "what1"
+							"name": "TODO.uon"
 						}
 					},
 					"end": "\\)",
 					"endCaptures": {
 						"0": {
-							"name": "what2"
+							"name": "TODO.uon"
 						}
 					},
-					"name": "meta.structure.str.value.uon",
+					"name": "meta.structure.str.validation.value.uon",
 					"patterns": [
 						{
 							"match": "max|min",
-							"name": "punctuation.definition.str.property.uon"
+							"name": "TODO.uon"
 						}
 					]
 				}
@@ -522,20 +473,20 @@
 					"begin": "\\(",
 					"beginCaptures": {
 						"0": {
-							"name": "test1"
+							"name": "TODO.uon"
 						}
 					},
 					"end": "\\)",
 					"endCaptures": {
 						"0": {
-							"name": "test2"
+							"name": "TODO.uon"
 						}
 					},
-					"name": "meta.structure.str.value.uon",
+					"name": "meta.structure.number.valdiation.value.uon",
 					"patterns": [
 						{
 							"match": "max|min|quantity",
-							"name": "punctuation.definition.str.property.uon"
+							"name": "TODO.uon"
 						}
 					]
 				}
