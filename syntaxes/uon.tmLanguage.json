@@ -20,40 +20,40 @@
 			"begin": "(!seq( *))?\\[",
 			"beginCaptures": {
 				"0": {
-					"name": "punctuation.definition.array.begin.uon"
+					"name": "punctuation.definition.json.sequence.begin.uon"
 				}
 			},
 			"end": "\\]",
 			"endCaptures": {
 				"0": {
-					"name": "punctuation.definition.array.end.uon"
+					"name": "punctuation.definition.json.sequence.end.uon"
 				}
 			},
-			"name": "meta.structure.array.uon",
+			"name": "meta.structure.sequence.uon",
 			"patterns": [
 				{
 					"include": "#json_value"
 				},
 				{
 					"match": ",",
-					"name": "punctuation.separator.array.uon"
+					"name": "punctuation.separator.sequence.uon"
 				},
 				{
 					"match": "[^\\s\\]]",
-					"name": "invalid.illegal.expected-array-separator.uon"
+					"name": "invalid.illegal.expected-sequence-separator.uon"
 				}
 			]
 		},
 		"yaml_seq": {
 			"match": "(-)(?!\\S)",
-			"name": "punctuation.definition.yaml.sequence.item.yaml"
-		},  
-		"yaml_map" : {
+			"name": "punctuation.definition.yaml.sequence.item.uon"
+		},
+		"yaml_map": {
 			"match": "(( *)([a-zA-Z])*)(( *):( *))",
-			"name": "punctuation.definition.yaml.map.item.yaml",
-			"captures" : {
-				"1" : {
-					"name" : "entity.name.tag.uon"
+			"name": "punctuation.definition.yaml.map.item.uon",
+			"captures": {
+				"1": {
+					"name": "entity.name.tag.uon"
 				}
 			}
 		},
@@ -61,16 +61,16 @@
 			"begin": "(!map( *))?\\{",
 			"beginCaptures": {
 				"0": {
-					"name": "punctuation.definition.dictionary.begin.uon"
+					"name": "punctuation.definition.mapping.begin.uon"
 				}
 			},
 			"end": "\\}",
 			"endCaptures": {
 				"0": {
-					"name": "punctuation.definition.dictionary.end.uon"
+					"name": "punctuation.definition.mapping.end.uon"
 				}
 			},
-			"name": "meta.structure.dictionary.uon",
+			"name": "meta.structure.mapping.uon",
 			"patterns": [
 				{
 					"comment": "the uon object key",
@@ -81,7 +81,7 @@
 					"include": "#unquotedObjectKey"
 				},
 				{
-					"include" : "#string_description"
+					"include": "#string_description"
 				},
 				{
 					"include": "#comments"
@@ -90,16 +90,16 @@
 					"begin": ":",
 					"beginCaptures": {
 						"0": {
-							"name": "punctuation.separator.dictionary.key-value.uon"
+							"name": "punctuation.separator.mapping.key-value.uon"
 						}
 					},
 					"end": "(,)|(?=\\})",
 					"endCaptures": {
 						"1": {
-							"name": "punctuation.separator.dictionary.pair.uon"
+							"name": "punctuation.separator.mapping.pair.uon"
 						}
 					},
-					"name": "meta.structure.dictionary.value.uon",
+					"name": "meta.structure.mapping.value.uon",
 					"patterns": [
 						{
 							"comment": "the uon object value",
@@ -107,30 +107,30 @@
 						},
 						{
 							"match": "[^\\s,]",
-							"name": "invalid.illegal.expected-dictionary-separator.uon"
+							"name": "invalid.illegal.expected-mapping-separator.uon"
 						}
 					]
 				},
 				{
 					"match": "[^\\s\\}]",
-					"name": "invalid.illegal.expected-dictionary-separator.uon"
+					"name": "invalid.illegal.expected-mapping-separator.uon"
 				}
 			]
 		},
 		"schema": {
-			"begin": "!!([a-zA-Z]*)( *)?:",
+			"begin": "(!!([a-zA-Z]*))(( *)?:)",
 			"beginCaptures": {
-				"0": {
-					"name": "punctuation.definition.str.begin.uon"
+				"1": {
+					"name": "punctuation.definition.schema.begin.uon"
 				}
 			},
-			"name": "meta.structure.str.value.uon",
+			"name": "meta.structure.schema.value.uon",
 			"patterns": [
 				{
 					"begin": "!schema",
 					"beginCaptures": {
 						"0": {
-							"name": "test.sema"
+							"name": "TODO.uon"
 						}
 					},
 					"patterns": [
@@ -138,16 +138,16 @@
 							"begin": "\\(",
 							"beginCaptures": {
 								"0": {
-									"name": "test1.uon"
+									"name": "TODO.uon"
 								}
 							},
 							"end": "\\)",
 							"endCaptures": {
 								"0": {
-									"name": "test3.uon"
+									"name": "TODO.uon"
 								}
 							},
-							"name": "test2.uon",
+							"name": "TODO.uon",
 							"patterns": [
 								{
 									"match": "description|name|uuid",
@@ -159,16 +159,16 @@
 							"begin": "\\{",
 							"beginCaptures": {
 								"0": {
-									"name": "ouii.uon"
+									"name": "TODO.uon"
 								}
 							},
 							"end": "\\}",
 							"endCaptures": {
 								"0": {
-									"name": "non.uon"
+									"name": "TODO.uon"
 								}
 							},
-							"name": "test2.uon",
+							"name": "TODO.uon",
 							"patterns": [
 								{
 									"comment": "the uon object key",
@@ -241,25 +241,28 @@
 				}
 			]
 		},
-		"constant": {
-			"match": "\\b(?:true|false|null)\\b",
-			"name": "constant.language.uon"
-		},
 		"number": {
-			"match": "(?x)        # turn on extended mode\n  -?        # an optional minus\n  (?:\n    0       # a zero\n    |       # ...or...\n    [1-9]   # a 1-9 character\n    \\d*     # followed by zero or more digits\n  )\n  (?:\n    (?:\n      \\.    # a period\n      \\d+   # followed by one or more digits\n    )?\n    (?:\n      [eE]  # an e character\n      [+-]? # followed by an option +/-\n      \\d+   # followed by one or more digits\n    )?      # make exponent optional\n  )?        # make decimal portion optional",
-			"name": "constant.numeric.uon"
+			"match": "(?x)-?(?:0|[1-9]\\d*)(?:(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)?([ ])*(m|k|m|g|kg|s|min|C|K)?" ,
+			"captures" : {
+				"0" : {
+					"name" : "constant.numeric.uon"
+				},
+				"2" : {
+					"name" : "constant.language.uon"
+				}
+			}
 		},
 		"objectkey": {
 			"begin": "\"",
 			"beginCaptures": {
 				"0": {
-					"name": "punctuation.support.type.property-name.begin.uon"
+					"name": "entity.name.tag.uon.begin.uon"
 				}
 			},
 			"end": "\"",
 			"endCaptures": {
 				"0": {
-					"name": "punctuation.support.type.property-name.end.uon"
+					"name": "entity.name.tag.uon.end.uon"
 				}
 			},
 			"name": "string.uon support.type.property-name.uon",
@@ -271,7 +274,7 @@
 		},
 		"unquotedObjectKey": {
 			"match": "[a-zA-Z]",
-			"name": "string.uon support.type.property-name.uon"
+			"name": "entity.name.tag.uon"
 		},
 		"quotedString": {
 			"begin": "\"",
@@ -312,28 +315,28 @@
 				}
 			]
 		},
-		"scalar" : {
+		"scalar": {
 			"patterns": [
 				{
-					"include": "#boolean_scalar"
+					"include": "#number"
 				},
 				{
 					"include": "#string_scalar"
 				},
 				{
-					"include" : "#urlType"
+					"include": "#quantity"
 				},
 				{
-					"include" : "#numberType"
+					"include": "#boolean_scalar"
 				},
 				{
-					"include" : "#quantity"
+					"include": "#urlType"
 				},
 				{
-					"include" : "#string_description"
+					"include": "#numberType"
 				},
 				{
-					"include": "#number"
+					"include": "#string_description"
 				},
 				{
 					"match": "[^\\s\\}]",
@@ -341,7 +344,7 @@
 				}
 			]
 		},
-		"string_description":{ 
+		"string_description": {
 			"begin": "\\(",
 			"beginCaptures": {
 				"0": {
@@ -376,7 +379,7 @@
 				}
 			]
 		},
-		"boolean_scalar" : {
+		"boolean_scalar": {
 			"name": "boolean_scalar.uon",
 			"patterns": [
 				{
@@ -426,22 +429,6 @@
 				}
 			]
 		},
-		"length": {
-			"match": "m|km",
-			"name": "string.uon support.type.property-name.uon"
-		},
-		"mass": {
-			"match": "g|kg",
-			"name": "string.uon support.type.property-name.uon"
-		},
-		"time": {
-			"match": "s|min",
-			"name": "string.uon support.type.property-name.uon"
-		},
-		"temperature": {
-			"match": "C|K",
-			"name": "string.uon support.type.property-name.uon"
-		},
 		"boolean": {
 			"patterns": [
 				{
@@ -454,15 +441,15 @@
 		},
 		"true": {
 			"match": "true|True",
-			"name": "string.uon support.type.property-name.uon"
+			"name": "constant.language.uon"
 		},
 		"false": {
 			"match": "false|False",
-			"name": "string.uon support.type.property-name.uon"
+			"name": "constant.language.uon"
 		},
 		"null": {
 			"match": "null|none|None",
-			"name": "string.uon support.type.property-name.uon"
+			"name": "constant.language.uon"
 		},
 		"comments": {
 			"begin": "#",
@@ -554,8 +541,8 @@
 				}
 			]
 		},
-		"root_value" : {
-			"patterns":[
+		"root_value": {
+			"patterns": [
 				{
 					"include": "#json_collection"
 				},
@@ -570,8 +557,8 @@
 				}
 			]
 		},
-		"yaml_collection" : {
-			"patterns" : [
+		"yaml_collection": {
+			"patterns": [
 				{
 					"include": "#yaml_seq"
 				},
@@ -580,8 +567,8 @@
 				}
 			]
 		},
-		"json_collection" : {
-			"patterns":[
+		"json_collection": {
+			"patterns": [
 				{
 					"include": "#json_seq"
 				},
