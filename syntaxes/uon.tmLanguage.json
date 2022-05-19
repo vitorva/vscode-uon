@@ -44,6 +44,19 @@
 				}
 			]
 		},
+		"yaml_seq": {
+			"match": "(-)(?!\\S)",
+			"name": "punctuation.definition.yaml.sequence.item.yaml"
+		},  
+		"yaml_map" : {
+			"match": "(( *)([a-zA-Z])*)(( *):( *))",
+			"name": "punctuation.definition.yaml.map.item.yaml",
+			"captures" : {
+				"1" : {
+					"name" : "entity.name.tag.uon"
+				}
+			}
+		},
 		"json_map": {
 			"begin": "(!map( *))?\\{",
 			"beginCaptures": {
@@ -68,25 +81,7 @@
 					"include": "#unquotedObjectKey"
 				},
 				{
-					"begin": "\\(",
-					"beginCaptures": {
-						"0": {
-							"name": "test1.uon"
-						}
-					},
-					"end": "\\)",
-					"endCaptures": {
-						"0": {
-							"name": "test3.uon"
-						}
-					},
-					"name": "test2.uon",
-					"patterns": [
-						{
-							"match": "description|optional",
-							"name": "punctuation.definition.str.property.uon"
-						}
-					]
+					"include" : "#string_description"
 				},
 				{
 					"include": "#comments"
@@ -340,6 +335,18 @@
 				}
 			}
 		},
+		"unquotedString3": {
+			"match": "(!str( *))(( *)?([a-zA-Z])+)",
+			"name": "string.unquoted.uon",
+			"captures": {
+				"1": {
+					"name": "string.uon support.type.property-name.zzzzz.uon"
+				},
+				"2": {
+					"name": "string.unquoted.begin.uon"
+				}
+			}
+		},
 		"stringcontent": {
 			"patterns": [
 				{
@@ -355,14 +362,51 @@
 		"scalar" : {
 			"patterns": [
 				{
-					"include": "#quotedString2"
+					"include": "#boolean_scalar"
 				},
 				{
-					"include": "#unquotedString2"
+					"include": "#string_scalar"
+				},
+				{
+					"include" : "#urlType"
+				},
+				{
+					"include" : "#numberType"
+				},
+				{
+					"include" : "#quantity"
+				},
+				{
+					"include" : "#string_description"
+				},
+				{
+					"include": "#number"
 				},
 				{
 					"match": "[^\\s\\}]",
 					"name": "test"
+				}
+			]
+		},
+
+		"string_description":{ 
+			"begin": "\\(",
+			"beginCaptures": {
+				"0": {
+					"name": "test1.uon"
+				}
+			},
+			"end": "\\)",
+			"endCaptures": {
+				"0": {
+					"name": "test3.uon"
+				}
+			},
+			"name": "test2.uon",
+			"patterns": [
+				{
+					"match": "description|optional",
+					"name": "punctuation.definition.str.property.uon"
 				}
 			]
 		},
@@ -371,6 +415,9 @@
 			"patterns": [
 				{
 					"include": "#quotedString"
+				},
+				{
+					"include": "#unquotedString"
 				},
 				{
 					"include": "#strType"
@@ -394,10 +441,16 @@
 			"name": "boolean_scalar.uon",
 			"patterns": [
 				{
-					"include": "#quotedString"
+					"include": "#boolType"
 				},
 				{
-					"include": "#boolType"
+					"include": "#true"
+				},
+				{
+					"include": "#false"
+				},
+				{
+					"include": "#null"
 				}
 			]
 		},
@@ -572,6 +625,19 @@
 				},
 				{
 					"include": "#schema"
+				},
+				{
+					"include": "#scalar"
+				}
+			]
+		},
+		"yaml_collection" : {
+			"patterns" : [
+				{
+					"include": "#yaml_seq"
+				},
+				{
+					"include": "#yaml_map"
 				}
 			]
 		},
