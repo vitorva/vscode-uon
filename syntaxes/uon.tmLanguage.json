@@ -14,7 +14,10 @@
 		"json_seq": {
 			"begin": "(!seq( *))?\\[",
 			"beginCaptures": {
-				"0": {
+				"1" : {
+					"name" : "markup.bold.uon"
+				},
+				"2": {
 					"name": "punctuation.definition.json.sequence.begin.uon"
 				}
 			},
@@ -41,22 +44,30 @@
 		},
 		"yaml_seq": {
 			"match": "(!seq( *))?(-)(?!\\S)",
-			"name": "punctuation.definition.yaml.sequence.item.uon"
+			"name": "punctuation.definition.yaml.sequence.item.uon",
+			"captures": {
+				"1" : {
+					"name" : "markup.bold.uon"
+				}
+			}
 		},
 		"yaml_map": {
-			"match": "((!map)?( *)([a-zA-Z])*)(( *):( *))",
+			"match": "(((!map)?( *))([a-zA-Z])*)(( *):( *))",
 			"name": "punctuation.definition.yaml.map.item.uon",
 			"captures": {
-				"1": {
-					"name": "entity.name.tag.uon"
+				"1" : {
+					"name" : "entity.name.tag.uon"
+				},
+				"2" : {
+					"name" : "comment.uon"
 				}
 			}
 		},
 		"json_map": {
 			"begin": "(!map( *))?\\{",
 			"beginCaptures": {
-				"0": {
-					"name": "punctuation.definition.mapping.begin.uon"
+				"1": {
+					"name": "entity.name.tag.uon"
 				}
 			},
 			"end": "\\}",
@@ -133,16 +144,16 @@
 							"begin": "\\(",
 							"beginCaptures": {
 								"0": {
-									"name": "TODO.uon"
+									"name": "punctuation.definition.schema-presentation.begin.uon"
 								}
 							},
 							"end": "\\)",
 							"endCaptures": {
 								"0": {
-									"name": "TODO.uon"
+									"name": "punctuation.definition.schema-presentation.end.uon"
 								}
 							},
-							"name": "TODO.uon",
+							"name": "punctuation.definition.schema.uon",
 							"patterns": [
 								{
 									"match": "description|name|uuid",
@@ -157,16 +168,16 @@
 							"begin": "\\{",
 							"beginCaptures": {
 								"0": {
-									"name": "TODO.uon"
+									"name": "punctuation.definition.schema-attribute.begin.uon"
 								}
 							},
 							"end": "\\}",
 							"endCaptures": {
 								"0": {
-									"name": "TODO.uon"
+									"name": "punctuation.definition.schema-attribute.end.uon"
 								}
 							},
-							"name": "TODO.uon",
+							"name": "punctuation.definition.schema-attribute.uon",
 							"patterns": [
 								{
 									"comment": "the uon object key",
@@ -180,20 +191,23 @@
 									"begin": "\\(",
 									"beginCaptures": {
 										"0": {
-											"name": "TODO.uon"
+											"name": "punctuation.definition.schema-attribute-description.begin.uon"
 										}
 									},
 									"end": "\\)",
 									"endCaptures": {
 										"0": {
-											"name": "TODO.uon"
+											"name": "punctuation.definition.schema-attribute-description.end.uon"
 										}
 									},
-									"name": "TODO.uon",
+									"name": "punctuation.definition.schema-attribute-description.uon",
 									"patterns": [
 										{
 											"match": "description|optional",
 											"name": "string.uon support.type.property-name2.uon"
+										},
+										{
+											"include" : "#string_scalar"
 										}
 									]
 								},
@@ -204,16 +218,16 @@
 									"begin": ":",
 									"beginCaptures": {
 										"0": {
-											"name": "punctuation.separator.dictionary.key-value.uon"
+											"name": "punctuation.separator.schema-validation.key-value.uon"
 										}
 									},
 									"end": "(,)|(?=\\})",
 									"endCaptures": {
 										"1": {
-											"name": "punctuation.separator.dictionary.pair.uon"
+											"name": "punctuation.separator.schema-validation.pair.uon"
 										}
 									},
-									"name": "meta.structure.dictionary.value.uon",
+									"name": "meta.structure.schema-validation.value.uon",
 									"patterns": [
 										{
 											"comment": "the uon object value",
@@ -304,7 +318,7 @@
 		"stringcontent": {
 			"patterns": [
 				{
-					"match": "(?x)                # turn on extended mode\n  \\\\                # a literal backslash\n  (?:               # ...followed by...\n    [\"\\\\/bfnrt]     # one of these characters\n    |               # ...or...\n    u               # a u\n    [0-9a-fA-F]{4}) # and four hex digits",
+					"match": "(?x)\\\\(?:[\"\\\\/bfnrt]|u[0-9a-fA-F]{4})",
 					"name": "constant.character.escape.uon"
 				},
 				{
@@ -342,16 +356,16 @@
 			"begin": "\\(",
 			"beginCaptures": {
 				"0": {
-					"name": "TODO.uon"
+					"name": "punctuation.definition.string-description.begin.uon"
 				}
 			},
 			"end": "\\)",
 			"endCaptures": {
 				"0": {
-					"name": "TODO.uon"
+					"name": "punctuation.definition.string-description.end.uon"
 				}
 			},
-			"name": "TODO.uon",
+			"name": "punctuation.definition.string-description.uon",
 			"patterns": [
 				{
 					"match": "description|optional",
@@ -399,7 +413,7 @@
 		},
 		"quantityValidation": {
 			"match" : "length|mass|time|temperature",
-			"name": "string.uon support.type.property-name4.uon"
+			"name": "string.uon"
 		},
 		"null": {
 			"match": "null|none|None",
@@ -445,20 +459,20 @@
 					"begin": "\\(",
 					"beginCaptures": {
 						"0": {
-							"name": "TODO.uon"
+							"name": "punctuation.definition.schema-validation-property.begin.uon"
 						}
 					},
 					"end": "\\)",
 					"endCaptures": {
 						"0": {
-							"name": "TODO.uon"
+							"name": "punctuation.definition.schema-validation-property.end.uon"
 						}
 					},
-					"name": "meta.structure.number.validation.value.uon",
+					"name": "punctuation.definition.schema-validation-property.uon",
 					"patterns": [
 						{
 							"match": "max|min|quantity",
-							"name": "string.uon support.type.property-name3.uon"						
+							"name": "string.uon support.type.property-name2.uon"						
 						},
 						{
 							"include" : "#local_validation"
