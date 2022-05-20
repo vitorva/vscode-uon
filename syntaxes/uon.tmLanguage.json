@@ -146,7 +146,10 @@
 							"patterns": [
 								{
 									"match": "description|name|uuid",
-									"name": "punctuation.definition.str.property.uon"
+									"name": "string.uon support.type.property-name.uon"
+								},
+								{
+									"include" : "#string_scalar"
 								}
 							]
 						},
@@ -190,7 +193,7 @@
 									"patterns": [
 										{
 											"match": "description|optional",
-											"name": "punctuation.definition.str.property.uon"
+											"name": "string.uon support.type.property-name2.uon"
 										}
 									]
 								},
@@ -396,7 +399,7 @@
 		},
 		"quantityValidation": {
 			"match" : "length|mass|time|temperature",
-			"name": "TODO.uon"
+			"name": "string.uon support.type.property-name4.uon"
 		},
 		"null": {
 			"match": "null|none|None",
@@ -420,10 +423,7 @@
 		"validationProperties": {
 			"patterns": [
 				{
-					"include": "#stringValidation"
-				},
-				{
-					"include": "#numberValidation"
+					"include": "#validation"
 				},
 				{
 					"include": "#boolType"
@@ -433,41 +433,13 @@
 				}
 			]
 		},
-		"stringValidation": {
-			"begin": "!str",
-			"beginCaptures": {
-				"0": {
-					"name": "TODO.uon"
-				}
-			},
-			"patterns": [
-				{
-					"begin": "\\(",
-					"beginCaptures": {
-						"0": {
-							"name": "TODO.uon"
-						}
-					},
-					"end": "\\)",
-					"endCaptures": {
-						"0": {
-							"name": "TODO.uon"
-						}
-					},
-					"name": "meta.structure.str.validation.value.uon",
-					"patterns": [
-						{
-							"match": "max|min",
-							"name": "TODO.uon"
-						}
-					]
-				}
-			]
-		},
-		"numberValidation": {
+		"validation": {
 			"patterns": [
 				{
 					"include": "#numberType"
+				},
+				{
+					"include": "#strType"
 				},
 				{
 					"begin": "\\(",
@@ -482,16 +454,47 @@
 							"name": "TODO.uon"
 						}
 					},
-					"name": "meta.structure.number.valdiation.value.uon",
+					"name": "meta.structure.number.validation.value.uon",
 					"patterns": [
 						{
 							"match": "max|min|quantity",
-							"name": "TODO.uon"
+							"name": "string.uon support.type.property-name3.uon"						
+						},
+						{
+							"include" : "#local_validation"
 						}
 					]
 				}
 			]
 		},
+		"local_validation" : {
+			"begin": ":",
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.separator.dictionary.key-value.uon"
+				}
+			},
+			"end": "(,)|(?=\\))",
+			"endCaptures": {
+				"1": {
+					"name": "punctuation.separator.dictionary.pair.uon"
+				}
+			},
+			"patterns" :[
+				{
+					"include" : "#number"
+				},
+				{
+					"include" : "#quantityValidation"
+				},
+				{
+					"match": "[^\\s\\}]",
+					"name": "invalid.illegal.expected-propriety-value.uon"
+				}
+			]
+
+		},
+
 		"root_value": {
 			"patterns": [
 				{
