@@ -315,10 +315,10 @@
 					"include": "#quantityValidation"
 				},
 				{
-					"include": "#string_scalar"
+					"include": "#boolean_scalar"
 				},
 				{
-					"include": "#boolean_scalar"
+					"include": "#string_scalar"
 				},
 				{
 					"include": "#urlType"
@@ -367,8 +367,16 @@
 			]
 		},
 		"boolean_scalar": {
-			"match" : "(!bool)?(true|True|false|False)",
-			"name": "boolean_scalar.uon"
+			"name": "boolean-scalar.uon",
+			"patterns" : [
+					{
+						"match" : "(true|True|false|False)",
+						"name": "string.uon support.type.property-name.uon"
+					},
+					{
+						"include" : "#boolType"
+					}
+			]
 		},
 		"uonType" : {
 			"match": "!str|!bool|!url|!float(128|64|32)?|!int(128|64|32)?|!uint(128|64|32)?",
