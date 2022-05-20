@@ -1,5 +1,4 @@
 {
-	"version": "https://github.com/microsoft/vscode-uon.tmLanguage/commit/9bd83f1c252b375e957203f21793316203f61f70",
 	"name": "UON",
 	"scopeName": "source.uon",
 	"patterns": [
@@ -12,12 +11,9 @@
 	],
 	"repository": {
 		"json_seq": {
-			"begin": "(!seq( *))?\\[",
+			"begin": "\\[",
 			"beginCaptures": {
-				"1" : {
-					"name" : "markup.bold.uon"
-				},
-				"2": {
+				"0": {
 					"name": "punctuation.definition.json.sequence.begin.uon"
 				}
 			},
@@ -43,33 +39,16 @@
 			]
 		},
 		"yaml_seq": {
-			"match": "(!seq( *))?(-)(?!\\S)",
-			"name": "punctuation.definition.yaml.sequence.item.uon",
-			"captures": {
-				"1" : {
-					"name" : "markup.bold.uon"
-				}
-			}
+			"match": "(-)(?!\\S)",
+			"name": "punctuation.definition.yaml.sequence.item.uon"
+
 		},
 		"yaml_map": {
-			"match": "(((!map)?( *))([a-zA-Z])*)(( *):( *))",
-			"name": "punctuation.definition.yaml.map.item.uon",
-			"captures": {
-				"1" : {
-					"name" : "entity.name.tag.uon"
-				},
-				"2" : {
-					"name" : "comment.uon"
-				}
-			}
+			"match": "(([a-zA-Z])*)(( *):( *))",
+			"name": "markup.bold.uon"
 		},
 		"json_map": {
-			"begin": "(!map( *))?\\{",
-			"beginCaptures": {
-				"1": {
-					"name": "entity.name.tag.uon"
-				}
-			},
+			"begin": "\\{",
 			"end": "\\}",
 			"endCaptures": {
 				"0": {
@@ -511,6 +490,10 @@
 
 		"root_value": {
 			"patterns": [
+				{
+					"match" : "!seq|!map",
+					"name": "markup.bold.uon"
+				},
 				{
 					"include": "#json_collection"
 				},
