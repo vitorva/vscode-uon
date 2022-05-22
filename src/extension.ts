@@ -17,9 +17,77 @@ import * as c3 from 'antlr4-c3';
 
 import { CompletionItem, CompletionItemKind, InsertTextFormat } from 'vscode-languageserver';
 
-const  hoverJson = require('./hover.json');
+import { UONVisitor } from './generated/UONVisitor';
+import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor';
 
-import { exists } from 'fs';
+import { UONListener } from './generated/UONListener';
+import {Json_mapContext, Yaml_mapContext, Yaml_seqContext } from './generated/UONParser';
+
+import { ParseTreeWalker } from 'antlr4ts/tree/ParseTreeWalker';
+import {ParseTreeListener} from 'antlr4ts/tree/ParseTreeListener';
+
+import {TerminalNode, ErrorNode } from 'antlr4ts/tree';
+import {ParserRuleContext} from 'antlr4ts';
+import { UonContext } from './generated/_OLD/UONParser';
+
+class EnterFunctionListener implements UONListener {
+
+    visitTerminal(/*@NotNull*/ node: TerminalNode){
+
+    };
+
+    visitErrorNode(/*@NotNull*/ node: ErrorNode){
+
+    };
+    enterEveryRule(/*@NotNull*/ ctx: ParserRuleContext){
+      //if(ctx === Yaml_seqContext){
+      //this.enterYaml_seq(ctx);
+      //}
+    console.log(ctx);
+    };
+
+    exitEveryRule(/*@NotNull*/ ctx: ParserRuleContext){
+
+    };
+
+
+    // Assuming a parser rule with name: `functionDeclaration`
+    enterYaml_seq(context: Yaml_seqContext) {
+      //console.log(`Function start line number ${context._start.line}`);
+      console.log("enterYaml_seq !!!!! ")
+      // ...
+    }
+
+    enterRule(context: Yaml_seqContext) {
+      //console.log(`Function start line number ${context._start.line}`);
+      console.log("enterYaml_seq !!!!! ")
+      // ...
+    }
+  
+    // other enterX functions...
+
+}
+
+
+
+//Visitor Approach
+// Extend the AbstractParseTreeVisitor to get default visitor behaviour
+class CountFunctionsVisitor extends AbstractParseTreeVisitor<number> implements UONVisitor<number> {
+
+  defaultResult() {
+    return 0
+  }
+
+  aggregateResult(aggregate: number, nextResult: number) {
+    return aggregate + nextResult
+  }
+
+  visitFunctionDeclaration(context: Json_mapContext): number {
+    return 1 + super.visitChildren(context);
+  }
+}
+
+const  hoverJson = require('./hover.json');
 
 class Visitor implements ParseTreeVisitor<any> {
   visit(){
@@ -156,6 +224,16 @@ export function activate(context: vscode.ExtensionContext) {
       //let visitor = new Visitor();
       //tree.accept(visitor);
       console.log("tree.toStringTree", tree.toStringTree(parser))
+
+      // Create the visitor
+      //const countFunctionsVisitor = new CountFunctionsVisitor();
+      // Use the visitor entry point
+      //console.log(countFunctionsVisitor.visit(tree));
+
+      // Create the listener
+      const listener: ParseTreeListener = new EnterFunctionListener();
+      // Use the entry point for listeners
+      ParseTreeWalker.DEFAULT.walk(listener, tree);
 
       console.log("tokenStream");
       console.log("tokenStreamSize", tokenStream.size);
@@ -368,4 +446,117 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   context.subscriptions.push(hover);
+
+  context.subscriptions.push(
+  vscode.languages.registerDocumentSymbolProvider(
+      {scheme: "file", language: "uon"}, 
+      new UonConfigDocumentSymbolProvider()
+  )
+);
+
+}
+
+class UonConfigDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
+
+  private format(cmd: string):string{
+      return cmd.substr(1).toLowerCase().replace(/^\w/, c => c.toUpperCase())
+  }
+
+  public provideDocumentSymbols(
+    document: vscode.TextDocument,
+    token: vscode.CancellationToken): Promise<vscode.DocumentSymbol[]> 
+    {
+    return new Promise((resolve, reject) => 
+    {
+        let symbols: vscode.DocumentSymbol[] = [];
+        let nodes = [symbols]
+        let inside_marker = false
+        let inside_run = false
+        let inside_userinput = false
+
+        let symbolkind_marker = vscode.SymbolKind.Field
+        let symbolkind_run = vscode.SymbolKind.Event
+        let symbolkind_cmd = vscode.SymbolKind.Function
+
+        for (var i = 0; i < document.lineCount; i++) {
+            var line = document.lineAt(i);
+
+            let tokens = line.text.split(" ")
+
+            if (line.text.startsWith("!map")) {
+
+                let marker_symbol = new vscode.DocumentSymbol(
+                    this.format(tokens[0]) + " " + tokens[1],
+                    'Component',
+                    symbolkind_marker,
+                    line.range, line.range)
+
+
+                nodes[nodes.length-1].push(marker_symbol)
+                if (!inside_marker) {
+                    nodes.push(marker_symbol.children)
+                    inside_marker = true
+                }
+                // marker_symbol.children.push(_boot)
+            }
+            else if (line.text.startsWith("#END_COMP")) {
+                // TODO check if nodes has length 1 before popping.
+                if (inside_marker) {
+                    nodes.pop()
+                    inside_marker = false
+                }
+            }
+            else if (line.text.startsWith("#RUN") || line.text.startsWith("#END")) {
+                
+                let run_symbol = new vscode.DocumentSymbol(
+                    this.format(tokens[0]),
+                    'Session separator',
+                    symbolkind_run,
+                    line.range, line.range)
+
+                if (inside_run) {
+                    nodes.pop()
+                }
+
+                nodes[nodes.length-1].push(run_symbol)
+                nodes.push(run_symbol.children)
+                inside_run = true
+            }
+            else if (line.text.startsWith("#USERINPUTBEGIN")) {
+
+                let user_symbol = new vscode.DocumentSymbol(
+                    this.format(tokens[0]),
+                    'User module',
+                    vscode.SymbolKind.Interface,
+                    line.range, line.range)
+
+
+                nodes[nodes.length-1].push(user_symbol)
+                if (!inside_userinput) {
+                    nodes.push(user_symbol.children)
+                    inside_userinput = true
+                }
+                // marker_symbol.children.push(_boot)
+            }
+            else if (line.text.startsWith("#USERINPUTEND")) {
+                // TODO check if nodes has length 1 before popping.
+                if (inside_userinput) {
+                    nodes.pop()
+                    inside_userinput = false
+                }
+            }                
+            else if (line.text.startsWith("#")) {
+                let cmd_symbol = new vscode.DocumentSymbol(
+                    this.format(tokens[0]),
+                    '',
+                    symbolkind_cmd,
+                    line.range, line.range)
+
+                nodes[nodes.length-1].push(cmd_symbol)
+            }
+        }
+
+        resolve(symbols);
+    });
+}
 }
