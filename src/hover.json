@@ -1,0 +1,16 @@
+{
+        "content" : {
+        "!str" : "String encoded in UTF-8\n\nBased on : !scalar",
+        "!bool" : "Boolean, true or false\n\nBased on : !scalar",
+        "!map" : "Unordered Mapping (also called HashMap or Dictionary )\n\nBased on : !type",
+        "!seq" : "Ordered Sequence (also called List or Array)\n\nBased on : !scalar",
+        "!float128" : "",
+        "!float64" : "",
+        "!float32" : "",
+        "!float" : "Floating point IEEE-754\n\nBased on : !scalar",
+        "!int128" : "",
+        "!int64" : "",
+        "!int32" : "",
+        "!int" : "Variable length integer value"
+    }
+}

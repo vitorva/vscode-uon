@@ -17,6 +17,10 @@ import * as c3 from 'antlr4-c3';
 
 import { CompletionItem, CompletionItemKind, InsertTextFormat } from 'vscode-languageserver';
 
+const  hoverJson = require('./hover.json');
+
+import { exists } from 'fs';
+
 class Visitor implements ParseTreeVisitor<any> {
   visit(){
 
@@ -286,13 +290,80 @@ export function activate(context: vscode.ExtensionContext) {
     provideHover(document, position, token) {
       const range = document.getWordRangeAtPosition(position);
       const word = document.getText(range);
+      console.log(word);
 
-      if (word === "!str") {
-        return new vscode.Hover({
-          language: "String encoded in UTF-8",
-          value: "String encoded in UTF-8"
-        });
+      //console.log(Person.person["name"]);
+
+      const test = Object.keys(hoverJson.content)
+      console.log(test);
+      
+    
+      if(test.includes(word)){
+      console.log(hoverJson.content[word]);
+      return new vscode.Hover({
+        language: "uon",
+        value: hoverJson.content[word]
+      });
       }
+
+      return
+      
+
+      //TODO : READ A HOVER FILE
+
+      //const hover = JSON.parse(hoverJson);
+          // Read key
+          
+          /*
+    for (var key in hoverJson) {
+      console.log(key);
+     if (word === key){
+      return new vscode.Hover({
+        language: "uon",
+        value: hoverJson[key];
+      });
+     }
+     return
+  }
+  */
+  /*
+      switch(word) { 
+        case "!str": { 
+          return new vscode.Hover({
+            language: "uon",
+            value: "String encoded in UTF-8\n\nBased on : !scalar "
+          });
+        } 
+        case "!bool": { 
+          return new vscode.Hover({
+            language: "uon",
+            value: "Boolean, true or false\n\nBased on : !scalar "
+          });
+        }
+        case "!map": { 
+          return new vscode.Hover({
+            language: "uon",
+            value: "Unordered Mapping (also called HashMap or Dictionary )\n\nBased on : !type "
+          });
+        } 
+        case "!seq": { 
+          return new vscode.Hover({
+            language: "uon",
+            value: "Ordered Sequence (also called List or Array)\n\nBased on : !scalar "
+          });
+        }
+        case "!float": { 
+          return new vscode.Hover({
+            language: "uon",
+            value: "Floating point IEEE-754\n\nBased on : !scalar "
+          });
+        }    
+        default: { 
+           return; 
+        } 
+     } 
+*/
+
     }
   });
 
