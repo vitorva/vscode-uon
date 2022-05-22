@@ -106,6 +106,8 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
 
 }
 
+let tmp : any = null;
+
 export function activate(context: vscode.ExtensionContext) {
 
   const provider1 = vscode.languages.registerCompletionItemProvider({ scheme: "file", language: "uon" }, {
@@ -237,7 +239,29 @@ export function activate(context: vscode.ExtensionContext) {
 
         let item = new vscode.CompletionItem(str, vscode.CompletionItemKind.Keyword);
         const range = document.getWordRangeAtPosition(position);
-        item.range = range;
+
+        //const range2 = new vscode.Range(new vscode.Position(position.line, position.character), position);
+
+        /*
+        if(tmp === null){
+           tmp = range2 ;
+        }else{
+          item.range = tmp;
+          tmp = range2;
+        }
+        */
+
+        //item.range = range2
+
+        /*
+        if(tmp === null){
+          tmp = new vscode.Position(position.line, position.character);
+       }else{
+         const range2 = new vscode.Range(new vscode.Position(tmp.line, tmp.character), position);
+         item.range = range2;
+         tmp = null;
+       }
+        */
 
         keywords.push(item);
       }
@@ -254,7 +278,7 @@ export function activate(context: vscode.ExtensionContext) {
       console.log(keywords);
       return keywords;
     }
-  }, " ");
+  }, " ", "\n", ".");
 
   context.subscriptions.push(provider1);
 
