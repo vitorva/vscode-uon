@@ -21,49 +21,25 @@ import { UONVisitor } from './generated/UONVisitor';
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor';
 
 import { UONListener } from './generated/UONListener';
-import {Json_mapContext, Yaml_mapContext, Yaml_seqContext } from './generated/UONParser';
+import {Json_mapContext, Yaml_mapContext, Yaml_seqContext, NumberContext } from './generated/UONParser';
 
 import { ParseTreeWalker } from 'antlr4ts/tree/ParseTreeWalker';
 import {ParseTreeListener} from 'antlr4ts/tree/ParseTreeListener';
 
-import {TerminalNode, ErrorNode } from 'antlr4ts/tree';
+import {TerminalNode, ErrorNode, ParseTree, RuleNode } from 'antlr4ts/tree';
 import {ParserRuleContext} from 'antlr4ts';
 import { UonContext } from './generated/_OLD/UONParser';
 
 class EnterFunctionListener implements UONListener {
-
-    visitTerminal(/*@NotNull*/ node: TerminalNode){
-
-    };
-
-    visitErrorNode(/*@NotNull*/ node: ErrorNode){
-
-    };
-    enterEveryRule(/*@NotNull*/ ctx: ParserRuleContext){
-      //if(ctx === Yaml_seqContext){
-      //this.enterYaml_seq(ctx);
-      //}
-    console.log(ctx);
-    };
-
-    exitEveryRule(/*@NotNull*/ ctx: ParserRuleContext){
-
-    };
-
-
-    // Assuming a parser rule with name: `functionDeclaration`
     enterYaml_seq(context: Yaml_seqContext) {
       //console.log(`Function start line number ${context._start.line}`);
       console.log("enterYaml_seq !!!!! ")
       // ...
     }
+    enterNumber(ctx: NumberContext){
+      console.log("enterNumber !!!!! ");
+    };
 
-    enterRule(context: Yaml_seqContext) {
-      //console.log(`Function start line number ${context._start.line}`);
-      console.log("enterYaml_seq !!!!! ")
-      // ...
-    }
-  
     // other enterX functions...
 
 }
@@ -72,19 +48,54 @@ class EnterFunctionListener implements UONListener {
 
 //Visitor Approach
 // Extend the AbstractParseTreeVisitor to get default visitor behaviour
-class CountFunctionsVisitor extends AbstractParseTreeVisitor<number> implements UONVisitor<number> {
+class CountFunctionsVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<any> {
 
   defaultResult() {
-    return 0
+    return "";
   }
 
-  aggregateResult(aggregate: number, nextResult: number) {
-    return aggregate + nextResult
+  visit(tree: ParseTree) {
+      super.visit(tree);
   }
 
-  visitFunctionDeclaration(context: Json_mapContext): number {
-    return 1 + super.visitChildren(context);
+  visitChildren(node: RuleNode){
+    console.log(node)
+    //super.visitChildren(node);
+    let result = this.defaultResult();
+    let n = node.childCount;
+    for (let i = 0; i < n; i++) {
+        if (!this.shouldVisitNextChild(node, result)) {
+            break;
+        }
+        let c = node.getChild(i);
+
+        // TODO
+        
+        let childResult = c.accept(this);
+        result = this.aggregateResult(result, childResult);
+    }
+    return result;
   }
+
+  aggregateResult(aggregate: string, nextResult: string) {
+    return aggregate + nextResult;
+  }
+
+  visitYaml_seq(ctx: Yaml_seqContext) : string{
+    return ctx.text + this.visitChildren(ctx);
+  }
+  
+  /*
+  visitYaml_seq(ctx: Yaml_seqContext){
+    console.log("visitYaml_seq WORK !!");
+  }
+
+  visitTerminal(node: TerminalNode) {
+    console.log("TERMINUS", node._parent);  
+    console.log("TERMINUS2", node.text); 
+  }
+  */
+  
 }
 
 const  hoverJson = require('./hover.json');
@@ -223,16 +234,17 @@ export function activate(context: vscode.ExtensionContext) {
 
       //let visitor = new Visitor();
       //tree.accept(visitor);
-      console.log("tree.toStringTree", tree.toStringTree(parser))
+      console.log("tree.toStringTree", tree.toStringTree(parser));
 
       // Create the visitor
       //const countFunctionsVisitor = new CountFunctionsVisitor();
       // Use the visitor entry point
-      //console.log(countFunctionsVisitor.visit(tree));
+      //countFunctionsVisitor.visit(tree);
 
       // Create the listener
-      const listener: ParseTreeListener = new EnterFunctionListener();
+      const listener: UONListener = new EnterFunctionListener();
       // Use the entry point for listeners
+      
       ParseTreeWalker.DEFAULT.walk(listener, tree);
 
       console.log("tokenStream");
