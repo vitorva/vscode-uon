@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 
 import { UONLexer } from './generated/UONLexer';
-import { UONParser } from "./generated/UONParser";
+import { Seq_itemContext, StringContext, UONParser } from "./generated/UONParser";
 
 import {
   ANTLRErrorListener, CharStreams, CommonToken, CommonTokenStream, TokenStream, RecognitionException, Recognizer, Token, Parser
@@ -23,54 +23,30 @@ import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor
 import { UONListener } from './generated/UONListener';
 import {Json_mapContext, Yaml_mapContext, Yaml_seqContext, NumberContext } from './generated/UONParser';
 
-import { ParseTreeWalker } from 'antlr4ts/tree/ParseTreeWalker';
-import {ParseTreeListener} from 'antlr4ts/tree/ParseTreeListener';
-
 import {TerminalNode, ErrorNode, ParseTree, RuleNode } from 'antlr4ts/tree';
-import {ParserRuleContext} from 'antlr4ts';
-import { UonContext } from './generated/_OLD/UONParser';
 
-class EnterFunctionListener implements UONListener {
-    enterYaml_seq(context: Yaml_seqContext) {
-      //console.log(`Function start line number ${context._start.line}`);
-      console.log("enterYaml_seq !!!!! ")
-      // ...
-    }
-    enterNumber(ctx: NumberContext){
-      console.log("enterNumber !!!!! ");
-    };
+const  hoverJson = require('./hover.json');
 
-    // other enterX functions...
 
+// TODO :Créer une classe qui contient une liste de nodes
+abstract class node {
 }
-
-
 
 //Visitor Approach
 // Extend the AbstractParseTreeVisitor to get default visitor behaviour
-class CountFunctionsVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<any> {
-
+class UonASTVisitor extends AbstractParseTreeVisitor<string>  implements UONVisitor<string> {
   defaultResult() {
     return "";
   }
 
-  visit(tree: ParseTree) {
-      super.visit(tree);
-  }
-
   visitChildren(node: RuleNode){
-    console.log(node)
-    //super.visitChildren(node);
     let result = this.defaultResult();
     let n = node.childCount;
     for (let i = 0; i < n; i++) {
         if (!this.shouldVisitNextChild(node, result)) {
             break;
         }
-        let c = node.getChild(i);
-
-        // TODO
-        
+        let c = node.getChild(i);        
         let childResult = c.accept(this);
         result = this.aggregateResult(result, childResult);
     }
@@ -82,47 +58,24 @@ class CountFunctionsVisitor extends AbstractParseTreeVisitor<any> implements UON
   }
 
   visitYaml_seq(ctx: Yaml_seqContext) : string{
-    return ctx.text + this.visitChildren(ctx);
-  }
-  
-  /*
-  visitYaml_seq(ctx: Yaml_seqContext){
-    console.log("visitYaml_seq WORK !!");
+    return "( Yaml_seq " + this.visitChildren(ctx) + ")";
   }
 
+  visitSeq_item (ctx: Seq_itemContext){
+    return "( Seq_item " + this.visitChildren(ctx) + ")";
+  }
+
+  visitString?(ctx: StringContext) {
+    return "( String " + this.visitChildren(ctx) + ")";
+  }
+
+  visitNumber(ctx: NumberContext){
+    return "( Number " + this.visitChildren(ctx) + ")";
+  }
+  
   visitTerminal(node: TerminalNode) {
-    console.log("TERMINUS", node._parent);  
-    console.log("TERMINUS2", node.text); 
+    return node.text;
   }
-  */
-  
-}
-
-const  hoverJson = require('./hover.json');
-
-class Visitor implements ParseTreeVisitor<any> {
-  visit(){
-
-  }
-  visitChildren(ctx: any) {
-    if (!ctx) {
-      return;
-    }
-
-    if (ctx.children) {
-      return ctx.children.map((child : any) => {
-        if (child.children && child.children.length !== 0) {
-          return child.accept(this);
-        } else {
-          console.log(child);
-        }
-      });
-    }
-  }
-
-  visitTerminal(){}
-
-  visitErrorNode(){}
 }
 
 class UonCompletionErrorStrategy extends DefaultErrorStrategy {
@@ -131,49 +84,14 @@ class UonCompletionErrorStrategy extends DefaultErrorStrategy {
   }
 
   protected consumeUntil(recognizer: Parser, set: IntervalSet): void {
-    console.log(set);
+    super.consumeUntil(recognizer, set);
   }
 
   public recover(recognizer: Parser, e: RecognitionException): void {
-              //		System.out.println("recover in "+recognizer.getRuleInvocationStack()+
-        //						   " index="+recognizer.inputStream.index+
-        //						   ", lastErrorIndex="+
-        //						   lastErrorIndex+
-        //						   ", states="+lastErrorStates);
-
-        console.log(this.lastErrorStates);
-        if (this.lastErrorIndex === recognizer.inputStream.index &&
-          this.lastErrorStates &&
-          this.lastErrorStates.contains(recognizer.state)) {
-          // uh oh, another error at same token index and previously-visited
-          // state in ATN; must be a case where LT(1) is in the recovery
-          // token set so nothing got consumed. Consume a single token
-          // at least to prevent an infinite loop; this is a failsafe.
-          //			System.err.println("seen error condition before index="+
-          //							   lastErrorIndex+", states="+lastErrorStates);
-          //			System.err.println("FAILSAFE consumes "+recognizer.getTokenNames()[recognizer.inputStream.LA(1)]);
-          //recognizer.consume();
-      }
-    this.lastErrorIndex = recognizer.inputStream.index;
-    console.log("lastErrorIndex", this.lastErrorIndex);
   }
 
   protected getErrorRecoverySet(recognizer: Parser): IntervalSet {
-    const defaultRecoverySet = super.getErrorRecoverySet(recognizer);
-
-    const soqlFieldFollowSet = new IntervalSet();
-
-    soqlFieldFollowSet.add(UONLexer.COLON);
-
-    let temp = []
-    for (let i = 0; i < recognizer.inputStream.size; i++) {
-      temp.push(recognizer.inputStream.get(i).text);
-    }
-    console.log(temp);
-
-    console.log(super.lastErrorIndex);
-
-    return soqlFieldFollowSet;
+    return super.getErrorRecoverySet(recognizer);
   }
 
 }
@@ -186,66 +104,49 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
     ++this.errorCount;
     console.log("ERROR", this.errorCount);
   }
-
 }
-
-let tmp : any = null;
 
 export function activate(context: vscode.ExtensionContext) {
 
   const provider1 = vscode.languages.registerCompletionItemProvider({ scheme: "file", language: "uon" }, {
 
     async provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, context: vscode.CompletionContext) {
-      //let line = position.line;
-      //let column = position.character;
 
-      // https://stackoverflow.com/questions/65261663/vscode-how-to-get-position-of-cursor-in-the-document
-      // Alternative :
-      // https://stackoverflow.com/questions/64561781/vscode-api-get-position-of-last-character-of-line
+      //Find cursor position
       let activeEditor = vscode.window.activeTextEditor;
       let curPos = activeEditor?.selection.active;
       let offset = document.offsetAt(curPos!!);
 
-      //console.log(offset);
 
+      //Retrieve text from start to cursor position
       const text = document.getText().slice(0, offset);
       console.log(text);
       console.log(text.length);
 
+      //Antlr setup
       const inputStream = CharStreams.fromString(text);
       const lexer = new UONLexer(inputStream);
-      
       const tokenStream = new CommonTokenStream(lexer);
-
       const parser = new UONParser(tokenStream);
-
-
 
       //let errorListener = new ErrorListener();
       //parser.addErrorListener(errorListener);
 
       parser.removeErrorListeners();
 
-      const lol = new UonCompletionErrorStrategy();
-      parser.errorHandler = lol;
+      const errorStrategy = new UonCompletionErrorStrategy();
+      parser.errorHandler = errorStrategy;
 
       parser.buildParseTree = true;
-      let tree = parser.uon();
-
-      //let visitor = new Visitor();
-      //tree.accept(visitor);
+      let tree = parser.uon();  // Parse Tree
+     
       console.log("tree.toStringTree", tree.toStringTree(parser));
 
       // Create the visitor
-      //const countFunctionsVisitor = new CountFunctionsVisitor();
+      const uonASTVisitor = new UonASTVisitor();
       // Use the visitor entry point
-      //countFunctionsVisitor.visit(tree);
+      console.log("AST", uonASTVisitor.visit(tree));
 
-      // Create the listener
-      const listener: UONListener = new EnterFunctionListener();
-      // Use the entry point for listeners
-      
-      ParseTreeWalker.DEFAULT.walk(listener, tree);
 
       console.log("tokenStream");
       console.log("tokenStreamSize", tokenStream.size);
