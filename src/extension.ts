@@ -70,13 +70,13 @@ class UonTerminalNode extends ExpressionNode {
 
 //Visitor Approach
 // Extend the AbstractParseTreeVisitor to get default visitor behaviour
-class UonASTVisitor extends AbstractParseTreeVisitor<ExpressionNode>  implements UONVisitor<ExpressionNode> {
+class UonASTVisitor extends AbstractParseTreeVisitor<any>  implements UONVisitor<any> {
   defaultResult() {
     return new EmptyExpressionNode();
   }
 
   visitChildren(node: RuleNode){
-    let result = this.defaultResult();
+    let result : ExpressionNode[] = [];
     let n = node.childCount;
     for (let i = 0; i < n; i++) {
         if (!this.shouldVisitNextChild(node, result)) {
@@ -84,9 +84,12 @@ class UonASTVisitor extends AbstractParseTreeVisitor<ExpressionNode>  implements
         }
         let c = node.getChild(i);        
         let childResult = c.accept(this);
-        result = this.aggregateResult(result, childResult);
+        result.push(childResult);
     }
-    return result;
+
+    const flatResult = result.flat();
+
+    return flatResult;
   }
 
   aggregateResult(aggregate: ExpressionNode, nextResult: ExpressionNode) {
@@ -100,28 +103,28 @@ class UonASTVisitor extends AbstractParseTreeVisitor<ExpressionNode>  implements
   visitYaml_seq(ctx: Yaml_seqContext){
     //return "( Yaml_seq " + this.visitChildren(ctx) + ")";
     var node = new YamlSeqNode();
-    node.children.push(this.visitChildren(ctx));
+    node.children = this.visitChildren(ctx);
     return node;
   }
 
   visitSeq_item (ctx: Seq_itemContext){
     //return "( Seq_item " + this.visitChildren(ctx) + ")";
     var node = new SeqItemNode();
-    node.children.push(this.visitChildren(ctx));
+    node.children = this.visitChildren(ctx);
     return node;
   }
 
   visitString?(ctx: StringContext) {
     //return "( String " + this.visitChildren(ctx) + ")";
     var node = new StringNode();
-    node.children.push(this.visitChildren(ctx));
+    node.children = this.visitChildren(ctx);
     return node;
   }
 
   visitNumber(ctx: NumberContext){
     //return "( Number " + this.visitChildren(ctx) + ")";
     var node = new NumberNode();
-    node.children.push(this.visitChildren(ctx));
+    node.children = this.visitChildren(ctx);
     return node;
   }
   
