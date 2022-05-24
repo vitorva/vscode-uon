@@ -29,14 +29,50 @@ const  hoverJson = require('./hover.json');
 
 
 // TODO :Créer une classe qui contient une liste de nodes
-abstract class node {
+abstract class ExpressionNode {
+  children: ExpressionNode[] = [];
+}
+
+abstract class InfixExpressionNode extends ExpressionNode {
+
+  //visitChildren(node: RuleNode): Result;
+
+  //ExpressionNode Left { get; set; }
+  //public ExpressionNode Right { get; set; }
+
+  //left : ExpressionNode | undefined;
+  //right : ExpressionNode | undefined;
+  //children : ExpressionNode[] | undefined;
+}
+
+class EmptyExpressionNode extends InfixExpressionNode {}
+
+class YamlSeqNode extends InfixExpressionNode {}
+
+class NumberNode extends InfixExpressionNode {}
+
+class StringNode extends InfixExpressionNode {}
+
+class SeqItemNode extends InfixExpressionNode {}
+
+
+class UonTerminalNode extends ExpressionNode {
+
+  value: string;
+ 
+  // Normal signature with defaults
+  constructor(value : string) {
+    super();
+    this.value = value;
+  }
+
 }
 
 //Visitor Approach
 // Extend the AbstractParseTreeVisitor to get default visitor behaviour
-class UonASTVisitor extends AbstractParseTreeVisitor<string>  implements UONVisitor<string> {
+class UonASTVisitor extends AbstractParseTreeVisitor<ExpressionNode>  implements UONVisitor<ExpressionNode> {
   defaultResult() {
-    return "";
+    return new EmptyExpressionNode();
   }
 
   visitChildren(node: RuleNode){
@@ -53,28 +89,45 @@ class UonASTVisitor extends AbstractParseTreeVisitor<string>  implements UONVisi
     return result;
   }
 
-  aggregateResult(aggregate: string, nextResult: string) {
-    return aggregate + nextResult;
+  aggregateResult(aggregate: ExpressionNode, nextResult: ExpressionNode) {
+    //return aggregate + nextResult;
+    //return new EmptyExpressionNode();
+    var node = aggregate;
+    node.children.push(nextResult);
+    return node;
   }
 
-  visitYaml_seq(ctx: Yaml_seqContext) : string{
-    return "( Yaml_seq " + this.visitChildren(ctx) + ")";
+  visitYaml_seq(ctx: Yaml_seqContext){
+    //return "( Yaml_seq " + this.visitChildren(ctx) + ")";
+    var node = new YamlSeqNode();
+    node.children.push(this.visitChildren(ctx));
+    return node;
   }
 
   visitSeq_item (ctx: Seq_itemContext){
-    return "( Seq_item " + this.visitChildren(ctx) + ")";
+    //return "( Seq_item " + this.visitChildren(ctx) + ")";
+    var node = new SeqItemNode();
+    node.children.push(this.visitChildren(ctx));
+    return node;
   }
 
   visitString?(ctx: StringContext) {
-    return "( String " + this.visitChildren(ctx) + ")";
+    //return "( String " + this.visitChildren(ctx) + ")";
+    var node = new StringNode();
+    node.children.push(this.visitChildren(ctx));
+    return node;
   }
 
   visitNumber(ctx: NumberContext){
-    return "( Number " + this.visitChildren(ctx) + ")";
+    //return "( Number " + this.visitChildren(ctx) + ")";
+    var node = new NumberNode();
+    node.children.push(this.visitChildren(ctx));
+    return node;
   }
   
   visitTerminal(node: TerminalNode) {
-    return node.text;
+    // return node.text;
+    return new UonTerminalNode(node.text);
   }
 }
 
@@ -145,7 +198,10 @@ export function activate(context: vscode.ExtensionContext) {
       // Create the visitor
       const uonASTVisitor = new UonASTVisitor();
       // Use the visitor entry point
-      console.log("AST", uonASTVisitor.visit(tree));
+
+      const ast = uonASTVisitor.visit(tree);
+
+      console.log("AST", ast);
 
 
       console.log("tokenStream");
