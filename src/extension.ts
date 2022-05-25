@@ -11,7 +11,7 @@ import {
 
 import { DefaultErrorStrategy } from 'antlr4ts/DefaultErrorStrategy';
 import { IntervalSet } from 'antlr4ts/misc/IntervalSet';
-import {ParseTreeVisitor} from 'antlr4ts/tree/ParseTreeVisitor';
+import { ParseTreeVisitor } from 'antlr4ts/tree/ParseTreeVisitor';
 
 import * as c3 from 'antlr4-c3';
 
@@ -21,11 +21,11 @@ import { UONVisitor } from './generated/UONVisitor';
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor';
 
 import { UONListener } from './generated/UONListener';
-import {Json_mapContext, Yaml_mapContext, Yaml_seqContext, NumberContext } from './generated/UONParser';
+import { Json_mapContext, Yaml_mapContext, Yaml_seqContext, NumberContext } from './generated/UONParser';
 
-import {TerminalNode, ErrorNode, ParseTree, RuleNode } from 'antlr4ts/tree';
+import { TerminalNode, ErrorNode, ParseTree, RuleNode } from 'antlr4ts/tree';
 
-const  hoverJson = require('./hover.json');
+const hoverJson = require('./hover.json');
 
 
 // TODO :Créer une classe qui contient une liste de nodes
@@ -45,25 +45,25 @@ abstract class InfixExpressionNode extends ExpressionNode {
   //children : ExpressionNode[] | undefined;
 }
 
-class EmptyExpressionNode extends InfixExpressionNode {}
+class EmptyExpressionNode extends InfixExpressionNode { }
 
-class YamlSeqNode extends InfixExpressionNode {}
+class YamlSeqNode extends InfixExpressionNode { }
 
-class NumberNode extends InfixExpressionNode {}
+class NumberNode extends InfixExpressionNode { }
 
-class StringNode extends InfixExpressionNode {}
+class StringNode extends InfixExpressionNode { }
 
-class SeqItemNode extends InfixExpressionNode {}
+class SeqItemNode extends InfixExpressionNode { }
 
 
 class UonTerminalNode extends ExpressionNode {
 
   value: string;
-  start : number;
-  stop : number;
- 
+  start: number;
+  stop: number;
+
   // Normal signature with defaults
-  constructor(value : string, start : number, stop : number) {
+  constructor(value: string, start: number, stop: number) {
     super();
     this.value = value;
     this.start = start;
@@ -73,23 +73,43 @@ class UonTerminalNode extends ExpressionNode {
 
 //Visitor Approach
 // Extend the AbstractParseTreeVisitor to get default visitor behaviour
-class UonASTVisitor extends AbstractParseTreeVisitor<any>  implements UONVisitor<any> {
+class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<any> {
+
+  document: vscode.TextDocument;
+
+  constructor(document: vscode.TextDocument) {
+    super();
+    this.document = document;
+  }
+
   defaultResult() {
     return new EmptyExpressionNode();
   }
 
-  visitChildren(node: RuleNode){
-    let result : ExpressionNode[] = [];
-    let n = node.childCount;
-    for (let i = 0; i < n; i++) {
-        if (!this.shouldVisitNextChild(node, result)) {
-            break;
-        }
-        let c = node.getChild(i);        
-        let childResult = c.accept(this);
-        result.push(childResult);
-    }
+  shouldVisitNextChild(node: RuleNode, currentResult: any) {
+    return true;
+  }
 
+  visitChildren(node: RuleNode) {
+    let result: any;
+    let n = node.childCount;
+    if(n > 1){
+      result = [];
+    }
+    for (let i = 0; i < n; i++) {
+      if (!this.shouldVisitNextChild(node, result)) {
+        break;
+      }
+      let c = node.getChild(i);
+      let childResult = c.accept(this);
+      if(n > 1){
+        result.push(childResult);
+      }
+      else{
+        result = childResult;
+        return result;
+      }
+    }
     const flatResult = result.flat();
 
     return flatResult;
@@ -103,41 +123,81 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any>  implements UONVisitor
     return node;
   }
 
-  visitYaml_seq(ctx: Yaml_seqContext){
+  visitYaml_seq(ctx: Yaml_seqContext) {
     //return "( Yaml_seq " + this.visitChildren(ctx) + ")";
-    var node = new YamlSeqNode();
-    node.children = this.visitChildren(ctx);
-    return node;
+    //var node = new YamlSeqNode();
+    //node.children = this.visitChildren(ctx);
+    //return node;
+
+    const line = this.document.lineAt(0);
+
+    let marker_symbol = new vscode.DocumentSymbol(
+      "TEST",
+      " ",
+      vscode.SymbolKind.String,
+      line.range, line.range)
+
+      var test = this.visitChildren(ctx);
+      
+      test.array.forEach((element: vscode.DocumentSymbol)  => {
+        marker_symbol.children.push(element);
+      });
+
+      return marker_symbol;
   }
 
-  visitSeq_item (ctx: Seq_itemContext){
+  /*
+  visitSeq_item(ctx: Seq_itemContext) {
     //return "( Seq_item " + this.visitChildren(ctx) + ")";
     var node = new SeqItemNode();
     node.children = this.visitChildren(ctx);
     return node;
   }
+  */
 
   visitString?(ctx: StringContext) {
     //return "( String " + this.visitChildren(ctx) + ")";
-    var node = new StringNode();
-    node.children = this.visitChildren(ctx);
-    return node;
+    //var node = new StringNode();
+    //node.children = this.visitChildren(ctx);
+    //return node;
+
+    const line = this.document.lineAt(0);
+
+    let string = new vscode.DocumentSymbol(
+      this.visitChildren(ctx),
+      " ",
+      vscode.SymbolKind.String,
+      line.range, line.range); // TODO: Convertir position
+
+    return string;
+
   }
 
-  visitNumber(ctx: NumberContext){
+  visitNumber(ctx: NumberContext) {
     //return "( Number " + this.visitChildren(ctx) + ")";
-    var node = new NumberNode();
-    node.children = this.visitChildren(ctx);
-    return node;
+    //var node = new NumberNode();
+    //node.children = this.visitChildren(ctx);
+    //return node;
+
+    const line = this.document.lineAt(0);
+
+    let number = new vscode.DocumentSymbol(
+      this.visitChildren(ctx),
+      " ",
+      vscode.SymbolKind.Number,
+      line.range, line.range); // TODO: Convertir position
+
+    return number;
   }
-  
+
   visitTerminal(node: TerminalNode) {
     console.log("Node", node)
     console.log("Node symbol", node._symbol);
     console.log("Node start", node._symbol.startIndex);
     console.log("Node stop", node._symbol.stopIndex);
 
-    return new UonTerminalNode(node.text, node._symbol.startIndex, node._symbol.stopIndex);
+    // TODO aussi retourner et traiter start et stop index
+    return node.text;
   }
 }
 
@@ -202,16 +262,16 @@ export function activate(context: vscode.ExtensionContext) {
 
       parser.buildParseTree = true;
       let tree = parser.uon();  // Parse Tree
-     
+
       console.log("tree.toStringTree", tree.toStringTree(parser));
 
       // Create the visitor
-      const uonASTVisitor = new UonASTVisitor();
+      //const uonASTVisitor = new UonASTVisitor();
       // Use the visitor entry point
 
-      const ast = uonASTVisitor.visit(tree);
+      //const ast = uonASTVisitor.visit(tree);
 
-      console.log("AST", ast);
+      //console.log("AST", ast);
 
       console.log("tokenStream");
       console.log("tokenStreamSize", tokenStream.size);
@@ -329,7 +389,7 @@ export function activate(context: vscode.ExtensionContext) {
       //TODO        
       const snippetCompletion = new vscode.CompletionItem('description : ... , name : ... , uuid : ... ');
       snippetCompletion.insertText = new vscode.SnippetString('description : ${1}, name : ${2}, uuid : ${3}');
-      
+
       //snippetCompletion.insertText = new vscode.SnippetString('Good ${1|morning,afternoon,evening|}. It is ${1}, right?');
       //keywords.push(new vscode.newS('(SELECT ... FROM ...)', '(SELECT $2 FROM $1)'));
 
@@ -352,73 +412,73 @@ export function activate(context: vscode.ExtensionContext) {
 
       const test = Object.keys(hoverJson.content)
       console.log(test);
-      
-    
-      if(test.includes(word)){
-      console.log(hoverJson.content[word]);
-      return new vscode.Hover({
-        language: "uon",
-        value: hoverJson.content[word]
-      });
+
+
+      if (test.includes(word)) {
+        console.log(hoverJson.content[word]);
+        return new vscode.Hover({
+          language: "uon",
+          value: hoverJson.content[word]
+        });
       }
 
       return
-      
+
 
       //TODO : READ A HOVER FILE
 
       //const hover = JSON.parse(hoverJson);
-          // Read key
-          
-          /*
-    for (var key in hoverJson) {
-      console.log(key);
-     if (word === key){
-      return new vscode.Hover({
-        language: "uon",
-        value: hoverJson[key];
-      });
-     }
-     return
-  }
-  */
-  /*
-      switch(word) { 
-        case "!str": { 
-          return new vscode.Hover({
-            language: "uon",
-            value: "String encoded in UTF-8\n\nBased on : !scalar "
-          });
-        } 
-        case "!bool": { 
-          return new vscode.Hover({
-            language: "uon",
-            value: "Boolean, true or false\n\nBased on : !scalar "
-          });
-        }
-        case "!map": { 
-          return new vscode.Hover({
-            language: "uon",
-            value: "Unordered Mapping (also called HashMap or Dictionary )\n\nBased on : !type "
-          });
-        } 
-        case "!seq": { 
-          return new vscode.Hover({
-            language: "uon",
-            value: "Ordered Sequence (also called List or Array)\n\nBased on : !scalar "
-          });
-        }
-        case "!float": { 
-          return new vscode.Hover({
-            language: "uon",
-            value: "Floating point IEEE-754\n\nBased on : !scalar "
-          });
-        }    
-        default: { 
-           return; 
-        } 
-     } 
+      // Read key
+
+      /*
+for (var key in hoverJson) {
+  console.log(key);
+ if (word === key){
+  return new vscode.Hover({
+    language: "uon",
+    value: hoverJson[key];
+  });
+ }
+ return
+}
 */
+      /*
+          switch(word) { 
+            case "!str": { 
+              return new vscode.Hover({
+                language: "uon",
+                value: "String encoded in UTF-8\n\nBased on : !scalar "
+              });
+            } 
+            case "!bool": { 
+              return new vscode.Hover({
+                language: "uon",
+                value: "Boolean, true or false\n\nBased on : !scalar "
+              });
+            }
+            case "!map": { 
+              return new vscode.Hover({
+                language: "uon",
+                value: "Unordered Mapping (also called HashMap or Dictionary )\n\nBased on : !type "
+              });
+            } 
+            case "!seq": { 
+              return new vscode.Hover({
+                language: "uon",
+                value: "Ordered Sequence (also called List or Array)\n\nBased on : !scalar "
+              });
+            }
+            case "!float": { 
+              return new vscode.Hover({
+                language: "uon",
+                value: "Floating point IEEE-754\n\nBased on : !scalar "
+              });
+            }    
+            default: { 
+               return; 
+            } 
+         } 
+    */
 
     }
   });
@@ -426,48 +486,86 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(hover);
 
   context.subscriptions.push(
-  vscode.languages.registerDocumentSymbolProvider(
-      {scheme: "file", language: "uon"}, 
+    vscode.languages.registerDocumentSymbolProvider(
+      { scheme: "file", language: "uon" },
       new UonConfigDocumentSymbolProvider()
-  )
-);
+    )
+  );
 
 }
 
 class UonConfigDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
 
-  private format(cmd: string):string{
-      return cmd.substr(1).toLowerCase().replace(/^\w/, c => c.toUpperCase())
+  private format(cmd: string): string {
+    return cmd.substr(1).toLowerCase().replace(/^\w/, c => c.toUpperCase())
   }
 
   public provideDocumentSymbols(
     document: vscode.TextDocument,
-    token: vscode.CancellationToken): Promise<vscode.DocumentSymbol[]> 
-    {
-    return new Promise((resolve, reject) => 
-    {
-        let symbols: vscode.DocumentSymbol[] = [];
-        let nodes = [symbols]
+    token: vscode.CancellationToken): Promise<vscode.DocumentSymbol[]> {
+    return new Promise((resolve, reject) => {
 
-        let symbolkind_array = vscode.SymbolKind.Array;
-        let symbolkind_text = vscode.SymbolKind.String;
-        let symbolkind_number = vscode.SymbolKind.Number;
+      //Find cursor position
+      let activeEditor = vscode.window.activeTextEditor;
+      let curPos = activeEditor?.selection.active;
+      let offset = document.offsetAt(curPos!!);
 
 
-        var line = document.lineAt(0);
+      //Retrieve text from start to cursor position
+      const text = document.getText().slice(0, offset);
+      console.log(text);
+      console.log(text.length);
 
-        let marker_symbol = new vscode.DocumentSymbol(
-          " ",
-          " ",
-          symbolkind_array,
-          line.range, line.range)
+      //Antlr setup
+      const inputStream = CharStreams.fromString(text);
+      const lexer = new UONLexer(inputStream);
+      const tokenStream = new CommonTokenStream(lexer);
+      const parser = new UONParser(tokenStream);
+
+      //let errorListener = new ErrorListener();
+      //parser.addErrorListener(errorListener);
+
+      parser.removeErrorListeners();
+
+      const errorStrategy = new UonCompletionErrorStrategy();
+      parser.errorHandler = errorStrategy;
+
+      parser.buildParseTree = true;
+      let tree = parser.uon();  // Parse Tree
+
+      console.log("tree.toStringTree", tree.toStringTree(parser));
+
+      // Create the visitor
+      const uonASTVisitor = new UonASTVisitor(document);
+      // Use the visitor entry point
+
+      const ast = uonASTVisitor.visit(tree);
+
+      console.log("AST", ast);
+
+
+      let symbols: vscode.DocumentSymbol[] = [];
+      let nodes = [symbols]
+
+      let symbolkind_array = vscode.SymbolKind.Array;
+      let symbolkind_text = vscode.SymbolKind.String;
+      let symbolkind_number = vscode.SymbolKind.Number;
+
+
+      var line = document.lineAt(0);
+
+      let marker_symbol = new vscode.DocumentSymbol(
+        " ",
+        " ",
+        symbolkind_array,
+        line.range, line.range)
 
 
       // retour ast ???    
-      nodes[nodes.length-1].push(marker_symbol);
-
+      nodes[nodes.length - 1].push(ast);
 
       var line = document.lineAt(1);
+
       let value1 = new vscode.DocumentSymbol(
         "value1",
         '??',
@@ -477,42 +575,46 @@ class UonConfigDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
       marker_symbol.children.push(value1);
 
       var line = document.lineAt(2);
+
       let marker_symbol2 = new vscode.DocumentSymbol(
         " ",
         " ",
         symbolkind_array,
         line.range, line.range)
 
-        //nodes[nodes.length-1].push(marker_symbol2);
+      //nodes[nodes.length-1].push(marker_symbol2);
 
-        var line = document.lineAt(3);
-        let value2 = new vscode.DocumentSymbol(
-          "test",
-          " ",
-          symbolkind_text,
-          line.range, line.range)
+      var line = document.lineAt(3);
 
-        var line = document.lineAt(4);
-        let value3 = new vscode.DocumentSymbol(
+      let value2 = new vscode.DocumentSymbol(
+        "test",
+        " ",
+        symbolkind_text,
+        line.range, line.range)
+
+      var line = document.lineAt(4);
+
+      let value3 = new vscode.DocumentSymbol(
         "test 2",
         " ",
         symbolkind_text,
         line.range, line.range)
 
-        var line = document.lineAt(5);
-        let value4 = new vscode.DocumentSymbol(
-          "12",
-          " ",
-          symbolkind_number,
-          line.range, line.range)
+      var line = document.lineAt(5);
 
-          marker_symbol2.children.push(value2);
-          marker_symbol2.children.push(value3);
-          marker_symbol2.children.push(value4);
+      let value4 = new vscode.DocumentSymbol(
+        "12",
+        " ",
+        symbolkind_number,
+        line.range, line.range)
 
-          marker_symbol.children.push( marker_symbol2)
+      marker_symbol2.children.push(value2);
+      marker_symbol2.children.push(value3);
+      marker_symbol2.children.push(value4);
 
-        resolve(symbols);
+      marker_symbol.children.push(marker_symbol2)
+
+      resolve(symbols);
     });
-}
+  }
 }
