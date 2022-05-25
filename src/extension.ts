@@ -59,13 +59,16 @@ class SeqItemNode extends InfixExpressionNode {}
 class UonTerminalNode extends ExpressionNode {
 
   value: string;
+  start : number;
+  stop : number;
  
   // Normal signature with defaults
-  constructor(value : string) {
+  constructor(value : string, start : number, stop : number) {
     super();
     this.value = value;
+    this.start = start;
+    this.stop = stop;
   }
-
 }
 
 //Visitor Approach
@@ -129,8 +132,12 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any>  implements UONVisitor
   }
   
   visitTerminal(node: TerminalNode) {
-    // return node.text;
-    return new UonTerminalNode(node.text);
+    console.log("Node", node)
+    console.log("Node symbol", node._symbol);
+    console.log("Node start", node._symbol.startIndex);
+    console.log("Node stop", node._symbol.stopIndex);
+
+    return new UonTerminalNode(node.text, node._symbol.startIndex, node._symbol.stopIndex);
   }
 }
 
@@ -205,7 +212,6 @@ export function activate(context: vscode.ExtensionContext) {
       const ast = uonASTVisitor.visit(tree);
 
       console.log("AST", ast);
-
 
       console.log("tokenStream");
       console.log("tokenStreamSize", tokenStream.size);
