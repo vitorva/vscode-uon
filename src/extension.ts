@@ -448,91 +448,69 @@ class UonConfigDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
     {
         let symbols: vscode.DocumentSymbol[] = [];
         let nodes = [symbols]
-        let inside_marker = false
-        let inside_run = false
-        let inside_userinput = false
 
-        let symbolkind_marker = vscode.SymbolKind.Field
-        let symbolkind_run = vscode.SymbolKind.Event
-        let symbolkind_cmd = vscode.SymbolKind.Function
-
-        for (var i = 0; i < document.lineCount; i++) {
-            var line = document.lineAt(i);
-
-            let tokens = line.text.split(" ")
-
-            if (line.text.startsWith("!map")) {
-
-                let marker_symbol = new vscode.DocumentSymbol(
-                    this.format(tokens[0]) + " " + tokens[1],
-                    'Component',
-                    symbolkind_marker,
-                    line.range, line.range)
+        let symbolkind_array = vscode.SymbolKind.Array;
+        let symbolkind_text = vscode.SymbolKind.String;
+        let symbolkind_number = vscode.SymbolKind.Number;
 
 
-                nodes[nodes.length-1].push(marker_symbol)
-                if (!inside_marker) {
-                    nodes.push(marker_symbol.children)
-                    inside_marker = true
-                }
-                // marker_symbol.children.push(_boot)
-            }
-            else if (line.text.startsWith("#END_COMP")) {
-                // TODO check if nodes has length 1 before popping.
-                if (inside_marker) {
-                    nodes.pop()
-                    inside_marker = false
-                }
-            }
-            else if (line.text.startsWith("#RUN") || line.text.startsWith("#END")) {
-                
-                let run_symbol = new vscode.DocumentSymbol(
-                    this.format(tokens[0]),
-                    'Session separator',
-                    symbolkind_run,
-                    line.range, line.range)
+        var line = document.lineAt(0);
 
-                if (inside_run) {
-                    nodes.pop()
-                }
-
-                nodes[nodes.length-1].push(run_symbol)
-                nodes.push(run_symbol.children)
-                inside_run = true
-            }
-            else if (line.text.startsWith("#USERINPUTBEGIN")) {
-
-                let user_symbol = new vscode.DocumentSymbol(
-                    this.format(tokens[0]),
-                    'User module',
-                    vscode.SymbolKind.Interface,
-                    line.range, line.range)
+        let marker_symbol = new vscode.DocumentSymbol(
+          " ",
+          " ",
+          symbolkind_array,
+          line.range, line.range)
 
 
-                nodes[nodes.length-1].push(user_symbol)
-                if (!inside_userinput) {
-                    nodes.push(user_symbol.children)
-                    inside_userinput = true
-                }
-                // marker_symbol.children.push(_boot)
-            }
-            else if (line.text.startsWith("#USERINPUTEND")) {
-                // TODO check if nodes has length 1 before popping.
-                if (inside_userinput) {
-                    nodes.pop()
-                    inside_userinput = false
-                }
-            }                
-            else if (line.text.startsWith("#")) {
-                let cmd_symbol = new vscode.DocumentSymbol(
-                    this.format(tokens[0]),
-                    '',
-                    symbolkind_cmd,
-                    line.range, line.range)
+      // retour ast ???    
+      nodes[nodes.length-1].push(marker_symbol);
 
-                nodes[nodes.length-1].push(cmd_symbol)
-            }
-        }
+
+      var line = document.lineAt(1);
+      let value1 = new vscode.DocumentSymbol(
+        "value1",
+        '??',
+        symbolkind_text,
+        line.range, line.range)
+
+      marker_symbol.children.push(value1);
+
+      var line = document.lineAt(2);
+      let marker_symbol2 = new vscode.DocumentSymbol(
+        " ",
+        " ",
+        symbolkind_array,
+        line.range, line.range)
+
+        //nodes[nodes.length-1].push(marker_symbol2);
+
+        var line = document.lineAt(3);
+        let value2 = new vscode.DocumentSymbol(
+          "test",
+          " ",
+          symbolkind_text,
+          line.range, line.range)
+
+        var line = document.lineAt(4);
+        let value3 = new vscode.DocumentSymbol(
+        "test 2",
+        " ",
+        symbolkind_text,
+        line.range, line.range)
+
+        var line = document.lineAt(5);
+        let value4 = new vscode.DocumentSymbol(
+          "12",
+          " ",
+          symbolkind_number,
+          line.range, line.range)
+
+          marker_symbol2.children.push(value2);
+          marker_symbol2.children.push(value3);
+          marker_symbol2.children.push(value4);
+
+          marker_symbol.children.push( marker_symbol2)
 
         resolve(symbols);
     });
