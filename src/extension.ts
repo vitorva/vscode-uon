@@ -27,50 +27,6 @@ import { TerminalNode, ErrorNode, ParseTree, RuleNode } from 'antlr4ts/tree';
 
 const hoverJson = require('./hover.json');
 
-
-// TODO :Créer une classe qui contient une liste de nodes
-abstract class ExpressionNode {
-  children: ExpressionNode[] = [];
-}
-
-abstract class InfixExpressionNode extends ExpressionNode {
-
-  //visitChildren(node: RuleNode): Result;
-
-  //ExpressionNode Left { get; set; }
-  //public ExpressionNode Right { get; set; }
-
-  //left : ExpressionNode | undefined;
-  //right : ExpressionNode | undefined;
-  //children : ExpressionNode[] | undefined;
-}
-
-class EmptyExpressionNode extends InfixExpressionNode { }
-
-class YamlSeqNode extends InfixExpressionNode { }
-
-class NumberNode extends InfixExpressionNode { }
-
-class StringNode extends InfixExpressionNode { }
-
-class SeqItemNode extends InfixExpressionNode { }
-
-
-class UonTerminalNode extends ExpressionNode {
-
-  value: string;
-  start: number;
-  stop: number;
-
-  // Normal signature with defaults
-  constructor(value: string, start: number, stop: number) {
-    super();
-    this.value = value;
-    this.start = start;
-    this.stop = stop;
-  }
-}
-
 //Visitor Approach
 // Extend the AbstractParseTreeVisitor to get default visitor behaviour
 class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<any> {
@@ -83,7 +39,7 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<
   }
 
   defaultResult() {
-    return new EmptyExpressionNode();
+    return null;
   }
 
   shouldVisitNextChild(node: RuleNode, currentResult: any) {
@@ -93,7 +49,7 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<
   visitChildren(node: RuleNode) {
     let result: any;
     let n = node.childCount;
-    if(n > 1){
+    if (n > 1) {
       result = [];
     }
     for (let i = 0; i < n; i++) {
@@ -102,65 +58,56 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<
       }
       let c = node.getChild(i);
       let childResult = c.accept(this);
-      if(n > 1){
+      if (n > 1) {
         result.push(childResult);
       }
-      else{
+      else {
         result = childResult;
         return result;
       }
     }
-    const flatResult = result.flat();
 
+    const flatResult = result.flat();
     return flatResult;
   }
 
-  aggregateResult(aggregate: ExpressionNode, nextResult: ExpressionNode) {
+  //TODO
+  aggregateResult(aggregate: any, nextResult: any) {
     //return aggregate + nextResult;
     //return new EmptyExpressionNode();
-    var node = aggregate;
-    node.children.push(nextResult);
-    return node;
+    //var node = aggregate;
+    //node.children.push(nextResult);
+    //return node;
+    return null;
   }
 
   visitYaml_seq(ctx: Yaml_seqContext) {
-    //return "( Yaml_seq " + this.visitChildren(ctx) + ")";
-    //var node = new YamlSeqNode();
-    //node.children = this.visitChildren(ctx);
-    //return node;
-
     const line = this.document.lineAt(0);
 
-    let marker_symbol = new vscode.DocumentSymbol(
-      "TEST",
+    let yamlSeq = new vscode.DocumentSymbol(
       " ",
-      vscode.SymbolKind.String,
+      " ",
+      vscode.SymbolKind.Array,
       line.range, line.range)
 
-      var test = this.visitChildren(ctx);
-      
-      test.array.forEach((element: vscode.DocumentSymbol)  => {
-        marker_symbol.children.push(element);
-      });
+    var children = this.visitChildren(ctx);
 
-      return marker_symbol;
+    for (var i = 0; i < children.length; i++) {
+      if (children[i] !== "-") {
+        yamlSeq.children.push(children[i]);
+      }
+    }
+
+    return yamlSeq;
   }
 
   /*
   visitSeq_item(ctx: Seq_itemContext) {
-    //return "( Seq_item " + this.visitChildren(ctx) + ")";
-    var node = new SeqItemNode();
-    node.children = this.visitChildren(ctx);
-    return node;
+    //return null
   }
   */
 
   visitString?(ctx: StringContext) {
-    //return "( String " + this.visitChildren(ctx) + ")";
-    //var node = new StringNode();
-    //node.children = this.visitChildren(ctx);
-    //return node;
-
     const line = this.document.lineAt(0);
 
     let string = new vscode.DocumentSymbol(
@@ -174,11 +121,6 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<
   }
 
   visitNumber(ctx: NumberContext) {
-    //return "( Number " + this.visitChildren(ctx) + ")";
-    //var node = new NumberNode();
-    //node.children = this.visitChildren(ctx);
-    //return node;
-
     const line = this.document.lineAt(0);
 
     let number = new vscode.DocumentSymbol(
@@ -264,14 +206,6 @@ export function activate(context: vscode.ExtensionContext) {
       let tree = parser.uon();  // Parse Tree
 
       console.log("tree.toStringTree", tree.toStringTree(parser));
-
-      // Create the visitor
-      //const uonASTVisitor = new UonASTVisitor();
-      // Use the visitor entry point
-
-      //const ast = uonASTVisitor.visit(tree);
-
-      //console.log("AST", ast);
 
       console.log("tokenStream");
       console.log("tokenStreamSize", tokenStream.size);
@@ -360,6 +294,8 @@ export function activate(context: vscode.ExtensionContext) {
         let item = new vscode.CompletionItem(str, vscode.CompletionItemKind.Keyword);
         const range = document.getWordRangeAtPosition(position);
 
+        // TODO : Range pour texte collé
+
         //const range2 = new vscode.Range(new vscode.Position(position.line, position.character), position);
 
         /*
@@ -408,13 +344,11 @@ export function activate(context: vscode.ExtensionContext) {
       const word = document.getText(range);
       console.log(word);
 
-      //console.log(Person.person["name"]);
-
-      const test = Object.keys(hoverJson.content)
-      console.log(test);
+      const hover = Object.keys(hoverJson.content)
+      console.log(hover);
 
 
-      if (test.includes(word)) {
+      if (hover.includes(word)) {
         console.log(hoverJson.content[word]);
         return new vscode.Hover({
           language: "uon",
@@ -422,64 +356,7 @@ export function activate(context: vscode.ExtensionContext) {
         });
       }
 
-      return
-
-
-      //TODO : READ A HOVER FILE
-
-      //const hover = JSON.parse(hoverJson);
-      // Read key
-
-      /*
-for (var key in hoverJson) {
-  console.log(key);
- if (word === key){
-  return new vscode.Hover({
-    language: "uon",
-    value: hoverJson[key];
-  });
- }
- return
-}
-*/
-      /*
-          switch(word) { 
-            case "!str": { 
-              return new vscode.Hover({
-                language: "uon",
-                value: "String encoded in UTF-8\n\nBased on : !scalar "
-              });
-            } 
-            case "!bool": { 
-              return new vscode.Hover({
-                language: "uon",
-                value: "Boolean, true or false\n\nBased on : !scalar "
-              });
-            }
-            case "!map": { 
-              return new vscode.Hover({
-                language: "uon",
-                value: "Unordered Mapping (also called HashMap or Dictionary )\n\nBased on : !type "
-              });
-            } 
-            case "!seq": { 
-              return new vscode.Hover({
-                language: "uon",
-                value: "Ordered Sequence (also called List or Array)\n\nBased on : !scalar "
-              });
-            }
-            case "!float": { 
-              return new vscode.Hover({
-                language: "uon",
-                value: "Floating point IEEE-754\n\nBased on : !scalar "
-              });
-            }    
-            default: { 
-               return; 
-            } 
-         } 
-    */
-
+      return;
     }
   });
 
@@ -496,10 +373,6 @@ for (var key in hoverJson) {
 
 class UonConfigDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
 
-  private format(cmd: string): string {
-    return cmd.substr(1).toLowerCase().replace(/^\w/, c => c.toUpperCase())
-  }
-
   public provideDocumentSymbols(
     document: vscode.TextDocument,
     token: vscode.CancellationToken): Promise<vscode.DocumentSymbol[]> {
@@ -510,11 +383,8 @@ class UonConfigDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
       let curPos = activeEditor?.selection.active;
       let offset = document.offsetAt(curPos!!);
 
-
       //Retrieve text from start to cursor position
       const text = document.getText().slice(0, offset);
-      console.log(text);
-      console.log(text.length);
 
       //Antlr setup
       const inputStream = CharStreams.fromString(text);
@@ -522,28 +392,24 @@ class UonConfigDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
       const tokenStream = new CommonTokenStream(lexer);
       const parser = new UONParser(tokenStream);
 
-      //let errorListener = new ErrorListener();
-      //parser.addErrorListener(errorListener);
-
-      parser.removeErrorListeners();
-
-      const errorStrategy = new UonCompletionErrorStrategy();
-      parser.errorHandler = errorStrategy;
-
       parser.buildParseTree = true;
       let tree = parser.uon();  // Parse Tree
 
-      console.log("tree.toStringTree", tree.toStringTree(parser));
-
       // Create the visitor
       const uonASTVisitor = new UonASTVisitor(document);
+      
       // Use the visitor entry point
-
       const ast = uonASTVisitor.visit(tree);
 
       console.log("AST", ast);
 
+      let symbols: vscode.DocumentSymbol[] = [];
+      let nodes = [symbols];
 
+      nodes[nodes.length - 1].push(ast);
+
+      /* static example
+      
       let symbols: vscode.DocumentSymbol[] = [];
       let nodes = [symbols]
 
@@ -562,7 +428,7 @@ class UonConfigDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
 
 
       // retour ast ???    
-      nodes[nodes.length - 1].push(ast);
+      nodes[nodes.length - 1].push(marker_symbol);
 
       var line = document.lineAt(1);
 
@@ -613,6 +479,7 @@ class UonConfigDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
       marker_symbol2.children.push(value4);
 
       marker_symbol.children.push(marker_symbol2)
+      */
 
       resolve(symbols);
     });
