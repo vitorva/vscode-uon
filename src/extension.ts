@@ -11,7 +11,6 @@ import {
 
 import { DefaultErrorStrategy } from 'antlr4ts/DefaultErrorStrategy';
 import { IntervalSet } from 'antlr4ts/misc/IntervalSet';
-import { ParseTreeVisitor } from 'antlr4ts/tree/ParseTreeVisitor';
 
 import * as c3 from 'antlr4-c3';
 
@@ -24,7 +23,6 @@ import { UONListener } from './generated/UONListener';
 import { Json_mapContext, Yaml_mapContext, Yaml_seqContext, NumberContext } from './generated/UONParser';
 
 import { TerminalNode, ErrorNode, ParseTree, RuleNode } from 'antlr4ts/tree';
-import { match } from 'assert';
 
 const hoverJson = require('./hover.json');
 
@@ -116,44 +114,35 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<
   */
 
   visitString?(ctx: StringContext) {
-    const line = this.document.lineAt(0);
-
-    const test= this.visitChildren(ctx);
-
+    const child= this.visitChildren(ctx);
     const regex = /\r\n/g;
 
-    // - "test"\r\n- - "ok1"\r\n  - 12\r\n  - "ok1"\r\n- - "what"\r\n  - 12
-    var line2 = this.text.slice(0, test.stop).match(regex)?.length;
-
-    //const la = " \n   \n   \n";
-    //var line2 = la.match(regex)?.length;
+    var line = this.text.slice(0, child.stop).match(regex)?.length;
 
     var beginWord;
     var endWord;
 
-    if(line2 === undefined){
-      line2 = 0;
-      beginWord = test.startIndex;
-      endWord = test.stopIndex;
-
+    if(line === undefined){
+      line = 0;
+      beginWord = child.start;
+      endWord = child.stop;
     }else{
-      console.log(this.text.slice(0, test.stop));
-      const lastocc = this.text.slice(0, test.stop).lastIndexOf("\r\n");
+      console.log(this.text.slice(0, child.stop));
 
-      console.log(this.text.slice(0, test.stop).lastIndexOf("\r\n"));
+      const lastocc = this.text.slice(0, child.stop).lastIndexOf("\r\n");
+
+      console.log(this.text.slice(0, child.stop).lastIndexOf("\r\n"));
   
-      beginWord = test.start - lastocc;
-      endWord = beginWord + test.text.length;
+      beginWord = child.start - lastocc;
+      endWord = beginWord + child.text.length;
     }
 
-    
-    const start = new vscode.Position(line2, beginWord);
-    const end = new vscode.Position(line2, endWord);
-
+    const start = new vscode.Position(line, beginWord);
+    const end = new vscode.Position(line, endWord);
     const range = new vscode.Range(start, end);
 
     let string = new vscode.DocumentSymbol(
-      test.text,
+      child.text,
       " ",
       vscode.SymbolKind.String,
       range, range); 
@@ -164,10 +153,10 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<
   visitNumber(ctx: NumberContext) {
     const line = this.document.lineAt(0);
 
-    const test= this.visitChildren(ctx);
+    const child= this.visitChildren(ctx);
 
     let number = new vscode.DocumentSymbol(
-      test.text,
+      child.text,
       " ",
       vscode.SymbolKind.Number,
       line.range, line.range); // TODO: Convertir position
