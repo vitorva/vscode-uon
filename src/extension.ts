@@ -24,6 +24,7 @@ import { UONListener } from './generated/UONListener';
 import { Json_mapContext, Yaml_mapContext, Yaml_seqContext, NumberContext } from './generated/UONParser';
 
 import { TerminalNode, ErrorNode, ParseTree, RuleNode } from 'antlr4ts/tree';
+import { match } from 'assert';
 
 const hoverJson = require('./hover.json');
 
@@ -32,10 +33,12 @@ const hoverJson = require('./hover.json');
 class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<any> {
 
   document: vscode.TextDocument;
+  text: String;
 
-  constructor(document: vscode.TextDocument) {
+  constructor(document: vscode.TextDocument, text: String) {
     super();
     this.document = document;
+    this.text = text;
   }
 
   defaultResult() {
@@ -84,17 +87,22 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<
   visitYaml_seq(ctx: Yaml_seqContext) {
     const line = this.document.lineAt(0);
 
+    var children = this.visitChildren(ctx);
+    const head = children.shift();
+
     let yamlSeq = new vscode.DocumentSymbol(
       " ",
       " ",
       vscode.SymbolKind.Array,
-      line.range, line.range)
-
-    var children = this.visitChildren(ctx);
+      line.range, line.range);
 
     for (var i = 0; i < children.length; i++) {
-      if (children[i] !== "-") {
+      if (children[i] instanceof vscode.DocumentSymbol) {
         yamlSeq.children.push(children[i]);
+      }else{
+        // TODO
+        //const line = this.document.lineAt(1);
+        //children[i + 1].range = vscode.SymbolKind.String,line.range, line.range)
       }
     }
 
@@ -110,21 +118,56 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<
   visitString?(ctx: StringContext) {
     const line = this.document.lineAt(0);
 
+    const test= this.visitChildren(ctx);
+
+    const regex = /\r\n/g;
+
+    // - "test"\r\n- - "ok1"\r\n  - 12\r\n  - "ok1"\r\n- - "what"\r\n  - 12
+    var line2 = this.text.slice(0, test.stop).match(regex)?.length;
+
+    //const la = " \n   \n   \n";
+    //var line2 = la.match(regex)?.length;
+
+    var beginWord;
+    var endWord;
+
+    if(line2 === undefined){
+      line2 = 0;
+      beginWord = test.startIndex;
+      endWord = test.stopIndex;
+
+    }else{
+      console.log(this.text.slice(0, test.stop));
+      const lastocc = this.text.slice(0, test.stop).lastIndexOf("\r\n");
+
+      console.log(this.text.slice(0, test.stop).lastIndexOf("\r\n"));
+  
+      beginWord = test.start - lastocc;
+      endWord = beginWord + test.text.length;
+    }
+
+    
+    const start = new vscode.Position(line2, beginWord);
+    const end = new vscode.Position(line2, endWord);
+
+    const range = new vscode.Range(start, end);
+
     let string = new vscode.DocumentSymbol(
-      this.visitChildren(ctx),
+      test.text,
       " ",
       vscode.SymbolKind.String,
-      line.range, line.range); // TODO: Convertir position
+      range, range); 
 
     return string;
-
   }
 
   visitNumber(ctx: NumberContext) {
     const line = this.document.lineAt(0);
 
+    const test= this.visitChildren(ctx);
+
     let number = new vscode.DocumentSymbol(
-      this.visitChildren(ctx),
+      test.text,
       " ",
       vscode.SymbolKind.Number,
       line.range, line.range); // TODO: Convertir position
@@ -139,7 +182,12 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<
     console.log("Node stop", node._symbol.stopIndex);
 
     // TODO aussi retourner et traiter start et stop index
-    return node.text;
+    const test = {
+      "text" : node.text,
+      "start" : node._symbol.startIndex,
+      "stop" : node._symbol.stopIndex
+    }
+    return test;
   }
 }
 
@@ -396,8 +444,8 @@ class UonConfigDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
       let tree = parser.uon();  // Parse Tree
 
       // Create the visitor
-      const uonASTVisitor = new UonASTVisitor(document);
-      
+      const uonASTVisitor = new UonASTVisitor(document, text);
+
       // Use the visitor entry point
       const ast = uonASTVisitor.visit(tree);
 
