@@ -30,6 +30,7 @@ const hoverJson = require('./hover.json');
 // Extend the AbstractParseTreeVisitor to get default visitor behaviour
 class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<any> {
 
+  level = 0; 
   document: vscode.TextDocument;
   text: String;
 
@@ -83,9 +84,22 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<
   }
 
   visitJson_map(ctx: Json_mapContext){
+    this.level = this.level + 1;
     var children = this.visitChildren(ctx);
+    this.level = this.level - 1;
     console.log(children);
 
+    if(this.level === 0){
+      var response = [];
+
+      for (var i = 0; i < children.length; i++) {
+        if (children[i] instanceof vscode.DocumentSymbol) {
+          response.push(children[i]);
+        }
+      }
+      return response;
+    }
+  
     const head = children.shift();
 
     const regex = /\r\n/g;
@@ -128,7 +142,7 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<
       }
     }
 
-    return jsonMap;
+    return [jsonMap];
 
   }
 
@@ -162,7 +176,21 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<
   }
 
   visitJson_seq(ctx: Json_seqContext){
+    this.level = this.level + 1;
     var children = this.visitChildren(ctx);
+    this.level = this.level - 1;
+
+    if(this.level === 0){
+      var response = [];
+
+      for (var i = 0; i < children.length; i++) {
+        if (children[i] instanceof vscode.DocumentSymbol) {
+          response.push(children[i]);
+        }
+      }
+      return response;
+    }
+
     const head = children.shift();
 
     const regex = /\r\n/g;
@@ -205,11 +233,25 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<
       }
     }
 
-    return jsonSeq;
+    return [jsonSeq];
   }
 
   visitYaml_seq(ctx: Yaml_seqContext) {
+    this.level = this.level + 1;
     var children = this.visitChildren(ctx);
+    this.level = this.level - 1;
+
+    if(this.level === 0){
+      var response = [];
+
+      for (var i = 0; i < children.length; i++) {
+        if (children[i] instanceof vscode.DocumentSymbol) {
+          response.push(children[i]);
+        }
+      }
+      return response;
+    }
+
     const head = children.shift();
 
     const regex = /\r\n/g;
@@ -254,7 +296,7 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<
       }
     }
 
-    return yamlSeq;
+    return [yamlSeq];
   }
 
   /*
@@ -616,8 +658,12 @@ class UonConfigDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
       let symbols: vscode.DocumentSymbol[] = [];
       let nodes = [symbols];
 
-      nodes[nodes.length - 1].push(ast);
+      
+      for (var i = 0; i < ast.length; i++) {
+        nodes[nodes.length - 1].push(ast[i]);
+      }
 
+      
       /* static example
       
       let symbols: vscode.DocumentSymbol[] = [];
