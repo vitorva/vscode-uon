@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 
 import { UONLexer } from './generated/UONLexer';
-import { Json_pairContext, Json_seqContext, Seq_itemContext, StringContext, UONParser } from "./generated/UONParser";
+import { Json_pairContext, Json_seqContext, PairContext, Seq_itemContext, StringContext, UONParser } from "./generated/UONParser";
 
 import {
   ANTLRErrorListener, CharStreams, CommonToken, CommonTokenStream, TokenStream, RecognitionException, Recognizer, Token, Parser
@@ -146,13 +146,41 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<
 
   }
 
+  visitPair(ctx: PairContext){
+    var children = this.visitChildren(ctx);
+    console.log("visitPair", children);
+
+    const head = children[0];
+    const tail = children[children.length-1];
+
+    if(tail.kind === vscode.SymbolKind.Object){
+      tail.name = head.name;
+    }else {
+      const tmp = tail.name;
+      tail.detail = tmp;
+      tail.name = head.name;
+    }
+      
+    for (var i = 0; i < children.length; i++) {
+      if (children[i] instanceof vscode.DocumentSymbol) {
+        console.log("name : ", children[i].name);
+        console.log("name : ", children[i].name);
+        console.log("detail : ", children[i].detail);
+        console.log("kind : ", children[i].kind);
+        console.log("vscode.SymbolKind : ", vscode.SymbolKind);
+      }
+    }
+
+    return tail;
+  }
+
+
   visitJson_pair(ctx: Json_pairContext){
     var children = this.visitChildren(ctx);
     console.log("visitJson_pair", children);
 
     const head = children[0];
-
-    const tail = children[2];
+    const tail = children[children.length-1];
 
     if(tail.kind === vscode.SymbolKind.Object){
       tail.name = head.name;
