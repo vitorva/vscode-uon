@@ -44,8 +44,19 @@
 
 		},
 		"yaml_map": {
-			"match": "(([a-zA-Z])*)(( *):( *))",
-			"name": "markup.bold.uon"
+			"match": "([a-zA-Z]+)(.*)(:)",
+			"captures": {
+				"1": {
+					"name": "entity.name.tag.uon"
+				},
+				"2": {
+					"patterns" : [
+						{
+							"include" : "#string_description"
+						}
+					]
+				}
+			}
 		},
 		"json_map": {
 			"begin": "\\{",
