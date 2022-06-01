@@ -87,6 +87,10 @@
 					"name": "meta.structure.mapping.value.uon",
 					"patterns": [
 						{
+							"match" : "!seq|!map",
+							"name": "markup.bold.uon"
+						},
+						{
 							"comment": "the uon object value",
 							"include": "#json_value"
 						},
@@ -348,7 +352,26 @@
 			"patterns": [
 				{
 					"match": "description|optional",
-					"name": "punctuation.definition.str.property.uon"
+					"name": "support.type.property-name2.uon"
+				},
+				{
+					"begin": ":",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.separator.dictionary.key-value.uon"
+						}
+					},
+					"end": "(,)|(?=\\))",
+					"endCaptures": {
+						"1": {
+							"name": "punctuation.separator.dictionary.pair.uon"
+						}
+					},
+					"patterns" :[
+						{
+							"include" : "#string_scalar"
+						}
+					]
 				}
 			]
 		},
@@ -493,7 +516,6 @@
 					"name": "invalid.illegal.expected-propriety-value.uon"
 				}
 			]
-
 		},
 
 		"root_value": {
