@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 
 import { UONLexer } from './generated/UONLexer';
-import { Json_pairContext, Json_seqContext, PairContext, Seq_itemContext, StringContext, UONParser } from "./generated/UONParser";
+import { BooleanContext, Json_pairContext, Json_seqContext, PairContext, Seq_itemContext, StringContext, UONParser } from "./generated/UONParser";
 
 import {
   ANTLRErrorListener, CharStreams, CommonToken, CommonTokenStream, TokenStream, RecognitionException, Recognizer, Token, Parser
@@ -24,7 +24,7 @@ import { Json_mapContext, Yaml_mapContext, Yaml_seqContext, NumberContext } from
 
 import { TerminalNode, ErrorNode, ParseTree, RuleNode } from 'antlr4ts/tree';
 
-const hoverJson = require('./hover.json');
+const hoverJson =  require("./hover.json");
 
 //Visitor Approach
 // Extend the AbstractParseTreeVisitor to get default visitor behaviour
@@ -145,6 +145,70 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<
     return [jsonMap];
 
   }
+
+  /*
+  visitYaml_map(ctx: Yaml_mapContext){
+    this.level = this.level + 1;
+    var children = this.visitChildren(ctx);
+    this.level = this.level - 1;
+    console.log(children);
+
+    if(this.level === 0){
+      var response = [];
+
+      for (var i = 0; i < children.length; i++) {
+        if (children[i] instanceof vscode.DocumentSymbol) {
+          response.push(children[i]);
+        }
+      }
+      return response;
+    }
+  
+    const head = children.shift();
+
+    const regex = /\r\n/g;
+
+    var line = this.text.slice(0, head.stop).match(regex)?.length;
+
+    var beginWord;
+    var endWord;
+
+    if(line === undefined){
+      line = 0;
+      beginWord = head.start;
+      endWord = head.stop;
+    }else{
+      console.log(this.text.slice(0, head.stop));
+
+      const lastocc = this.text.slice(0, head.stop).lastIndexOf("\r\n");
+
+      console.log(this.text.slice(0, head.stop).lastIndexOf("\r\n"));
+  
+      beginWord = head.start - lastocc;
+      endWord = beginWord + head.text.length;
+    }
+
+    const start = new vscode.Position(line, beginWord);
+    const end = new vscode.Position(line, endWord);
+    const range = new vscode.Range(start, end);
+
+    console.log(head.range);
+
+    let yamlMap = new vscode.DocumentSymbol(
+      " ",
+      " ",
+      vscode.SymbolKind.Object,
+      range, range);
+
+    for (var i = 0; i < children.length; i++) {
+      if (children[i] instanceof vscode.DocumentSymbol) {
+        yamlMap.children.push(children[i]);
+      }
+    }
+
+      return [yamlMap];
+  }
+  */
 
   visitPair(ctx: PairContext){
     var children = this.visitChildren(ctx);
@@ -370,6 +434,43 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<
     return string;
   }
 
+  visitBoolean(ctx: BooleanContext){
+    const child= this.visitChildren(ctx);
+    const regex = /\r\n/g;
+
+    var line = this.text.slice(0, child.stop).match(regex)?.length;
+
+    var beginWord;
+    var endWord;
+
+    if(line === undefined){
+      line = 0;
+      beginWord = child.start;
+      endWord = child.stop;
+    }else{
+      console.log(this.text.slice(0, child.stop));
+
+      const lastocc = this.text.slice(0, child.stop).lastIndexOf("\r\n");
+
+      console.log(this.text.slice(0, child.stop).lastIndexOf("\r\n"));
+  
+      beginWord = child.start - lastocc;
+      endWord = beginWord + child.text.length;
+    }
+
+    const start = new vscode.Position(line, beginWord);
+    const end = new vscode.Position(line, endWord);
+    const range = new vscode.Range(start, end);
+
+    let boolean = new vscode.DocumentSymbol(
+      child.text,
+      " ",
+      vscode.SymbolKind.Boolean,
+      range, range); 
+
+    return boolean;
+  }
+
   visitNumber(ctx: NumberContext) {
     const child= this.visitChildren(ctx);
     const regex = /\r\n/g;
@@ -530,7 +631,7 @@ export function activate(context: vscode.ExtensionContext) {
       //  UONParser.RULE_arr
       //]);
 
-      /*
+      
       core.ignoredTokens = new Set([
           UONLexer.OPEN_C_BRA,
           UONLexer.CLOSE_C_BRA,
@@ -543,7 +644,6 @@ export function activate(context: vscode.ExtensionContext) {
           UONLexer.QUOTED_STRING,
           UONLexer.UNQUOTED_STRING
         ]);
-      */
 
       let candidates = core.collectCandidates(index);
 
@@ -609,7 +709,7 @@ export function activate(context: vscode.ExtensionContext) {
       //snippetCompletion.insertText = new vscode.SnippetString('Good ${1|morning,afternoon,evening|}. It is ${1}, right?');
       //keywords.push(new vscode.newS('(SELECT ... FROM ...)', '(SELECT $2 FROM $1)'));
 
-      keywords.push(snippetCompletion);
+      //keywords.push(snippetCompletion);
 
       console.log(keywords);
       return keywords;
@@ -630,10 +730,8 @@ export function activate(context: vscode.ExtensionContext) {
 
       if (hover.includes(word)) {
         console.log(hoverJson.content[word]);
-        return new vscode.Hover({
-          language: "uon",
-          value: hoverJson.content[word]
-        });
+        return new vscode.Hover(
+          new vscode.MarkdownString(hoverJson.content[word]))
       }
 
       return;
