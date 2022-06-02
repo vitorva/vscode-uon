@@ -526,7 +526,8 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<
 
 class UonCompletionErrorStrategy extends DefaultErrorStrategy {
   protected singleTokenDeletion(recognizer: Parser): Token | undefined {
-    return undefined;
+    //return undefined;
+    return super.singleTokenDeletion(recognizer);
   }
 
   protected consumeUntil(recognizer: Parser, set: IntervalSet): void {
@@ -534,6 +535,8 @@ class UonCompletionErrorStrategy extends DefaultErrorStrategy {
   }
 
   public recover(recognizer: Parser, e: RecognitionException): void {
+    //console.log("recover");
+    super.recover(recognizer, e);
   }
 
   protected getErrorRecoverySet(recognizer: Parser): IntervalSet {
@@ -543,16 +546,64 @@ class UonCompletionErrorStrategy extends DefaultErrorStrategy {
 }
 
 export class ErrorListener implements ANTLRErrorListener<CommonToken> {
+
+  level = 0; 
+  document: vscode.TextDocument;
+  collection: vscode.DiagnosticCollection;
+  context : vscode.ExtensionContext; // vscode.ExtensionContext !!!! ???
+
+  
+
+  constructor(document: vscode.TextDocument, collection: vscode.DiagnosticCollection, context : vscode.ExtensionContext) {
+    this.document = document;
+    this.collection = collection;
+    this.context = context;
+  }
+
+  public updateDiagnostics(document: vscode.TextDocument, collection: vscode.DiagnosticCollection, msg : string): void {
+    var line = document.lineAt(0);
+    
+    if (document) {
+      collection.set(document.uri, [{
+        code: '',
+        message: msg,
+        range: new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 10)),
+        severity: vscode.DiagnosticSeverity.Error,
+        source: '',
+        relatedInformation: [
+          new vscode.DiagnosticRelatedInformation(new vscode.Location(document.uri, new vscode.Range(new vscode.Position(1, 8), new vscode.Position(1, 9))), 'first assignment to `x`')
+        ]
+      }]);
+    } else {
+      collection.clear();
+    }
+  }
+
+
   public errorCount = 0;
 
   public syntaxError<T extends Token>(recognizer: Recognizer<T, any>, offendingSymbol: T | undefined, line: number,
     charPositionInLine: number, msg: string, e: RecognitionException | undefined): void {
     ++this.errorCount;
-    console.log("ERROR", this.errorCount);
-  }
-}
+    console.log("ERROR", line + "-" + charPositionInLine + " : " + msg);
 
-export function activate(context: vscode.ExtensionContext) {
+    const collection = vscode.languages.createDiagnosticCollection('test');
+    if (vscode.window.activeTextEditor) {
+      this.updateDiagnostics(vscode.window.activeTextEditor.document, collection, msg);
+    }
+
+    /*
+    this.context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(editor => {
+      if (editor) {
+        this.updateDiagnostics(this.document, this.collection, msg);
+      }
+    }));
+    */
+    
+  }
+  }
+
+export function activate(context1: vscode.ExtensionContext) {
 
   const provider1 = vscode.languages.registerCompletionItemProvider({ scheme: "file", language: "uon" }, {
 
@@ -575,10 +626,10 @@ export function activate(context: vscode.ExtensionContext) {
       const tokenStream = new CommonTokenStream(lexer);
       const parser = new UONParser(tokenStream);
 
-      //let errorListener = new ErrorListener();
-      //parser.addErrorListener(errorListener);
+      let errorListener = new ErrorListener(document, vscode.languages.createDiagnosticCollection('test'), context1);
+      parser.addErrorListener(errorListener);
 
-      parser.removeErrorListeners();
+      //parser.removeErrorListeners();
 
       const errorStrategy = new UonCompletionErrorStrategy();
       parser.errorHandler = errorStrategy;
@@ -711,12 +762,28 @@ export function activate(context: vscode.ExtensionContext) {
 
       //keywords.push(snippetCompletion);
 
+      /*
+      const collection = vscode.languages.createDiagnosticCollection('test');
+      if (vscode.window.activeTextEditor) {
+        updateDiagnosticsLocal(vscode.window.activeTextEditor.document, collection);
+      }
+      */
+
+      /*
+      context1.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(editor => {
+        if (editor) {
+          updateDiagnosticsLocal(editor.document, collection);
+        }
+      }));
+      */
+
       console.log(keywords);
       return keywords;
+    
     }
   }, " ", "\n", ".");
 
-  context.subscriptions.push(provider1);
+  context1.subscriptions.push(provider1);
 
   const hover = vscode.languages.registerHoverProvider({ scheme: "file", language: "uon" }, {
     provideHover(document, position, token) {
@@ -738,15 +805,86 @@ export function activate(context: vscode.ExtensionContext) {
     }
   });
 
-  context.subscriptions.push(hover);
+  context1.subscriptions.push(hover);
 
-  context.subscriptions.push(
+  context1.subscriptions.push(
     vscode.languages.registerDocumentSymbolProvider(
       { scheme: "file", language: "uon" },
       new UonConfigDocumentSymbolProvider()
     )
   );
 
+  /*
+  const diagnosticCollection : vscode.DiagnosticCollection = vscode.languages.createDiagnosticCollection('go');
+  context.subscriptions.push(diagnosticCollection);
+
+  diagnosticCollection.clear();
+  let diagnosticMap: Map<string, vscode.Diagnostic[]> = new Map();
+
+  let range = new vscode.Range(error.line-1, error.startColumn, error.line-1, error.endColumn);
+  */
+
+  /*
+  const collection = vscode.languages.createDiagnosticCollection('test');
+	if (vscode.window.activeTextEditor) {
+		updateDiagnostics(vscode.window.activeTextEditor.document, collection);
+	}
+	context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(editor => {
+		if (editor) {
+			updateDiagnostics(editor.document, collection);
+		}
+	}));
+  */
+
+  function updateDiagnosticsLocal(document: vscode.TextDocument, collection: vscode.DiagnosticCollection): void {
+    var line = document.lineAt(0);
+    
+    if (document) {
+      collection.set(document.uri, [{
+        code: '',
+        message: 'TEST UON ERROR',
+        range: new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 10)),
+        severity: vscode.DiagnosticSeverity.Error,
+        source: '',
+        relatedInformation: [
+          new vscode.DiagnosticRelatedInformation(new vscode.Location(document.uri, new vscode.Range(new vscode.Position(1, 8), new vscode.Position(1, 9))), 'first assignment to `x`')
+        ]
+      }]);
+    } else {
+      collection.clear();
+    }
+  }
+
+}
+
+function createDiagnostic(document: vscode.TextDocument, lineOfText: vscode.TextLine, lineIndex: number): vscode.Diagnostic {
+	// find where in the line of that the 'emoji' is mentioned
+	var line = document.lineAt(0);
+
+	// create range that represents, where in the document the word is
+	const range = new vscode.Range(line.range.start, line.range.end);
+
+	const diagnostic = new vscode.Diagnostic(range, "TEST ERROR UON",
+		vscode.DiagnosticSeverity.Information);
+
+	return diagnostic;
+}
+
+function onChange() {
+
+    /*
+    errors.forEach(error => {
+      let canonicalFile = vscode.Uri.file(error.file).toString();
+      let range = new vscode.Range(error.line-1, error.startColumn, error.line-1, error.endColumn);
+      let diagnostics = diagnosticMap.get(canonicalFile);
+      if (!diagnostics) { diagnostics = []; }
+      diagnostics.push(new vscode.Diagnostic(range, error.msg, error.severity));
+      diagnosticMap.set(canonicalFile, diagnostics);
+    });
+    diagnosticMap.forEach((diags, file) => {
+      diagnosticCollection.set(vscode.Uri.parse(file), diags);
+    });
+    */
 }
 
 class UonConfigDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
