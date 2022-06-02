@@ -587,18 +587,20 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
     ++this.errorCount;
     console.log("ERROR", line + "-" + charPositionInLine + " : " + msg);
 
+    
     const collection = vscode.languages.createDiagnosticCollection('test');
     if (vscode.window.activeTextEditor) {
       this.updateDiagnostics(vscode.window.activeTextEditor.document, collection, msg);
+      setInterval(() => {
+        collection.clear();
+      }, 1000);
     }
 
-    /*
+    
     this.context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(editor => {
-      if (editor) {
-        this.updateDiagnostics(this.document, this.collection, msg);
-      }
+        collection.clear();
     }));
-    */
+    
     
   }
   }
@@ -824,14 +826,25 @@ export function activate(context1: vscode.ExtensionContext) {
   let range = new vscode.Range(error.line-1, error.startColumn, error.line-1, error.endColumn);
   */
 
+  
   /*
   const collection = vscode.languages.createDiagnosticCollection('test');
 	if (vscode.window.activeTextEditor) {
-		updateDiagnostics(vscode.window.activeTextEditor.document, collection);
+		updateDiagnosticsLocal(vscode.window.activeTextEditor.document, collection);
+    setInterval(() => {
+      collection.clear();
+    }, 1000);
 	}
-	context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(editor => {
+
+  context1.subscriptions.push(vscode.window.onDidChangeTextEditorVisibleRanges(editor => {
+    collection.clear();
+	}));
+  */
+
+  /*
+	context1.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(editor => {
 		if (editor) {
-			updateDiagnostics(editor.document, collection);
+			updateDiagnosticsLocal(editor.document, collection);
 		}
 	}));
   */
