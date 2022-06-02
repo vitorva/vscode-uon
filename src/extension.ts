@@ -560,18 +560,16 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
     this.context = context;
   }
 
-  public updateDiagnostics(document: vscode.TextDocument, collection: vscode.DiagnosticCollection, msg : string): void {
-    var line = document.lineAt(0);
-    
+  public updateDiagnostics(document: vscode.TextDocument, collection: vscode.DiagnosticCollection, msg : string, range : vscode.Range): void {    
     if (document) {
       collection.set(document.uri, [{
         code: '',
         message: msg,
-        range: new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 10)),
+        range: range,
         severity: vscode.DiagnosticSeverity.Error,
         source: '',
         relatedInformation: [
-          new vscode.DiagnosticRelatedInformation(new vscode.Location(document.uri, new vscode.Range(new vscode.Position(1, 8), new vscode.Position(1, 9))), 'first assignment to `x`')
+          new vscode.DiagnosticRelatedInformation(new vscode.Location(document.uri, range), 'first assignment to `x`')
         ]
       }]);
     } else {
@@ -584,28 +582,27 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
 
   public syntaxError<T extends Token>(recognizer: Recognizer<T, any>, offendingSymbol: T | undefined, line: number,
     charPositionInLine: number, msg: string, e: RecognitionException | undefined): void {
+    
+    if(this.errorCount > 0){
+      return
+    }
     ++this.errorCount;
+
     console.log("ERROR", line + "-" + charPositionInLine + " : " + msg);
 
+    console.log("charPositionInLine", charPositionInLine);
     
-    const collection = vscode.languages.createDiagnosticCollection('test');
     if (vscode.window.activeTextEditor) {
-      this.updateDiagnostics(vscode.window.activeTextEditor.document, collection, msg);
-      setInterval(() => {
-        collection.clear();
-      }, 1000);
-    }
-
-    
-    this.context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(editor => {
-        collection.clear();
-    }));
-    
-    
+      console.log()
+      const range = new vscode.Range(new vscode.Position((line -1), charPositionInLine), new vscode.Position((line -1), charPositionInLine));
+      this.updateDiagnostics(vscode.window.activeTextEditor.document, this.collection, msg, range);
+    }    
   }
   }
 
 export function activate(context1: vscode.ExtensionContext) {
+
+  const collection : vscode.DiagnosticCollection = vscode.languages.createDiagnosticCollection('test');
 
   const provider1 = vscode.languages.registerCompletionItemProvider({ scheme: "file", language: "uon" }, {
 
@@ -628,10 +625,7 @@ export function activate(context1: vscode.ExtensionContext) {
       const tokenStream = new CommonTokenStream(lexer);
       const parser = new UONParser(tokenStream);
 
-      let errorListener = new ErrorListener(document, vscode.languages.createDiagnosticCollection('test'), context1);
-      parser.addErrorListener(errorListener);
-
-      //parser.removeErrorListeners();
+      parser.removeErrorListeners();
 
       const errorStrategy = new UonCompletionErrorStrategy();
       parser.errorHandler = errorStrategy;
@@ -812,7 +806,7 @@ export function activate(context1: vscode.ExtensionContext) {
   context1.subscriptions.push(
     vscode.languages.registerDocumentSymbolProvider(
       { scheme: "file", language: "uon" },
-      new UonConfigDocumentSymbolProvider()
+      new UonConfigDocumentSymbolProvider(collection, context1)
     )
   );
 
@@ -902,6 +896,15 @@ function onChange() {
 
 class UonConfigDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
 
+  collection: vscode.DiagnosticCollection;
+  context : vscode.ExtensionContext; // vscode.ExtensionContext !!!! ???
+  
+
+  constructor(collection: vscode.DiagnosticCollection, context : vscode.ExtensionContext) {
+    this.collection = collection;
+    this.context = context;
+  }
+
   public provideDocumentSymbols(
     document: vscode.TextDocument,
     token: vscode.CancellationToken): Promise<vscode.DocumentSymbol[]> {
@@ -923,8 +926,11 @@ class UonConfigDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
 
       parser.removeErrorListeners();
 
-      const errorStrategy = new UonCompletionErrorStrategy();
-      parser.errorHandler = errorStrategy;
+      this.collection.clear()
+      let errorListener = new ErrorListener(document, this.collection, this.context);
+      parser.addErrorListener(errorListener);
+
+      //parser.removeErrorListeners();
 
       parser.buildParseTree = true;
       let tree = parser.uon();  // Parse Tree
