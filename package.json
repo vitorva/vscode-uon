@@ -43,9 +43,10 @@
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
-	"antlr4ts": "antlr4ts -visitor UON.g4"
+    "antlr4ts": "antlr4ts -visitor UON.g4"
   },
   "devDependencies": {
+    "@types/chai": "^4.3.1",
     "@types/glob": "^7.2.0",
     "@types/mocha": "^9.1.0",
     "@types/node": "14.x",
@@ -62,6 +63,7 @@
   "dependencies": {
     "antlr4-c3": "^2.2.1",
     "antlr4ts": "^0.5.0-alpha.4",
+    "chai": "^4.3.6",
     "vscode-languageserver": "^7.0.0"
   }
 }
