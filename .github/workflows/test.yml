@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - fb-diagnostic
+      - fb-ci
 
 jobs:
   build:
