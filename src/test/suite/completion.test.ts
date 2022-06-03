@@ -29,11 +29,11 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
 }
 
 // Begin of the tests.
-describe("antlr4-c3:", function () {
+suite("antlr4-c3:", function () {
     this.slow(1000);
 
-    describe("Simple expression parser:", () => {
-        it("Most simple setup", () => {
+    test("Simple expression parser:", () => {
+        test("Most simple setup", () => {
             // No customization happens here, so the c3 engine only returns lexer tokens.
             const inputStream = CharStreams.fromString('!map {key : "value"}');
             const lexer = new UONLexer(inputStream);
