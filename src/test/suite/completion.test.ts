@@ -29,11 +29,10 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
 }
 
 // Begin of the tests.
-suite("antlr4-c3:", function () {
+suite("antlr4-c3", function () {
     this.slow(1000);
 
-    test("Simple expression parser:", () => {
-        test("Most simple setup", () => {
+    test("Uon parser", () => {
             // No customization happens here, so the c3 engine only returns lexer tokens.
             const inputStream = CharStreams.fromString('!map {key : "value"}');
             const lexer = new UONLexer(inputStream);
@@ -49,8 +48,7 @@ suite("antlr4-c3:", function () {
 
             // 1) At the input start.
             let candidates = core.collectCandidates(0);
-
-            expect(candidates.tokens.size, "Test 2").to.equal(3);
+            expect(candidates.tokens.size, "Test 2").to.equal(8);
 
             /*
             expect(candidates.tokens.has(ExprLexer.VAR), "Test 3").to.equal(true);
@@ -93,6 +91,5 @@ suite("antlr4-c3:", function () {
             expect(candidates.tokens.has(ExprLexer.DIVIDE), "Test 21").to.equal(true);
             expect(candidates.tokens.has(ExprLexer.OPEN_PAR), "Test 22").to.equal(true);
             */
-        });
     });
 });
