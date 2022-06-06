@@ -551,13 +551,15 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
   document: vscode.TextDocument;
   collection: vscode.DiagnosticCollection;
   context : vscode.ExtensionContext; // vscode.ExtensionContext !!!! ???
+  parser : UONParser;
 
   
 
-  constructor(document: vscode.TextDocument, collection: vscode.DiagnosticCollection, context : vscode.ExtensionContext) {
+  constructor(document: vscode.TextDocument, collection: vscode.DiagnosticCollection, context : vscode.ExtensionContext, parser : UONParser) {
     this.document = document;
     this.collection = collection;
     this.context = context;
+    this.parser = parser;
   }
 
   public updateDiagnostics(document: vscode.TextDocument, collection: vscode.DiagnosticCollection, msg : string, range : vscode.Range): void {    
@@ -582,7 +584,33 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
 
   public syntaxError<T extends Token>(recognizer: Recognizer<T, any>, offendingSymbol: T | undefined, line: number,
     charPositionInLine: number, msg: string, e: RecognitionException | undefined): void {
+    // ANTLRErrorListener -> ANTLRErrorStrategy -> DefaultErrorStrategy.ts 
+    //  - notifyErrorListeners
+    //  - e : RecognitionException
+    //  - IntervalSet
+    const expectedTokensString = e?.expectedTokens?.toStringVocabulary(recognizer.vocabulary);  
+    const expectedTokens = e?.expectedTokens?.toArray();
     
+    if(expectedTokensString === undefined){
+      return
+    }
+    //const myjson = JSON.parse(expectedTokensString);
+    //console.log(myjson);
+
+    console.log(e?.message);
+
+
+    if(expectedTokens === undefined){
+      return
+    }
+
+    for (let index = 0; index < expectedTokens.length; index++) {
+      const element = expectedTokens[index];
+      console.log(this.parser.vocabulary.getDisplayName(element));
+      
+    }
+    //console.log(this.parser.vocabulary.getDisplayName(expectedTokens[0]));
+
     if(this.errorCount > 0){
       return
     }
@@ -713,6 +741,7 @@ export function activate(context1: vscode.ExtensionContext) {
 
       let keywords: vscode.CompletionItem[] = [];
       for (let candidate of candidates.tokens) {
+        console.log("valid",candidate[0]);
         let str = parser.vocabulary.getDisplayName(candidate[0]);
 
         //https://stackoverflow.com/questions/19156148/i-want-to-remove-double-quotes-from-a-string
@@ -927,7 +956,7 @@ class UonConfigDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
       parser.removeErrorListeners();
 
       this.collection.clear()
-      let errorListener = new ErrorListener(document, this.collection, this.context);
+      let errorListener = new ErrorListener(document, this.collection, this.context, parser);
       parser.addErrorListener(errorListener);
 
       //parser.removeErrorListeners();
