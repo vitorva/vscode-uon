@@ -571,7 +571,7 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
         severity: vscode.DiagnosticSeverity.Error,
         source: '',
         relatedInformation: [
-          new vscode.DiagnosticRelatedInformation(new vscode.Location(document.uri, range), 'first assignment to `x`')
+          new vscode.DiagnosticRelatedInformation(new vscode.Location(document.uri, range), "")
         ]
       }]);
     } else {
@@ -588,11 +588,12 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
     //  - notifyErrorListeners
     //  - e : RecognitionException
     //  - IntervalSet
+    // Lien entre syntaxError et notifyErrorListeners ???
     const expectedTokensString = e?.expectedTokens?.toStringVocabulary(recognizer.vocabulary);  
     const expectedTokens = e?.expectedTokens?.toArray();
     
     if(expectedTokensString === undefined){
-      return
+      //return
     }
     //const myjson = JSON.parse(expectedTokensString);
     //console.log(myjson);
@@ -600,15 +601,18 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
     console.log(e?.message);
 
 
-    if(expectedTokens === undefined){
-      return
+    if(expectedTokens !== undefined){
+      //return
+      for (let index = 0; index < expectedTokens.length; index++) {
+        const element = expectedTokens[index];
+        console.log(this.parser.vocabulary.getDisplayName(element));
+        
+      }
+    }else{
+      // TODO
     }
 
-    for (let index = 0; index < expectedTokens.length; index++) {
-      const element = expectedTokens[index];
-      console.log(this.parser.vocabulary.getDisplayName(element));
-      
-    }
+
     //console.log(this.parser.vocabulary.getDisplayName(expectedTokens[0]));
 
     if(this.errorCount > 0){
