@@ -5,22 +5,32 @@ grammar UON;
 
 tokens { INDENT, DEDENT }
 
-@lexer::members {
-// TEST HELP
-
-	  
-//public emit(token: Token): Token;
-//public emit(): Token;
-	@Override
-	public emit(token?: Token): any {
-		super.emit(token)
-	}
+@lexer::header {
+  import com.yuvalshavit.antlr4.DenterHelper;
 }
+
+@lexer::members {
+  private final DenterHelper denter = new DenterHelper(NL,
+                                                       MyCoolParser.INDENT,
+                                                       MyCoolParser.DEDENT)
+  {
+    @Override
+    public Token pullToken() {
+      return MyCoolLexer.super.nextToken();
+    }
+  };
+
+  @Override
+  public Token nextToken() {
+    return denter.nextToken();
+  }
+}
+
+NL: ('\r'? '\n' ' '*);
+ 
 
 
 // more lexer rules
-
-
 uon
    : root_value
    ;
@@ -226,7 +236,7 @@ fragment SINGLE_QUOTE_CHAR
    
 fragment ESCAPE_SEQUENCE
    : '\\'
-   ( NEWLINE
+   ( NEWLINEXXX
    | UNICODE_SEQUENCE       // \u1234
    | ['"\\/bfnrtv]          // single escape char
    | ~['"\\bfnrtv0-9xu\r\n] // non escape char
@@ -261,7 +271,7 @@ fragment HEX
 fragment UNICODE_SEQUENCE
    : 'u' HEX HEX HEX HEX
    ;
-fragment NEWLINE
+fragment NEWLINEXXX
    : '\r\n'
    | [\r\n\u2028\u2029]
    ;   

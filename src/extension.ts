@@ -524,19 +524,64 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<
   }
 }
 
+//TODO 
 class UonCompletionErrorStrategy extends DefaultErrorStrategy {
   protected singleTokenDeletion(recognizer: Parser): Token | undefined {
     //return undefined;
-    return super.singleTokenDeletion(recognizer);
+    //super.singleTokenDeletion(recognizer);
+    //return super.singleTokenDeletion(recognizer);
+
+    let i = 2;
+    while(recognizer.inputStream.LA(i) === UONParser.INDENT){
+      i = i + 1;
+    }
+    
+    let nextTokenType = recognizer.inputStream.LA(i);
+    //let nextTokenType = recognizer.inputStream.LA(3);
+    let expecting = this.getExpectedTokens(recognizer);
+    if (expecting.contains(nextTokenType)) {
+        this.reportUnwantedToken(recognizer);
+        /*
+        System.err.println("recoverFromMismatchedToken deleting "+
+                           ((TokenStream)recognizer.inputStream).LT(1)+
+                           " since "+((TokenStream)recognizer.inputStream).LT(2)+
+                           " is what we want");
+        */
+        //recognizer.consume(); // simply delete extra token
+        
+
+        for (let index = 2; index <= i; index++) {
+          recognizer.consume();
+        }
+
+        // we want to return the token we're actually matching
+        let matchedSymbol = recognizer.currentToken;
+        this.reportMatch(recognizer); // we know current token is correct
+        return matchedSymbol;
+    }
+    return undefined;
+  }
+
+   sync(recognizer: Parser): void {
+    super.sync(recognizer);
   }
 
   protected consumeUntil(recognizer: Parser, set: IntervalSet): void {
-    super.consumeUntil(recognizer, set);
+    //super.consumeUntil(recognizer, set);
+            //		System.err.println("consumeUntil("+set.toString(recognizer.getTokenNames())+")");
+            let ttype = recognizer.inputStream.LA(1);
+            while (ttype !== UONLexer.COMMA && !set.contains(ttype)) {
+                //System.out.println("consume during recover LA(1)="+getTokenNames()[input.LA(1)]);
+                //			recognizer.inputStream.consume();
+          recognizer.consume();
+          ttype = recognizer.inputStream.LA(1);
+            }
   }
 
   public recover(recognizer: Parser, e: RecognitionException): void {
-    //console.log("recover");
+    console.log("recover");
     super.recover(recognizer, e);
+    UONParser.RULE_json_map
   }
 
   protected getErrorRecoverySet(recognizer: Parser): IntervalSet {
@@ -589,6 +634,10 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
     //  - e : RecognitionException
     //  - IntervalSet
     // Lien entre syntaxError et notifyErrorListeners ???
+
+    if(e === undefined){ // TODO
+      return
+    }
     const expectedTokensString = e?.expectedTokens?.toStringVocabulary(recognizer.vocabulary);  
     const expectedTokens = e?.expectedTokens?.toArray();
     
@@ -712,7 +761,7 @@ export function activate(context1: vscode.ExtensionContext) {
 
       
       core.ignoredTokens = new Set([
-          UONLexer.OPEN_C_BRA,
+          UONParser.DEDENT, // TODO
           UONLexer.CLOSE_C_BRA,
           UONLexer.OPEN_S_BRA,
           UONLexer.CLOSE_S_BRA,
@@ -965,11 +1014,16 @@ class UonConfigDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
 
       //parser.removeErrorListeners();
 
+      const errorStrategy = new UonCompletionErrorStrategy();
+      parser.errorHandler = errorStrategy;
+
       parser.buildParseTree = true;
       let tree = parser.uon();  // Parse Tree
 
       // Create the visitor
       const uonASTVisitor = new UonASTVisitor(document, text);
+
+      console.log("tree.toStringTree", tree.toStringTree(parser));
 
       // Use the visitor entry point
       const ast = uonASTVisitor.visit(tree);

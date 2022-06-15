@@ -37,7 +37,6 @@ import { TemperatureContext } from "./UONParser";
 import { NumberContext } from "./UONParser";
 import { Root_valueContext } from "./UONParser";
 import { Json_valueContext } from "./UONParser";
-import { Yaml_collection_nestedContext } from "./UONParser";
 import { Yaml_valueContext } from "./UONParser";
 import { Number_typeContext } from "./UONParser";
 import { SchemaContext } from "./UONParser";
@@ -314,13 +313,6 @@ export interface UONVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitJson_value?: (ctx: Json_valueContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.yaml_collection_nested`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitYaml_collection_nested?: (ctx: Yaml_collection_nestedContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `UONParser.yaml_value`.

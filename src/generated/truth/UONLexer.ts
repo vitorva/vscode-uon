@@ -13,9 +13,6 @@ import { Vocabulary } from "antlr4ts/Vocabulary";
 import { VocabularyImpl } from "antlr4ts/VocabularyImpl";
 
 import * as Utils from "antlr4ts/misc/Utils";
-import { Parser, Token } from "antlr4ts";
-import { CommonToken } from "antlr4ts";
-import { UONParser } from "./UONParser";
 
 
 export class UONLexer extends Lexer {
@@ -130,82 +127,7 @@ export class UONLexer extends Lexer {
 		return UONLexer.VOCABULARY;
 	}
 	// tslint:enable:no-trailing-whitespace
-	
 
-	/*
-
-	private java.util.LinkedList<Token> tokens = new java.util.LinkedList<>();
-
-	@Override
-	public Token nextToken() {
-		return tokens.isEmpty() ? super.nextToken() : tokens.poll();
-	}
-  */
-
-
-	@Override
-	public emit(token?: Token): Token {
-		return super.emit(token!!);
-	}
-
-	public commonToken(number: number, text: string): Token | undefined {
-	//return new CommonToken(this._tokenFactorySourcePair, type, DEFAULT_TOKEN_CHANNEL, start, stop);
-    //return new CommonToken(number, text);
-	return new CommonToken(number, text, this._tokenFactorySourcePair);
-	}
-
-
-	private cpt = 0;
-
-	@Override
-	public nextToken() : Token{
-
-		console.log(this.text);
-
-		/*
-		const test = this.inputStream.LA(1);
-		if( test == UONLexer.MAPPING_TYPE){
-			console.log(this.text);
-		}
-
-		if(this._input.LA(1) === UONLexer.OPEN_C_BRA){
-			console.log(this.text);
-		}
-
-		if(this._input.LA(1) === UONLexer.COMMA){
-			console.log(this.text);
-		}
-		*/
-
-		if(this._input.LA(1) == UONLexer.EOF){
-			
-		}
-
-		if (this.cpt < 10 && this._input.LA(1) === UONLexer.UNQUOTED_STRING) {
-			//console.log(this.text);
-			//this.text = "not paul"; // TODO
-			  
-			//return this.emit(this.commonToken(UONLexer.CLOSE_C_BRA, "}"));
-
-			//return this.emit(this.commonToken(UONLexer.COMMA, ","));
-
-			console.log("LA", this.cpt);
-
-			this.cpt = this.cpt + 1;
-			return this.emit(this.commonToken(UONParser.INDENT, "\n"));
-
-			//const next : Token = super.nextToken();
-		    //return next;
-		}
-
-		/*
-		this.emit(this.commonToken(UONParser.INDENT, "\n"));
-		this.emit(this.commonToken(UONParser.INDENT, "\n"));
-		this.emit(this.commonToken(UONParser.INDENT, "\n"));
-		*/
-
-		return super.nextToken(); // TODO A ENLEVER
-	}
 
 	constructor(input: CharStream) {
 		super(input);

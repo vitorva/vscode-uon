@@ -13,7 +13,7 @@ tokens { INDENT, DEDENT }
 //public emit(): Token;
 	@Override
 	public emit(token?: Token): any {
-		super.emit(token)
+	super.token = token;
 	}
 }
 
@@ -21,6 +21,7 @@ tokens { INDENT, DEDENT }
 // more lexer rules
 
 
+// more lexer rules
 uon
    : root_value
    ;
@@ -214,6 +215,10 @@ true : 'true' | 'True';
 false : 'false' | 'False';
 null: 'null' | 'none' | 'None';
 
+fragment SPACES
+ : [ \t]+
+ ;
+
 fragment DOUBLE_QUOTE_CHAR
    : ~["\\\r\n]
    | ESCAPE_SEQUENCE
@@ -226,7 +231,7 @@ fragment SINGLE_QUOTE_CHAR
    
 fragment ESCAPE_SEQUENCE
    : '\\'
-   ( NEWLINE
+   ( NEWLINEXXX
    | UNICODE_SEQUENCE       // \u1234
    | ['"\\/bfnrtv]          // single escape char
    | ~['"\\bfnrtv0-9xu\r\n] // non escape char
@@ -261,7 +266,7 @@ fragment HEX
 fragment UNICODE_SEQUENCE
    : 'u' HEX HEX HEX HEX
    ;
-fragment NEWLINE
+fragment NEWLINEXXX
    : '\r\n'
    | [\r\n\u2028\u2029]
    ;   

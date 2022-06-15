@@ -1,20 +1,14 @@
 "use strict";
 // Generated from UON.g4 by ANTLR 4.9.0-SNAPSHOT
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UONLexer = void 0;
 const ATNDeserializer_1 = require("antlr4ts/atn/ATNDeserializer");
 const Lexer_1 = require("antlr4ts/Lexer");
 const LexerATNSimulator_1 = require("antlr4ts/atn/LexerATNSimulator");
-const Decorators_1 = require("antlr4ts/Decorators");
 const VocabularyImpl_1 = require("antlr4ts/VocabularyImpl");
 const Utils = require("antlr4ts/misc/Utils");
 class UONLexer extends Lexer_1.Lexer {
+    // tslint:enable:no-trailing-whitespace
     constructor(input) {
         super(input);
         this._interp = new LexerATNSimulator_1.LexerATNSimulator(UONLexer._ATN, this);
@@ -23,13 +17,6 @@ class UONLexer extends Lexer_1.Lexer {
     // @NotNull
     get vocabulary() {
         return UONLexer.VOCABULARY;
-    }
-    // tslint:enable:no-trailing-whitespace
-    // TEST HELP
-    //public emit(token: Token): Token;
-    //public emit(): Token;
-    emit(token) {
-        super.emit(token);
     }
     // @Override
     get grammarFileName() { return "UON.g4"; }
@@ -48,6 +35,7 @@ class UONLexer extends Lexer_1.Lexer {
         return UONLexer.__ATN;
     }
 }
+exports.UONLexer = UONLexer;
 UONLexer.T__0 = 1;
 UONLexer.T__1 = 2;
 UONLexer.T__2 = 3;
@@ -563,8 +551,4 @@ UONLexer._serializedATN = Utils.join([
     UONLexer._serializedATNSegment0,
     UONLexer._serializedATNSegment1,
 ], "");
-__decorate([
-    Decorators_1.Override
-], UONLexer.prototype, "emit", null);
-exports.UONLexer = UONLexer;
 //# sourceMappingURL=UONLexer.js.map
