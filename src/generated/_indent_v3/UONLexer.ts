@@ -133,22 +133,22 @@ export class UONLexer extends Lexer {
 
 
 
-		private lastToken?: Token = undefined;
+	   private lastToken? : Token = undefined ;
 
 		@Override
 		public emit(token?: Token): Token {
-			if (token !== undefined) {
+			if(token !== undefined){
 				return super.emit(token);
-			}
+			}	
 			return super.emit();
-		}
+	   }
 
-		@Override
-		public nextToken(): Token {
+		@Override	
+	   public nextToken() : Token{
 			//console.log(this._input.LA(1));
-			const next: Token = super.nextToken();
+			const next : Token = super.nextToken();
 			console.log("nextToken", next.type)
-			if (this._input.LA(1) === UONLexer.MINUS) {
+			if(this._input.LA(1) === UONLexer.MINUS){
 				console.log("NO HOPE");
 			}
 
@@ -158,9 +158,9 @@ export class UONLexer extends Lexer {
 			//Essayer de le rajouter
 			//controler que ça casse pas la complétion
 
-			if (this.lastToken?.type === UONLexer.MINUS) {
-				this.emit(this.commonToken(UONParser.INDENT, "\n"));
-				console.log("HOPE ?", this.lastToken.line);
+			if(this.lastToken?.type === UONLexer.MINUS){
+			this.emit(this.commonToken(UONParser.INDENT, "\n"));
+			console.log("HOPE ?", this.lastToken.line);
 			}
 
 			this.lastToken = next;
@@ -168,10 +168,10 @@ export class UONLexer extends Lexer {
 			return this.lastToken;
 		}
 
-		public commonToken(number: number, text: string): Token | undefined {
-			//return new CommonToken(this._tokenFactorySourcePair, type, DEFAULT_TOKEN_CHANNEL, start, stop);
-			//return new CommonToken(number, text);
-			return new CommonToken(number, text, this._tokenFactorySourcePair);
+	   public commonToken(number: number, text: string): Token | undefined {
+		   //return new CommonToken(this._tokenFactorySourcePair, type, DEFAULT_TOKEN_CHANNEL, start, stop);
+	      //return new CommonToken(number, text);
+		   return new CommonToken(number, text, this._tokenFactorySourcePair);
 		}
 
 

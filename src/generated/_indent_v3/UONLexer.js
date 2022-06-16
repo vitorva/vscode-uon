@@ -45,7 +45,6 @@ class UONLexer extends Lexer_1.Lexer {
         //Essayer de le rajouter
         //controler que ça casse pas la complétion
         if (this.lastToken?.type === UONLexer.MINUS) {
-            this.emit(this.commonToken(UONParser.INDENT, "\n"));
             console.log("HOPE ?", this.lastToken.line);
         }
         this.lastToken = next;

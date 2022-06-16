@@ -17,8 +17,6 @@ const Utils = require("antlr4ts/misc/Utils");
 class UONLexer extends Lexer_1.Lexer {
     constructor(input) {
         super(input);
-        // tslint:enable:no-trailing-whitespace
-        this.lastToken = undefined;
         this._interp = new LexerATNSimulator_1.LexerATNSimulator(UONLexer._ATN, this);
     }
     // @Override
@@ -26,6 +24,7 @@ class UONLexer extends Lexer_1.Lexer {
     get vocabulary() {
         return UONLexer.VOCABULARY;
     }
+    // tslint:enable:no-trailing-whitespace
     emit(token) {
         if (token !== undefined) {
             return super.emit(token);
@@ -39,22 +38,10 @@ class UONLexer extends Lexer_1.Lexer {
         if (this._input.LA(1) === UONLexer.MINUS) {
             console.log("NO HOPE");
         }
-        //TODO : Bon signe car on pourrait gérer les identations quand on a le signe MINUS ?
-        // PAS besoin d'adapter toute la grammaire ?
-        //TODO Rajouter juste un ident après un minus
-        //Essayer de le rajouter
-        //controler que ça casse pas la complétion
-        if (this.lastToken?.type === UONLexer.MINUS) {
-            this.emit(this.commonToken(UONParser.INDENT, "\n"));
-            console.log("HOPE ?", this.lastToken.line);
+        if (next.type === UONLexer.MINUS) {
+            console.log("HOPE ?");
         }
-        this.lastToken = next;
-        return this.lastToken;
-    }
-    commonToken(number, text) {
-        //return new CommonToken(this._tokenFactorySourcePair, type, DEFAULT_TOKEN_CHANNEL, start, stop);
-        //return new CommonToken(number, text);
-        return new CommonToken(number, text, this._tokenFactorySourcePair);
+        return super.nextToken(); // TODO A ENLEVER
     }
     // @Override
     get grammarFileName() { return "UON.g4"; }
