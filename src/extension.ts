@@ -595,6 +595,11 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
     if(expectedTokensString === undefined){
       //return
     }
+
+    if(e === undefined){ // TODO
+      return
+    }
+    
     //const myjson = JSON.parse(expectedTokensString);
     //console.log(myjson);
 
