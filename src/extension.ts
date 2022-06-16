@@ -597,7 +597,7 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
     }
 
     if(e === undefined){ // TODO
-      return
+      //return
     }
     
     //const myjson = JSON.parse(expectedTokensString);
@@ -717,6 +717,7 @@ export function activate(context1: vscode.ExtensionContext) {
 
       
       core.ignoredTokens = new Set([
+          UONParser.INDENT,
           UONLexer.OPEN_C_BRA,
           UONLexer.CLOSE_C_BRA,
           UONLexer.OPEN_S_BRA,
@@ -729,7 +730,8 @@ export function activate(context1: vscode.ExtensionContext) {
           UONLexer.UNQUOTED_STRING
         ]);
 
-      let candidates = core.collectCandidates(index);
+      // TODO : index + 1 quand INDENT
+      let candidates = core. collectCandidates(index);
 
       const newCompletionItem = (
         text: string,

@@ -113,8 +113,12 @@ public class UONLexer extends Lexer {
 
 
 
+		private tokens: any[] = [];
+		private indents: any[] = [];
+
 		private lastToken?: Token = undefined;
 
+		/*
 		@Override
 		public emit(token?: Token): Token {
 			if (token !== undefined) {
@@ -122,30 +126,51 @@ public class UONLexer extends Lexer {
 			}
 			return super.emit();
 		}
+		*/
+		@Override
+		public emit(token?: Token): Token {
+			return super.emit(token!!);
+		}
+
+		private createAndScheduleIndent(indent: any) {
+			//const previous = this.indents.length ? 0 : this.indents[0];
+			//if (indent > previous) {
+			this.indents.push(indent);
+			this.tokens.push(this.commonToken(UONParser.INDENT, "INDENT"));
+			//}
+		}
 
 		@Override
 		public nextToken(): Token {
-			//console.log(this._input.LA(1));
-			const next: Token = super.nextToken();
-			console.log("nextToken", next.type)
-			if (this._input.LA(1) === UONLexer.MINUS) {
-				console.log("NO HOPE");
+
+			if (this.tokens.length === 0) {
+				console.log("this.tokens.length", this.tokens.length, this.tokens);
+				const next: Token = super.nextToken();
+
+				if (this.lastToken !== null && this.lastToken?.type === UONLexer.MINUS) {
+					this.tokens.push(this.commonToken(UONParser.MINUS, "-"));
+					this.createAndScheduleIndent(this._tokenStartCharPositionInLine);
+				}
+
+				if (this.lastToken !== null && this.lastToken?.type === UONLexer.BOOL_TYPE) {
+						this.tokens.push(this.commonToken(UONParser.BOOL_TYPE, "!bool"));
+						this.createAndScheduleIndent(this._tokenStartCharPositionInLine);
+				}
+
+
+				this.lastToken = next;
+			}
+			else {
+				this.lastToken = this.tokens.pop();
+				console.log(this.lastToken?.line)
+				console.log(this.lastToken?.type)
+				console.log("pop", this.lastToken?.text);
+
 			}
 
-			//TODO : Bon signe car on pourrait gérer les identations quand on a le signe MINUS ?
-			// PAS besoin d'adapter toute la grammaire ?
-			//TODO Rajouter juste un ident après un minus
-			//Essayer de le rajouter
-			//controler que ça casse pas la complétion
 
-			if (this.lastToken?.type === UONLexer.MINUS) {
-				this.emit(this.commonToken(UONParser.INDENT, "\n"));
-				console.log("HOPE ?", this.lastToken.line);
-			}
-
-			this.lastToken = next;
-
-			return this.lastToken;
+			//return this.emit(this.lastToken);
+			return this.lastToken!!;
 		}
 
 		public commonToken(number: number, text: string): Token | undefined {
