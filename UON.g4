@@ -6,24 +6,25 @@ tokens {
 }
 
 @lexer::members {
-
+	
+	private ignoreWord : boolean = true;
 	private tokens: any[] = [];
 	private indents: any[] = [];
 
 	private lastToken?: Token = undefined;
 
-	/*
+
 	@Override
 	public emit(token?: Token): Token {
+		if (this._type === UONParser.NEWLINE2) {
+			//this.skip();
+			this._text = "";
+		}
+
 		if (token !== undefined) {
 			return super.emit(token);
 		}
 		return super.emit();
-	}
-	*/
-	@Override
-	public emit(token?: Token): Token {
-		return super.emit(token!!);
 	}
 
 	private createAndScheduleIndent(indent: any) {
@@ -42,24 +43,27 @@ tokens {
 			const next: Token = super.nextToken();
 
 			if (this.lastToken !== null && this.lastToken?.type === UONLexer.MINUS) {
-				this.tokens.push(this.commonToken(UONParser.MINUS, "-"));
+				this.tokens.push(this.commonToken(UONParser.MINUS, "-")); // TODO
 				this.createAndScheduleIndent(this._tokenStartCharPositionInLine);
 			}
 
 			if (this.lastToken !== null && this.lastToken?.type === UONLexer.BOOL_TYPE) {
-					this.tokens.push(this.commonToken(UONParser.BOOL_TYPE, "!bool"));
-					this.createAndScheduleIndent(this._tokenStartCharPositionInLine);
+				//this.tokens.push(this.commonToken(UONParser.BOOL_TYPE, "!bool"));
+				this.createAndScheduleIndent(this._tokenStartCharPositionInLine);
 			}
 
+			if (this.lastToken?.type === UONLexer.NEWLINE2) {
+				//TODO NOTHING
+			}
 
 			this.lastToken = next;
+
 		}
 		else {
 			this.lastToken = this.tokens.pop();
 			console.log(this.lastToken?.line)
 			console.log(this.lastToken?.type)
 			console.log("pop", this.lastToken?.text);
-
 		}
 
 
@@ -73,9 +77,13 @@ tokens {
 		return new CommonToken(number, text, this._tokenFactorySourcePair);
 	}
 
+	public atStartOfInput(): boolean {
+		return super.charPositionInLine === 0 && super.line === 1;
+	}
+
 }
 
-uon: root_value;
+uon: NEWLINE2* root_value;
 
 json_collection: json_map | json_seq;
 
@@ -301,6 +309,12 @@ fragment SPACES: [ \t]+;
 // \- since - means "range" inside [...]
 
 WS: [ \n\r\t] -> channel(HIDDEN);
+
+NEWLINE2
+ : ( {atStartOfInput()}?   SPACES
+   | ( '\r'? '\n' | '\r' ) SPACES?
+   ) {if(ignoreWord) this.skip();}
+ ;
 
 OPEN_PAR: '(';
 CLOSE_PAR: ')';

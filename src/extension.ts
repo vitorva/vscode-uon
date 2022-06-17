@@ -664,8 +664,8 @@ export function activate(context1: vscode.ExtensionContext) {
 
       parser.removeErrorListeners();
 
-      const errorStrategy = new UonCompletionErrorStrategy();
-      parser.errorHandler = errorStrategy;
+      //const errorStrategy = new UonCompletionErrorStrategy();
+      //parser.errorHandler = errorStrategy;
 
       parser.buildParseTree = true;
       let tree = parser.uon();  // Parse Tree
@@ -964,16 +964,22 @@ class UonConfigDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
       const tokenStream = new CommonTokenStream(lexer);
       const parser = new UONParser(tokenStream);
 
-      parser.removeErrorListeners();
+      //parser.removeErrorListeners();
 
       this.collection.clear()
       let errorListener = new ErrorListener(document, this.collection, this.context, parser);
-      parser.addErrorListener(errorListener);
-
+      
       //parser.removeErrorListeners();
+
+      const errorStrategy = new UonCompletionErrorStrategy();
+      parser.errorHandler = errorStrategy;
+
+      parser.addErrorListener(errorListener);
 
       parser.buildParseTree = true;
       let tree = parser.uon();  // Parse Tree
+
+      console.log("tree.toStringTree", tree.toStringTree(parser));
 
       // Create the visitor
       const uonASTVisitor = new UonASTVisitor(document, text);
