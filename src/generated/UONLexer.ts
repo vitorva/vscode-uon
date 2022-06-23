@@ -13,8 +13,8 @@ import { Vocabulary } from "antlr4ts/Vocabulary";
 import { VocabularyImpl } from "antlr4ts/VocabularyImpl";
 
 import * as Utils from "antlr4ts/misc/Utils";
-import { CommonToken, Token } from "antlr4ts";
 import { UONParser } from "./UONParser";
+import { CommonToken, Token } from "antlr4ts";
 
 
 export class UONLexer extends Lexer {
@@ -196,9 +196,9 @@ export class UONLexer extends Lexer {
 			}
 			else if (indent > previous) {
 				this.indents.push(indent);
-				this.schedule(this.commonToken(UONParser.INDENT, spaces));
+				this.schedule(this.commonToken(UONParser.INDENT, "INDENT")); // spaces
 			} else {
-				while (this.indents.length === 0 && this.indents[0] > indent) {
+				while (this.indents.length !== 0 && this.indents[0] > indent) {
 					this.schedule(this.createDedent());
 					this.indents.pop();
 				}
@@ -339,7 +339,7 @@ export class UONLexer extends Lexer {
 	private NEWLINE2_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 0:
-			if(this.ignoreWord) this.skip();
+			if(this.ignoreWord) {this.skip();}
 			break;
 		}
 	}

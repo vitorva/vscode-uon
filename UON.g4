@@ -195,7 +195,7 @@ json_seq: (SEQUENCE_TYPE)? OPEN_S_BRA (
 
 yaml_collection: yaml_map | yaml_seq;
 
-yaml_collection_nested:  yaml_collection;
+yaml_collection_nested: NEWLINE2 (INDENT yaml_collection DEDENT);
 
 yaml_map: (MAPPING_TYPE)? pair+;
 
