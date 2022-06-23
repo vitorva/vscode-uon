@@ -8,6 +8,7 @@ import { Json_collectionContext } from "./UONParser";
 import { Json_mapContext } from "./UONParser";
 import { Json_seqContext } from "./UONParser";
 import { Yaml_collectionContext } from "./UONParser";
+import { Yaml_collection_nestedContext } from "./UONParser";
 import { Yaml_mapContext } from "./UONParser";
 import { Yaml_seqContext } from "./UONParser";
 import { Seq_itemContext } from "./UONParser";
@@ -127,6 +128,17 @@ export interface UONListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitYaml_collection?: (ctx: Yaml_collectionContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.yaml_collection_nested`.
+	 * @param ctx the parse tree
+	 */
+	enterYaml_collection_nested?: (ctx: Yaml_collection_nestedContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.yaml_collection_nested`.
+	 * @param ctx the parse tree
+	 */
+	exitYaml_collection_nested?: (ctx: Yaml_collection_nestedContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `UONParser.yaml_map`.

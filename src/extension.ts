@@ -527,7 +527,64 @@ class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<
 class UonCompletionErrorStrategy extends DefaultErrorStrategy {
   protected singleTokenDeletion(recognizer: Parser): Token | undefined {
     //return undefined;
-    return super.singleTokenDeletion(recognizer);
+    //return super.singleTokenDeletion(recognizer);
+    let nextTokenTypeax = recognizer.inputStream.LA(1);
+    let nextTokenTypes = recognizer.inputStream.LA(2);
+    let nextTokenTypecc = recognizer.inputStream.LA(3);
+    let nextTokenTypea = recognizer.inputStream.LA(4);
+
+    let nextTokenType = recognizer.inputStream.LA(2);
+    let expecting = this.getExpectedTokens(recognizer);
+
+    if (expecting.contains(nextTokenType)) {
+        this.reportUnwantedToken(recognizer);
+        /*
+        System.err.println("recoverFromMismatchedToken deleting "+
+                           ((TokenStream)recognizer.inputStream).LT(1)+
+                           " since "+((TokenStream)recognizer.inputStream).LT(2)+
+                           " is what we want");
+        */
+        recognizer.consume(); // simply delete extra token
+        // we want to return the token we're actually matching
+        let matchedSymbol = recognizer.currentToken;
+        this.reportMatch(recognizer); // we know current token is correct
+        return matchedSymbol;
+    }
+
+    return undefined;
+
+    let nextTokenType2 = recognizer.inputStream.LA(1);
+    let nextTokenType3 = recognizer.inputStream.LA(2);
+    let nextTokenType4 = recognizer.inputStream.LA(3);
+    let nextTokenType5 = recognizer.inputStream.LA(4);
+    let nextTokenType7 = recognizer.inputStream.LA(5);
+    let nextTokenType28 = recognizer.inputStream.LA(6);
+
+
+    let matchedSymbol = recognizer.currentToken;
+    return matchedSymbol;
+
+    expecting = this.getExpectedTokens(recognizer);
+    if (expecting.contains(nextTokenType)) {
+        this.reportUnwantedToken(recognizer);
+        /*
+        System.err.println("recoverFromMismatchedToken deleting "+
+                           ((TokenStream)recognizer.inputStream).LT(1)+
+                           " since "+((TokenStream)recognizer.inputStream).LT(2)+
+                           " is what we want");
+        */
+        recognizer.consume(); // simply delete extra token
+        recognizer.consume();
+        recognizer.consume();
+        // we want to return the token we're actually matching
+        let matchedSymbol = recognizer.currentToken;
+        this.reportMatch(recognizer); // we know current token is correct
+        return matchedSymbol;
+    }
+
+
+
+    return undefined;
   }
 
   protected consumeUntil(recognizer: Parser, set: IntervalSet): void {
@@ -621,7 +678,7 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
     //console.log(this.parser.vocabulary.getDisplayName(expectedTokens[0]));
 
     if(this.errorCount > 0){
-      return
+      //return
     }
     ++this.errorCount;
 
@@ -662,10 +719,10 @@ export function activate(context1: vscode.ExtensionContext) {
       const tokenStream = new CommonTokenStream(lexer);
       const parser = new UONParser(tokenStream);
 
-      parser.removeErrorListeners();
+      //parser.removeErrorListeners();
 
-      //const errorStrategy = new UonCompletionErrorStrategy();
-      //parser.errorHandler = errorStrategy;
+      const errorStrategy = new UonCompletionErrorStrategy();
+      parser.errorHandler = errorStrategy;
 
       parser.buildParseTree = true;
       let tree = parser.uon();  // Parse Tree
@@ -717,17 +774,16 @@ export function activate(context1: vscode.ExtensionContext) {
 
       
       core.ignoredTokens = new Set([
-          UONParser.INDENT,
           UONLexer.OPEN_C_BRA,
           UONLexer.CLOSE_C_BRA,
           UONLexer.OPEN_S_BRA,
           UONLexer.CLOSE_S_BRA,
           UONLexer.OPEN_PAR,
           UONLexer.CLOSE_PAR,
-          UONLexer.COMMA,
+          //UONLexer.COMMA,
           UONLexer.COLON,
-          UONLexer.QUOTED_STRING,
-          UONLexer.UNQUOTED_STRING
+          //UONLexer.QUOTED_STRING,
+          //UONLexer.UNQUOTED_STRING
         ]);
 
       // TODO : index + 1 quand INDENT
@@ -971,8 +1027,8 @@ class UonConfigDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
       
       //parser.removeErrorListeners();
 
-      const errorStrategy = new UonCompletionErrorStrategy();
-      parser.errorHandler = errorStrategy;
+      //const errorStrategy = new UonCompletionErrorStrategy();
+      //parser.errorHandler = errorStrategy;
 
       parser.addErrorListener(errorListener);
 

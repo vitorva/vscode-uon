@@ -18,7 +18,7 @@ class UONLexer extends Lexer_1.Lexer {
     constructor(input) {
         super(input);
         // tslint:enable:no-trailing-whitespace
-        this.ignoreWord = true;
+        this.ignoreWord = false;
         this.tokens = [];
         this.indents = [];
         this.lastToken = undefined;
@@ -30,33 +30,112 @@ class UONLexer extends Lexer_1.Lexer {
         return UONLexer.VOCABULARY;
     }
     emit(token) {
-        if (this._type === UONParser.NEWLINE2) {
-            //this.skip();
-            this._text = "";
-        }
         if (token !== undefined) {
             return super.emit(token);
         }
         return super.emit();
     }
     createAndScheduleIndent(indent) {
-        //const previous = this.indents.length ? 0 : this.indents[0];
-        //if (indent > previous) {
-        this.indents.push(indent);
-        this.tokens.push(this.commonToken(UONParser.INDENT, "INDENT"));
-        //}
+        const previous = this.indents.length ? 0 : this.indents[0];
+        if (indent > previous) {
+            this.indents.push(indent);
+            this.tokens.push(this.commonToken(UONParser.INDENT, "INDENT"));
+        }
+    }
+    processEOF_NextToken() {
+        this.schedule(this.commonToken(UONLexer.NEWLINE2, "\n"));
+        if (this.indents.length !== 0) {
+            // Now emit as much DEDENT tokens as needed.
+            while (this.indents.length !== 0) {
+                this.schedule(this.createDedent());
+                this.indents.pop();
+            }
+        }
+        // Put the EOF back on the token stream.
+        this.schedule(this.commonToken(UONParser.EOF, "<EOF>"));
+    }
+    createDedent() {
+        let dedent = this.commonToken(UONParser.DEDENT, "DEDENT");
+        dedent.line = this.lastToken?.line;
+        return dedent;
+    }
+    processNEWLINE_NextToken() {
+        console.log(this.text);
+        let spaces = this.text.replace(/(\r\n)+/, "");
+        this.schedule(this.commonToken(UONLexer.NEWLINE2, "\n"));
+        let indent = this.getIndentationCount(spaces);
+        let previous = this.indents.length === 0 ? 0 : this.indents[0];
+        console.log("indent-previous", indent, previous);
+        if (indent === previous) {
+        }
+        else if (indent > previous) {
+            this.indents.push(indent);
+            this.schedule(this.commonToken(UONParser.INDENT, spaces));
+        }
+        else {
+            while (this.indents.length === 0 && this.indents[0] > indent) {
+                this.schedule(this.createDedent());
+                this.indents.pop();
+            }
+        }
+    }
+    getIndentationCount(spaces) {
+        let count = 0;
+        for (let index = 0; index < spaces.length; index++) {
+            const ch = spaces[index];
+            switch (ch) {
+                case "\t":
+                    count = count + (8 - (count % 8));
+                    break;
+                default:
+                    // A normal space char.
+                    count = count + 1;
+            }
+        }
+        return count;
+    }
+    schedule(token) {
+        //throw new Error("Function not implemented.");
+        this.tokens.push(token);
     }
     nextToken() {
+        console.log("LENGHT", this.tokens.length);
         if (this.tokens.length === 0) {
             console.log("this.tokens.length", this.tokens.length, this.tokens);
-            const next = super.nextToken();
+            let next = super.nextToken();
+            if (next.type === UONLexer.EOF) {
+                this.processEOF_NextToken();
+                next = this.tokens.pop();
+            }
+            else if (next.type === UONLexer.NEWLINE2) {
+                this.processNEWLINE_NextToken();
+                next = this.tokens.pop();
+            }
             if (this.lastToken !== null && this.lastToken?.type === UONLexer.MINUS) {
-                this.tokens.push(this.commonToken(UONParser.MINUS, "-")); // TODO
-                this.createAndScheduleIndent(this._tokenStartCharPositionInLine);
+                //this.tokens.push(this.commonToken(UONParser.MINUS, "-")); // TODO
+                //this.createAndScheduleIndent(this._tokenStartCharPositionInLine);
+                /*
+                let indent = this._tokenStartCharPositionInLine;
+
+                let afterNext: Token = super.nextToken();
+                console.log(next.type);
+                console.log(afterNext.type);
+
+                if (afterNext.type === UONLexer.EOF) {
+                    this.processEOF_NextToken();
+                } else if (afterNext.type === UONLexer.NEWLINE2) {
+                    this.processNEWLINE_NextToken();
+                    //this.tokens.push(this.commonToken(UONParser.MINUS, "-")); // TODO
+                    //this.createAndScheduleIndent(this._tokenStartCharPositionInLine);
+                }
+                else {
+                    this.schedule(afterNext);
+                }
+                */
             }
             if (this.lastToken !== null && this.lastToken?.type === UONLexer.BOOL_TYPE) {
                 //this.tokens.push(this.commonToken(UONParser.BOOL_TYPE, "!bool"));
-                this.createAndScheduleIndent(this._tokenStartCharPositionInLine);
+                //this.createAndScheduleIndent(this._tokenStartCharPositionInLine);
             }
             if (this.lastToken?.type === UONLexer.NEWLINE2) {
                 //TODO NOTHING

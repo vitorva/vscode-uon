@@ -8,6 +8,7 @@ import { Json_collectionContext } from "./UONParser";
 import { Json_mapContext } from "./UONParser";
 import { Json_seqContext } from "./UONParser";
 import { Yaml_collectionContext } from "./UONParser";
+import { Yaml_collection_nestedContext } from "./UONParser";
 import { Yaml_mapContext } from "./UONParser";
 import { Yaml_seqContext } from "./UONParser";
 import { Seq_itemContext } from "./UONParser";
@@ -110,6 +111,13 @@ export interface UONVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitYaml_collection?: (ctx: Yaml_collectionContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.yaml_collection_nested`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitYaml_collection_nested?: (ctx: Yaml_collection_nestedContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `UONParser.yaml_map`.
