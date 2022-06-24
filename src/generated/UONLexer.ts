@@ -182,7 +182,7 @@ export class UONLexer extends Lexer {
 			console.log(this.text);
 			let spaces: string = this.text.replace(/(\r\n)+/, "");
 
-			this.schedule(this.commonToken(UONLexer.NEWLINE2, "\n"));
+			this.schedule(this.commonToken(UONLexer.NEWLINE2, "NEWLINE2"));
 
 
 			let indent: number = this.getIndentationCount(spaces);
@@ -200,7 +200,7 @@ export class UONLexer extends Lexer {
 			} else {
 				while (this.indents.length !== 0 && this.indents[0] > indent) {
 					this.schedule(this.createDedent());
-					this.indents.pop();
+					this.indents.shift();
 				}
 			}
 
@@ -241,10 +241,10 @@ export class UONLexer extends Lexer {
 
 				if (next.type === UONLexer.EOF) {
 					this.processEOF_NextToken();
-					next = this.tokens.pop();
+					next = this.tokens.shift();
 				} else if (next.type === UONLexer.NEWLINE2) {
 					this.processNEWLINE_NextToken();
-					next = this.tokens.pop();
+					next = this.tokens.shift();
 				}
 
 
@@ -285,10 +285,10 @@ export class UONLexer extends Lexer {
 
 			}
 			else {
-				this.lastToken = this.tokens.pop();
+				this.lastToken = this.tokens.shift();
 				console.log(this.lastToken?.line)
 				console.log(this.lastToken?.type)
-				console.log("pop", this.lastToken?.text);
+				console.log("shift", this.lastToken?.text);
 			}
 
 
