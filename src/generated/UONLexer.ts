@@ -134,7 +134,7 @@ export class UONLexer extends Lexer {
 
 
 		
-		private ignoreWord: boolean = false;
+		private ignoreWord: boolean = true;
 		private tokens: any[] = [];
 		private indents: any[] = [];
 
@@ -237,6 +237,10 @@ export class UONLexer extends Lexer {
 			if (this.tokens.length === 0) {
 				console.log("this.tokens.length", this.tokens.length, this.tokens);
 				let next: Token = super.nextToken();
+
+				if(next.type === UONLexer.MINUS){ // TODO
+					this.ignoreWord = false;
+				}
 
 
 				if (next.type === UONLexer.EOF) {
