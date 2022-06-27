@@ -2,7 +2,8 @@
   "name": "vscode-uon",
   "displayName": "UON",
   "description": "UON Language Support",
-  "version": "0.2.0",
+  "version": "0.1.0",
+  "publisher" : "test2Publish",
   "engines": {
     "vscode": "^1.65.0"
   },
@@ -43,7 +44,8 @@
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
-    "antlr4ts": "antlr4ts -visitor UON.g4"
+    "antlr4ts": "antlr4ts -visitor UON.g4",
+	"deploy": "vsce publish --yarn"
   },
   "devDependencies": {
     "@types/chai": "^4.3.1",
