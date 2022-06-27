@@ -22,8 +22,3 @@ jobs:
       if: runner.os == 'Linux'
     - run: npm test
       if: runner.os != 'Linux'
-  deploy:
-    only:
-        - tags
-    script:
-        - npm run deploy
