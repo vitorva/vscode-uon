@@ -12,17 +12,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - name: Publish
-      run: npm run deploy
+      run: |
+            npm install
+            npm run deploy
       env:
         VSCE_PAT: ${{ secrets.VSCE_PAT }}
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Install Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: 14.x
-    - run: npm install
-    - run: xvfb-run -a npm test
-      if: runner.os == 'Linux'
-    - run: npm test
-      if: runner.os != 'Linux'
