@@ -1,4 +1,11 @@
-out
+out/generated
+out/grammar
+out/src
+out/test
+out/extension*
+out/index*
+out/person*
+out/hover_old.json*
 dist
 node_modules
 .vscode-test/
