@@ -3,7 +3,9 @@ on:
     branches:
       - fb-ci
       - fb-indent-v3
-
+  release:
+    types:
+    - created  
 jobs:
   build:
     strategy:
@@ -12,7 +14,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         ref: fb-indent-v3
     - name: Install Node.js
