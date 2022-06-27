@@ -2,7 +2,7 @@
   "name": "vscode-uon",
   "displayName": "UON",
   "description": "UON Language Support",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "publisher": "test2Publish",
   "engines": {
     "vscode": "^1.65.0"
