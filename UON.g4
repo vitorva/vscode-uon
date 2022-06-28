@@ -247,6 +247,8 @@ fragment NEWLINE
 // \- since - means "range" inside [...]
 
 WS: [ \n\r\t] -> channel(HIDDEN);
+
+LINE_COMMENT: '#' ~[\r\n]* -> skip;
    
 OPEN_PAR:    '(';
 CLOSE_PAR:   ')';
