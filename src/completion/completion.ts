@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as c3 from 'antlr4-c3';
-import { CharStreams, CommonTokenStream, Parser, ParserRuleContext } from 'antlr4ts';
+import { CharStreams, CommonTokenStream, Parser} from 'antlr4ts';
 import { CompletionItem, CompletionItemKind } from 'vscode';
 import { UonCompletionErrorStrategy } from '../error/UonCompletionErrorStrategy';
 import { UONLexer } from '../generated/UONLexer';
