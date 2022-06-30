@@ -136,7 +136,7 @@ FLOAT_32_TYPE: '!float32';
 
 INT_TYPE: '!int';
 INT_128_TYPE: '!int128';
-INT_64_TYPE: '!int6';
+INT_64_TYPE: '!int64';
 INT_32_TYPE: '!int32';
 
 UINT_TYPE: '!uint';
@@ -191,6 +191,11 @@ boolean: (true | false);
 true : 'true' | 'True';
 false : 'false' | 'False';
 null: 'null' | 'none' | 'None';
+
+number : decimal | signed_decimal | float_number;
+decimal : string
+float_number: string
+signed_decimal: (PLUS|MINUS) string
 
 fragment DOUBLE_QUOTE_CHAR
    : ~["\\\r\n]
@@ -247,8 +252,6 @@ fragment NEWLINE
 // \- since - means "range" inside [...]
 
 WS: [ \n\r\t] -> channel(HIDDEN);
-
-LINE_COMMENT: '#' ~[\r\n]* -> skip;
    
 OPEN_PAR:    '(';
 CLOSE_PAR:   ')';
@@ -261,3 +264,5 @@ COLON:		 ':';
 MAPPING_TYPE: '!map';
 SEQUENCE_TYPE: '!seq';
 SCHEMA_TYPE: '!schema';
+PLUS: '+';
+MINUS: '-';

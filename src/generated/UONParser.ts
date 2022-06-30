@@ -1,4 +1,4 @@
-// Generated from UON.g4 by ANTLR 4.9.0-SNAPSHOT
+// Generated from ../grammar/UON.g4 by ANTLR 4.9.0-SNAPSHOT
 
 
 import { ATN } from "antlr4ts/atn/ATN";
@@ -171,7 +171,7 @@ export class UONParser extends Parser {
 		"'True'", "'false'", "'False'", "'null'", "'none'", "'None'", "'!!'", 
 		"'m'", "'km'", "'g'", "'kg'", "'s'", "'min'", "'C'", "'K'", undefined, 
 		"'!str'", "'!bool'", "'!url'", "'!float'", "'!float128'", "'!float64'", 
-		"'!float32'", "'!int'", "'!int128'", "'!int6'", "'!int32'", "'!uint'", 
+		"'!float32'", "'!int'", "'!int128'", "'!int64'", "'!int32'", "'!uint'", 
 		"'!uint128'", "'!uint64'", "'!uint32'", undefined, undefined, undefined, 
 		"'('", "')'", "'{'", "'}'", "'['", "']'", "','", "':'", "'!map'", "'!seq'", 
 		"'!schema'",

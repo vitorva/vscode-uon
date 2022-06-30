@@ -192,11 +192,6 @@ true : 'true' | 'True';
 false : 'false' | 'False';
 null: 'null' | 'none' | 'None';
 
-number : decimal | signed_decimal | float_number;
-decimal : string
-float_number: string
-signed_decimal: (PLUS|MINUS) string
-
 fragment DOUBLE_QUOTE_CHAR
    : ~["\\\r\n]
    | ESCAPE_SEQUENCE
@@ -252,6 +247,8 @@ fragment NEWLINE
 // \- since - means "range" inside [...]
 
 WS: [ \n\r\t] -> channel(HIDDEN);
+
+LINE_COMMENT: '#' ~[\r\n]* -> skip;
    
 OPEN_PAR:    '(';
 CLOSE_PAR:   ')';
@@ -264,5 +261,3 @@ COLON:		 ':';
 MAPPING_TYPE: '!map';
 SEQUENCE_TYPE: '!seq';
 SCHEMA_TYPE: '!schema';
-PLUS: '+';
-MINUS: '-';

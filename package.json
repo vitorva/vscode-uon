@@ -44,7 +44,8 @@
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
-    "antlr4ts": "antlr4ts -visitor UON.g4",
+    "antlr4ts": "cd src/generated && antlr4ts -visitor ../grammar/UON.g4",
+	"build": "npm run antlr4ts && tsc -b",
     "deploy": "vsce publish"
   },
   "devDependencies": {

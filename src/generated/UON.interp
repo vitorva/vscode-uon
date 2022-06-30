@@ -37,7 +37,7 @@ null
 '!float32'
 '!int'
 '!int128'
-'!int6'
+'!int64'
 '!int32'
 '!uint'
 '!uint128'
