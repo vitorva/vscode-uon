@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 
 import { completionFor } from './completion/completion';
-import { UonConfigDocumentSymbolProvider } from './outline/UonConfigDocumentSymbolProvider';
+import { UonDocumentSymbolProvider } from './outline/UonDocumentSymbolProvider';
 
 const hoverJson = require("./hover.json");
 
@@ -47,7 +47,7 @@ export function activate(extensionContext: vscode.ExtensionContext) {
   extensionContext.subscriptions.push(
     vscode.languages.registerDocumentSymbolProvider(
       { scheme: "file", language: "uon" },
-      new UonConfigDocumentSymbolProvider(collection, extensionContext)
+      new UonDocumentSymbolProvider(collection, extensionContext)
     )
   );
 }

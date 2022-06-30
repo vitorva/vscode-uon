@@ -6,7 +6,7 @@ import { UONLexer } from '../generated/UONLexer';
 import { UONParser } from '../generated/UONParser';
 import { UonASTVisitor } from './UonASTVisitor';
 
-export class UonConfigDocumentSymbolProvider implements DocumentSymbolProvider {
+export class UonDocumentSymbolProvider implements DocumentSymbolProvider {
 
     // The outline will also have the role of controlling the structure of the file
     collection: vscode.DiagnosticCollection;
@@ -22,11 +22,6 @@ export class UonConfigDocumentSymbolProvider implements DocumentSymbolProvider {
         token: vscode.CancellationToken): Promise<vscode.DocumentSymbol[]> {
         return new Promise((resolve, reject) => {
 
-            //Find cursor position
-            let activeEditor = vscode.window.activeTextEditor;
-            let curPos = activeEditor?.selection.active;
-            let offset = document.offsetAt(curPos!!);
-
             //Retrieve text from start to cursor position
             const text = document.getText();
 
@@ -35,10 +30,10 @@ export class UonConfigDocumentSymbolProvider implements DocumentSymbolProvider {
             const lexer = new UONLexer(inputStream);
             const tokenStream = new CommonTokenStream(lexer);
             const parser = new UONParser(tokenStream);
-
             parser.removeErrorListeners();
 
             this.collection.clear()
+            
             let errorListener = new ErrorListener(document, this.collection, this.context, parser);
             parser.addErrorListener(errorListener);
 
@@ -51,12 +46,10 @@ export class UonConfigDocumentSymbolProvider implements DocumentSymbolProvider {
             // Use the visitor entry point
             const ast = uonASTVisitor.visit(tree);
 
-            console.log("AST", ast);
-
             let symbols: vscode.DocumentSymbol[] = [];
             let nodes = [symbols];
 
-            // the ast coulb be an array []
+            // the ast could be an array []
             for (var i = 0; i < ast.length; i++) {
                 nodes[nodes.length - 1].push(ast[i]);
             }
