@@ -28,7 +28,6 @@ import { LengthContext } from "./UONParser";
 import { MassContext } from "./UONParser";
 import { TimeContext } from "./UONParser";
 import { TemperatureContext } from "./UONParser";
-import { NumberContext } from "./UONParser";
 import { Root_valueContext } from "./UONParser";
 import { Json_valueContext } from "./UONParser";
 import { Number_typeContext } from "./UONParser";
@@ -60,6 +59,7 @@ import { TrueContext } from "./UONParser";
 import { FalseContext } from "./UONParser";
 import { NullContext } from "./UONParser";
 import { LiteralContext } from "./UONParser";
+import { NumberContext } from "./UONParser";
 
 
 /**
@@ -341,17 +341,6 @@ export interface UONListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitTemperature?: (ctx: TemperatureContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.number`.
-	 * @param ctx the parse tree
-	 */
-	enterNumber?: (ctx: NumberContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.number`.
-	 * @param ctx the parse tree
-	 */
-	exitNumber?: (ctx: NumberContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `UONParser.root_value`.
@@ -693,5 +682,16 @@ export interface UONListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitLiteral?: (ctx: LiteralContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.number`.
+	 * @param ctx the parse tree
+	 */
+	enterNumber?: (ctx: NumberContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.number`.
+	 * @param ctx the parse tree
+	 */
+	exitNumber?: (ctx: NumberContext) => void;
 }
 

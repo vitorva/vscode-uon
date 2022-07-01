@@ -1,7 +1,7 @@
 grammar UON;
 
 uon
-   : root_value? EOF
+   : root_value?
    ;
 
 json_collection : json_map | json_seq;
@@ -61,18 +61,16 @@ mass: GRAMS | KILOGRAMS;
 time: SECOND  | MINUTE;
 temperature: CELSIUS | KELVIN;
 
-number: UNQUOTED_STRING;
-  
 root_value
    : json_collection
    | schema
    ;
 
 json_value
-   : json_map 
+   : json_map
    | json_seq
    | scalar
-   | json_user_type 
+   | json_user_type
    | null
    ;
 
@@ -91,18 +89,18 @@ schema_presentation: schema_name | schema_uuid | description;
 schema_name: 'name' COLON string;
 schema_uuid: 'uuid' COLON url;
 
-validation_properties: string_validation 
-                      | number_validation 
+validation_properties: string_validation
+                      | number_validation
                       | boolean_validation
                       | url_validation;
-                      
+
 string_validation: STR_TYPE (string_properties)?;
 string_properties: OPEN_PAR (string_property (COMMA string_property)*)? CLOSE_PAR;
-string_property 
-		:	string_max 
+string_property
+		:	string_max
 		|  string_min
 		;
-		
+
 string_max: 'max' COLON string;
 string_min: 'min' COLON string;
 
@@ -129,6 +127,13 @@ false : 'false' | 'False';
 null: 'null' | 'none' | 'None';
 
 literal : LENGTH | MASS | TEMPERATURE | TIME | boolean | null;
+
+number
+   : SYMBOL?
+      ( NUMERIC_LITERAL
+      | NUMBER
+      )
+   ;
 
 METERS: 'm';
 KILOMETERS: 'km';
@@ -181,12 +186,12 @@ fragment DOUBLE_QUOTE_CHAR
    : ~["\\\r\n]
    | ESCAPE_SEQUENCE
    ;
-   
+
 fragment SINGLE_QUOTE_CHAR
    : ~['\\\r\n]
    | ESCAPE_SEQUENCE
    ;
-   
+
 fragment ESCAPE_SEQUENCE
    : '\\'
    ( NEWLINE
@@ -198,37 +203,66 @@ fragment ESCAPE_SEQUENCE
    )
    ;
 
-UNQUOTED_STRING
-   : IDENTIFIER*
+NUMBER
+   : INT ('.' [0-9]*)? EXP? // +1.e2, 1234, 1234.5
+   | '.' [0-9]+ EXP?        // -.2e3
+   | '0' [xX] HEX+          // 0x12345678
    ;
 
-fragment IDENTIFIER
+NUMERIC_LITERAL
+   : 'Infinity'
+   | 'NaN'
+   ;
+
+SYMBOL
+   : '+' | '-'
+   ;
+
+fragment INT
+   : '0' | [1-9] [0-9]*
+   ;
+
+fragment EXP
+   : [Ee] SYMBOL? [0-9]*
+   ;
+
+UNQUOTED_STRING
+   : IDENTIFIER
+   ;
+
+IDENTIFIER
+   : IDENTIFIER_START IDENTIFIER_PART*
+   ;
+
+fragment IDENTIFIER_START
    : [\p{L}]
+   | '$'
+   | '_'
+   | '\\' UNICODE_SEQUENCE
+   ;
+
+fragment IDENTIFIER_PART
+   : IDENTIFIER_START
    | [\p{M}]
    | [\p{N}]
    | [\p{Pc}]
-   | '\\' UNICODE_SEQUENCE
    | '\u200C'
    | '\u200D'
-   | '$'
-   | '_'
-   | '"'
-   | '\''
-   | '?'
    ;
+
 
 fragment HEX
    : [0-9a-fA-F]
    ;
-   
+
 fragment UNICODE_SEQUENCE
    : 'u' HEX HEX HEX HEX
    ;
 fragment NEWLINE
    : '\r\n'
    | [\r\n\u2028\u2029]
-   ;   
-   
+   ;
+
 // \- since - means "range" inside [...]
 
 WS: [ \n\r\t] -> channel(HIDDEN);

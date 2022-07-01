@@ -28,7 +28,6 @@ import { LengthContext } from "./UONParser";
 import { MassContext } from "./UONParser";
 import { TimeContext } from "./UONParser";
 import { TemperatureContext } from "./UONParser";
-import { NumberContext } from "./UONParser";
 import { Root_valueContext } from "./UONParser";
 import { Json_valueContext } from "./UONParser";
 import { Number_typeContext } from "./UONParser";
@@ -60,6 +59,7 @@ import { TrueContext } from "./UONParser";
 import { FalseContext } from "./UONParser";
 import { NullContext } from "./UONParser";
 import { LiteralContext } from "./UONParser";
+import { NumberContext } from "./UONParser";
 
 
 /**
@@ -244,13 +244,6 @@ export interface UONVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitTemperature?: (ctx: TemperatureContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.number`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitNumber?: (ctx: NumberContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `UONParser.root_value`.
@@ -468,5 +461,12 @@ export interface UONVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitLiteral?: (ctx: LiteralContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.number`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitNumber?: (ctx: NumberContext) => Result;
 }
 
