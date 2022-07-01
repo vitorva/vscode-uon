@@ -2,6 +2,7 @@ import { CharStreams, CommonTokenStream } from 'antlr4ts';
 import * as vscode from 'vscode';
 import { DocumentSymbolProvider } from 'vscode';
 import { ErrorListener } from '../error/ErrorListener';
+import { UonCompletionErrorStrategy } from '../error/UonCompletionErrorStrategy';
 import { UONLexer } from '../generated/UONLexer';
 import { UONParser } from '../generated/UONParser';
 import { UonASTVisitor } from './UonASTVisitor';
@@ -33,6 +34,9 @@ export class UonDocumentSymbolProvider implements DocumentSymbolProvider {
             parser.removeErrorListeners();
 
             this.collection.clear();
+
+            const errorStrategy = new UonCompletionErrorStrategy();
+            parser.errorHandler = errorStrategy;
 
             let errorListener = new ErrorListener(document, this.collection, this.context, parser);
             parser.addErrorListener(errorListener);

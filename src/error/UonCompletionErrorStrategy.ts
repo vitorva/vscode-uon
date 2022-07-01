@@ -9,7 +9,8 @@ export class UonCompletionErrorStrategy extends DefaultErrorStrategy {
     }
   
     protected consumeUntil(recognizer: Parser, set: IntervalSet): void {
-      super.consumeUntil(recognizer, set);
+      //super.consumeUntil(recognizer, set);
+      return;
     }
   
     public recover(recognizer: Parser, e: RecognitionException): void {
