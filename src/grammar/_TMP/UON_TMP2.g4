@@ -1,7 +1,7 @@
 grammar UON;
 
 uon
-   : root_value? EOF
+   : root_value
    ;
 
 json_collection : json_map | json_seq;
@@ -27,11 +27,11 @@ description: 'description' COLON string;
 optional: 'optional' COLON boolean;
 
 string
-   : literal
-   | QUOTED_STRING
+   : QUOTED_STRING
    | UNQUOTED_STRING
    ;
-
+   
+CT : '!!';   
 custom_type: CT UNQUOTED_STRING;
 
 json_user_type: custom_type json_map;
@@ -49,17 +49,31 @@ string_scalar: (STR_TYPE)? string;
 boolean_scalar: (BOOL_TYPE)? boolean;
 url: (URL_TYPE)? string;
 
+
 quantity_scalar: numeric_scalar (quantity)?;
 numeric_scalar: coercible_numeric_scalar | number;
 
 coercible_numeric_scalar : number_type (coercible_numeric_scalar | number);
 
+
 quantity: length | mass | time | temperature;
 
 length: METERS | KILOMETERS;
+METERS: 'm';
+KILOMETERS: 'km';
+
 mass: GRAMS | KILOGRAMS;
+GRAMS: 'g';
+KILOGRAMS: 'kg';
+
 time: SECOND  | MINUTE;
+SECOND: 's';
+//min -> minute to avoid ambiguity with minimum
+MINUTE: 'minute';
+
 temperature: CELSIUS | KELVIN;
+CELSIUS: 'C';
+KELVIN: 'K';
 
 number: UNQUOTED_STRING;
   
@@ -76,10 +90,34 @@ json_value
    | null
    ;
 
+QUOTED_STRING
+   : '"' DOUBLE_QUOTE_CHAR* '"'
+   | '\'' SINGLE_QUOTE_CHAR* '\''
+   ;
+
 number_type: FLOAT_128_TYPE | FLOAT_64_TYPE | FLOAT_32_TYPE
                | INT_128_TYPE | INT_64_TYPE | INT_32_TYPE
                | UINT_128_TYPE | UINT_64_TYPE | UINT_32_TYPE
                | FLOAT_TYPE | INT_TYPE | UINT_TYPE;
+
+STR_TYPE: '!str';
+BOOL_TYPE: '!bool';
+URL_TYPE: '!url';
+
+FLOAT_TYPE: '!float';
+FLOAT_128_TYPE: '!float128';
+FLOAT_64_TYPE: '!float64';
+FLOAT_32_TYPE: '!float32';
+
+INT_TYPE: '!int';
+INT_128_TYPE: '!int128';
+INT_64_TYPE: '!int64';
+INT_32_TYPE: '!int32';
+
+UINT_TYPE: '!uint';
+UINT_128_TYPE: '!uint128';
+UINT_64_TYPE: '!uint64';
+UINT_32_TYPE: '!uint32';
 
 schema: custom_type COLON SCHEMA_TYPE (schema_presentations)? OPEN_C_BRA (attributes)? CLOSE_C_BRA;
 attributes: attribute (COMMA attribute)*;
@@ -120,62 +158,21 @@ number_max: 'max' COLON number;
 number_min: 'min' COLON number;
 number_validation_type: FLOAT_TYPE | INT_TYPE | UINT_TYPE;
 
-quantity_validation: 'quantity' COLON quantity_validation_types;
-quantity_validation_types: LENGTH | MASS | TEMPERATURE | TIME;
-
-boolean: (true | false);
-true : 'true' | 'True';
-false : 'false' | 'False';
-null: 'null' | 'none' | 'None';
-
-literal : LENGTH | MASS | TEMPERATURE | TIME | boolean | null;
-
-METERS: 'm';
-KILOMETERS: 'km';
-
-GRAMS: 'g';
-KILOGRAMS: 'kg';
-
-SECOND: 's';
-//min -> minute to avoid ambiguity with minimum
-MINUTE: 'minute';
-CELSIUS: 'C';
-
-KELVIN: 'K';
-
-CT : '!!';
-
-STR_TYPE: '!str';
-BOOL_TYPE: '!bool';
-URL_TYPE: '!url';
-
-FLOAT_TYPE: '!float';
-FLOAT_128_TYPE: '!float128';
-FLOAT_64_TYPE: '!float64';
-FLOAT_32_TYPE: '!float32';
-
-INT_TYPE: '!int';
-INT_128_TYPE: '!int128';
-INT_64_TYPE: '!int64';
-INT_32_TYPE: '!int32';
-
-UINT_TYPE: '!uint';
-UINT_128_TYPE: '!uint128';
-UINT_64_TYPE: '!uint64';
-UINT_32_TYPE: '!uint32';
-
 MAX : 'max';
 MIN : 'min';
+quantity_validation: 'quantity' COLON quantity_validation_types;
+
+quantity_validation_types: LENGTH | MASS | TEMPERATURE | TIME;
 
 LENGTH : 'length';
 MASS : 'mass';
 TEMPERATURE : 'temperature';
 TIME : 'time';
 
-QUOTED_STRING
-   : '"' DOUBLE_QUOTE_CHAR* '"'
-   | '\'' SINGLE_QUOTE_CHAR* '\''
-   ;
+boolean: (true | false);
+true : 'true' | 'True';
+false : 'false' | 'False';
+null: 'null' | 'none' | 'None';
 
 fragment DOUBLE_QUOTE_CHAR
    : ~["\\\r\n]
@@ -216,6 +213,7 @@ fragment IDENTIFIER
    | '\''
    | '?'
    ;
+
 
 fragment HEX
    : [0-9a-fA-F]

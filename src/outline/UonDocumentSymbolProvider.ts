@@ -32,8 +32,8 @@ export class UonDocumentSymbolProvider implements DocumentSymbolProvider {
             const parser = new UONParser(tokenStream);
             parser.removeErrorListeners();
 
-            this.collection.clear()
-            
+            this.collection.clear();
+
             let errorListener = new ErrorListener(document, this.collection, this.context, parser);
             parser.addErrorListener(errorListener);
 

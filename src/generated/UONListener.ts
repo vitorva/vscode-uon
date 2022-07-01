@@ -7,11 +7,6 @@ import { UonContext } from "./UONParser";
 import { Json_collectionContext } from "./UONParser";
 import { Json_mapContext } from "./UONParser";
 import { Json_seqContext } from "./UONParser";
-import { Yaml_collectionContext } from "./UONParser";
-import { Yaml_mapContext } from "./UONParser";
-import { Yaml_seqContext } from "./UONParser";
-import { Seq_itemContext } from "./UONParser";
-import { PairContext } from "./UONParser";
 import { Pair_keyContext } from "./UONParser";
 import { Json_pairContext } from "./UONParser";
 import { Presentation_propertiesContext } from "./UONParser";
@@ -21,7 +16,6 @@ import { OptionalContext } from "./UONParser";
 import { StringContext } from "./UONParser";
 import { Custom_typeContext } from "./UONParser";
 import { Json_user_typeContext } from "./UONParser";
-import { Yaml_user_typeContext } from "./UONParser";
 import { ScalarContext } from "./UONParser";
 import { String_scalarContext } from "./UONParser";
 import { Boolean_scalarContext } from "./UONParser";
@@ -37,7 +31,6 @@ import { TemperatureContext } from "./UONParser";
 import { NumberContext } from "./UONParser";
 import { Root_valueContext } from "./UONParser";
 import { Json_valueContext } from "./UONParser";
-import { Yaml_valueContext } from "./UONParser";
 import { Number_typeContext } from "./UONParser";
 import { SchemaContext } from "./UONParser";
 import { AttributesContext } from "./UONParser";
@@ -66,6 +59,7 @@ import { BooleanContext } from "./UONParser";
 import { TrueContext } from "./UONParser";
 import { FalseContext } from "./UONParser";
 import { NullContext } from "./UONParser";
+import { LiteralContext } from "./UONParser";
 
 
 /**
@@ -116,61 +110,6 @@ export interface UONListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitJson_seq?: (ctx: Json_seqContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.yaml_collection`.
-	 * @param ctx the parse tree
-	 */
-	enterYaml_collection?: (ctx: Yaml_collectionContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.yaml_collection`.
-	 * @param ctx the parse tree
-	 */
-	exitYaml_collection?: (ctx: Yaml_collectionContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.yaml_map`.
-	 * @param ctx the parse tree
-	 */
-	enterYaml_map?: (ctx: Yaml_mapContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.yaml_map`.
-	 * @param ctx the parse tree
-	 */
-	exitYaml_map?: (ctx: Yaml_mapContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.yaml_seq`.
-	 * @param ctx the parse tree
-	 */
-	enterYaml_seq?: (ctx: Yaml_seqContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.yaml_seq`.
-	 * @param ctx the parse tree
-	 */
-	exitYaml_seq?: (ctx: Yaml_seqContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.seq_item`.
-	 * @param ctx the parse tree
-	 */
-	enterSeq_item?: (ctx: Seq_itemContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.seq_item`.
-	 * @param ctx the parse tree
-	 */
-	exitSeq_item?: (ctx: Seq_itemContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.pair`.
-	 * @param ctx the parse tree
-	 */
-	enterPair?: (ctx: PairContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.pair`.
-	 * @param ctx the parse tree
-	 */
-	exitPair?: (ctx: PairContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `UONParser.pair_key`.
@@ -270,17 +209,6 @@ export interface UONListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitJson_user_type?: (ctx: Json_user_typeContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.yaml_user_type`.
-	 * @param ctx the parse tree
-	 */
-	enterYaml_user_type?: (ctx: Yaml_user_typeContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.yaml_user_type`.
-	 * @param ctx the parse tree
-	 */
-	exitYaml_user_type?: (ctx: Yaml_user_typeContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `UONParser.scalar`.
@@ -446,17 +374,6 @@ export interface UONListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitJson_value?: (ctx: Json_valueContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.yaml_value`.
-	 * @param ctx the parse tree
-	 */
-	enterYaml_value?: (ctx: Yaml_valueContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.yaml_value`.
-	 * @param ctx the parse tree
-	 */
-	exitYaml_value?: (ctx: Yaml_valueContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `UONParser.number_type`.
@@ -765,5 +682,16 @@ export interface UONListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitNull?: (ctx: NullContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.literal`.
+	 * @param ctx the parse tree
+	 */
+	enterLiteral?: (ctx: LiteralContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.literal`.
+	 * @param ctx the parse tree
+	 */
+	exitLiteral?: (ctx: LiteralContext) => void;
 }
 

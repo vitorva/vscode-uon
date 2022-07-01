@@ -7,11 +7,6 @@ import { UonContext } from "./UONParser";
 import { Json_collectionContext } from "./UONParser";
 import { Json_mapContext } from "./UONParser";
 import { Json_seqContext } from "./UONParser";
-import { Yaml_collectionContext } from "./UONParser";
-import { Yaml_mapContext } from "./UONParser";
-import { Yaml_seqContext } from "./UONParser";
-import { Seq_itemContext } from "./UONParser";
-import { PairContext } from "./UONParser";
 import { Pair_keyContext } from "./UONParser";
 import { Json_pairContext } from "./UONParser";
 import { Presentation_propertiesContext } from "./UONParser";
@@ -21,7 +16,6 @@ import { OptionalContext } from "./UONParser";
 import { StringContext } from "./UONParser";
 import { Custom_typeContext } from "./UONParser";
 import { Json_user_typeContext } from "./UONParser";
-import { Yaml_user_typeContext } from "./UONParser";
 import { ScalarContext } from "./UONParser";
 import { String_scalarContext } from "./UONParser";
 import { Boolean_scalarContext } from "./UONParser";
@@ -37,7 +31,6 @@ import { TemperatureContext } from "./UONParser";
 import { NumberContext } from "./UONParser";
 import { Root_valueContext } from "./UONParser";
 import { Json_valueContext } from "./UONParser";
-import { Yaml_valueContext } from "./UONParser";
 import { Number_typeContext } from "./UONParser";
 import { SchemaContext } from "./UONParser";
 import { AttributesContext } from "./UONParser";
@@ -66,6 +59,7 @@ import { BooleanContext } from "./UONParser";
 import { TrueContext } from "./UONParser";
 import { FalseContext } from "./UONParser";
 import { NullContext } from "./UONParser";
+import { LiteralContext } from "./UONParser";
 
 
 /**
@@ -103,41 +97,6 @@ export interface UONVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitJson_seq?: (ctx: Json_seqContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.yaml_collection`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitYaml_collection?: (ctx: Yaml_collectionContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.yaml_map`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitYaml_map?: (ctx: Yaml_mapContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.yaml_seq`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitYaml_seq?: (ctx: Yaml_seqContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.seq_item`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitSeq_item?: (ctx: Seq_itemContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.pair`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitPair?: (ctx: PairContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `UONParser.pair_key`.
@@ -201,13 +160,6 @@ export interface UONVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitJson_user_type?: (ctx: Json_user_typeContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.yaml_user_type`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitYaml_user_type?: (ctx: Yaml_user_typeContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `UONParser.scalar`.
@@ -313,13 +265,6 @@ export interface UONVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitJson_value?: (ctx: Json_valueContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.yaml_value`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitYaml_value?: (ctx: Yaml_valueContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `UONParser.number_type`.
@@ -516,5 +461,12 @@ export interface UONVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitNull?: (ctx: NullContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.literal`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitLiteral?: (ctx: LiteralContext) => Result;
 }
 
