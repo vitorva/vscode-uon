@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 import { AbstractParseTreeVisitor, RuleNode, TerminalNode } from "antlr4ts/tree";
-import { BooleanContext, Json_mapContext, Json_pairContext, Json_seqContext, NumberContext, StringContext } from "../generated/UONParser";
+import { BooleanContext, Json_mapContext, Json_pairContext, Json_seqContext, NumberContext, SchemaContext, StringContext } from "../generated/UONParser";
 import { UONVisitor } from "../generated/UONVisitor";
 
 export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<any> {
@@ -53,6 +53,68 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     aggregateResult(aggregate: any, nextResult: any) {
         return null;
     }
+
+    visitSchema(ctx: SchemaContext) {
+        this.level = this.level + 1;
+        var children = this.visitChildren(ctx);
+        this.level = this.level - 1;
+        console.log(children);
+
+        if (this.level === 0) {
+            var response = [];
+
+            for (var i = 0; i < children.length; i++) {
+                if (children[i] instanceof vscode.DocumentSymbol) {
+                    response.push(children[i]);
+                }
+            }
+            return response;
+        }
+
+        const head = children.shift();
+
+        const regex = /\r\n/g;
+
+        var line = this.text.slice(0, head.stop).match(regex)?.length;
+
+        var beginWord;
+        var endWord;
+
+        if (line === undefined) {
+            line = 0;
+            beginWord = head.start;
+            endWord = head.stop;
+        } else {
+            console.log(this.text.slice(0, head.stop));
+
+            const lastocc = this.text.slice(0, head.stop).lastIndexOf("\r\n");
+
+            console.log(this.text.slice(0, head.stop).lastIndexOf("\r\n"));
+
+            beginWord = head.start - lastocc;
+            endWord = beginWord + head.text.length;
+        }
+
+        const start = new vscode.Position(line, beginWord);
+        const end = new vscode.Position(line, endWord);
+        const range = new vscode.Range(start, end);
+
+        console.log(head.range);
+
+        let schema = new vscode.DocumentSymbol(
+            " ",
+            " ",
+            vscode.SymbolKind.Object,
+            range, range);
+
+        for (var i = 0; i < children.length; i++) {
+            if (children[i] instanceof vscode.DocumentSymbol) {
+                schema.children.push(children[i]);
+            }
+        }
+
+        return [schema];
+    } 
 
     visitJson_map(ctx: Json_mapContext) {
         this.level = this.level + 1;
