@@ -45,7 +45,7 @@ export class UonDocumentSymbolProvider implements DocumentSymbolProvider {
             let tree = parser.uon();  // parse Tree
 
             // Create the visitor
-            const uonASTVisitor = new UonASTVisitor(document, text);
+            const uonASTVisitor = new UonASTVisitor(text);
 
             // Use the visitor entry point
             const ast = uonASTVisitor.visit(tree);
@@ -53,7 +53,6 @@ export class UonDocumentSymbolProvider implements DocumentSymbolProvider {
             let symbols: vscode.DocumentSymbol[] = [];
             let nodes = [symbols];
 
-            // the ast could be an array []
             for (var i = 0; i < ast.length; i++) {
                 nodes[nodes.length - 1].push(ast[i]);
             }

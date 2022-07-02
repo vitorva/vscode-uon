@@ -6,13 +6,12 @@ import { UONVisitor } from "../generated/UONVisitor";
 
 export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<any> {
 
-    level = 0;
-    document: vscode.TextDocument;
+    level = 0; // Pour savoir si on est à la racine du document ou non
     text: String;
 
-    constructor(document: vscode.TextDocument, text: String) {
+    // Keep in memory the document and the texte for what ???
+    constructor(text: String) {
         super();
-        this.document = document;
         this.text = text;
     }
 
@@ -25,31 +24,39 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     }
 
     visitChildren(node: RuleNode) {
-        let result: any;
+        // let result = this.defaultResult(); --> ne sert à rien
+        let result: any; // any pour retourner un tableau ou non / plus de default 
         let n = node.childCount;
-        if (n > 1) {
+        if (n > 1) { // Si on a plus de 1 enfant alors on créer une structure pour garder les enfants
             result = [];
         }
+
+        //// algo de parcours modifié -> on agregera dans la structure "racine"
         for (let i = 0; i < n; i++) {
             if (!this.shouldVisitNextChild(node, result)) {
                 break;
             }
             let c = node.getChild(i);
             let childResult = c.accept(this);
+            //result = this.aggregateResult(result, childResult);
+            ////    
+
+            // Si on est une strucutre contenant des enfants alors on push les enfants dans un tableau
             if (n > 1) {
                 result.push(childResult);
             }
-            else {
+            else { // sinon on retourne directement l'enfant
                 result = childResult;
                 return result;
             }
         }
 
+        // pourqouoi faire un flat ? [ [], [], ] -> TODO
         const flatResult = result.flat();
         return flatResult;
     }
 
-    // TODO
+    // Ne fait rien car on aggretate plus ici
     aggregateResult(aggregate: any, nextResult: any) {
         return null;
     }
@@ -114,13 +121,12 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         }
 
         return [schema];
-    } 
+    }
 
-    visitJson_map(ctx: Json_mapContext) {
+    structure(ctx: any, kind : any) {
         this.level = this.level + 1;
         var children = this.visitChildren(ctx);
         this.level = this.level - 1;
-        console.log(children);
 
         if (this.level === 0) {
             var response = [];
@@ -133,27 +139,30 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
             return response;
         }
 
-        const head = children.shift();
-
+        // On récupère le première enfant...
+        const head = children.shift(); // C'est quoi head concrêtement ? // Comme c'est un dfs ici çA représentera normalement le {
         const regex = /\r\n/g;
 
+        // on prend le texte global, on drop jusqu'à head.stop et à l'aide de la regex on peut savoir le nombre d'espace donc de ligne
+        // start et stop doivent représente leur emplaccement dans la chaine de texte
         var line = this.text.slice(0, head.stop).match(regex)?.length;
 
         var beginWord;
         var endWord;
 
-        if (line === undefined) {
+        if (line === undefined) { // Normalement jamais atteint, au cas ou si erreur
             line = 0;
             beginWord = head.start;
             endWord = head.stop;
         } else {
             console.log(this.text.slice(0, head.stop));
 
-            const lastocc = this.text.slice(0, head.stop).lastIndexOf("\r\n");
+            const lastNewLinePosition = this.text.slice(0, head.stop).lastIndexOf("\r\n");
 
             console.log(this.text.slice(0, head.stop).lastIndexOf("\r\n"));
 
-            beginWord = head.start - lastocc;
+            // calcul pour représenter la position selon vscode dans le niveau colonne
+            beginWord = head.start - lastNewLinePosition;
             endWord = beginWord + head.text.length;
         }
 
@@ -163,32 +172,42 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
 
         console.log(head.range);
 
-        let jsonMap = new vscode.DocumentSymbol(
+       
+        let structure = new vscode.DocumentSymbol(
             " ",
             " ",
-            vscode.SymbolKind.Object,
+            kind,
             range, range);
 
         for (var i = 0; i < children.length; i++) {
             if (children[i] instanceof vscode.DocumentSymbol) {
-                jsonMap.children.push(children[i]);
+                structure.children.push(children[i]);
             }
         }
 
-        return [jsonMap];
+        return [structure]; // tableau pour représenter une strucuture...
+
 
     }
 
-    visitJson_pair(ctx: Json_pairContext) {
-        var children = this.visitChildren(ctx);
+    visitJson_map(ctx: Json_mapContext) {
+        return  this.structure(ctx, vscode.SymbolKind.Object);
+    }
+
+    // traitement particulier...
+    //
+    visitJson_pair(ctx: Json_pairContext) { // name(....) : !str toto
+        var children = this.visitChildren(ctx); // cool dfs garde l'ordre donc agrlable à manipuler car c'est ce qu'on attend à recevoir
         console.log("visitJson_pair", children);
 
         const head = children[0];
         const tail = children[children.length - 1];
 
         if (tail.kind === vscode.SymbolKind.Object) {
+            // {} name
             tail.name = head.name;
         } else {
+            //[abc] name paul
             const tmp = tail.name;
             tail.detail = tmp;
             tail.name = head.name;
@@ -208,64 +227,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     }
 
     visitJson_seq(ctx: Json_seqContext) {
-        this.level = this.level + 1;
-        var children = this.visitChildren(ctx);
-        this.level = this.level - 1;
-
-        if (this.level === 0) {
-            var response = [];
-
-            for (var i = 0; i < children.length; i++) {
-                if (children[i] instanceof vscode.DocumentSymbol) {
-                    response.push(children[i]);
-                }
-            }
-            return response;
-        }
-
-        const head = children.shift();
-
-        const regex = /\r\n/g;
-
-        var line = this.text.slice(0, head.stop).match(regex)?.length;
-
-        var beginWord;
-        var endWord;
-
-        if (line === undefined) {
-            line = 0;
-            beginWord = head.start;
-            endWord = head.stop;
-        } else {
-            console.log(this.text.slice(0, head.stop));
-
-            const lastocc = this.text.slice(0, head.stop).lastIndexOf("\r\n");
-
-            console.log(this.text.slice(0, head.stop).lastIndexOf("\r\n"));
-
-            beginWord = head.start - lastocc;
-            endWord = beginWord + head.text.length;
-        }
-
-        const start = new vscode.Position(line, beginWord);
-        const end = new vscode.Position(line, endWord);
-        const range = new vscode.Range(start, end);
-
-        console.log(head.range);
-
-        let jsonSeq = new vscode.DocumentSymbol(
-            " ",
-            " ",
-            vscode.SymbolKind.Array,
-            range, range);
-
-        for (var i = 0; i < children.length; i++) {
-            if (children[i] instanceof vscode.DocumentSymbol) {
-                jsonSeq.children.push(children[i]);
-            }
-        }
-
-        return [jsonSeq];
+        return this.structure(ctx, vscode.SymbolKind.Array);
     }
 
     visitString?(ctx: StringContext) {
@@ -342,6 +304,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return boolean;
     }
 
+    // traitement pour la position + afficher #(number)
     visitNumber(ctx: NumberContext) {
         const child = this.visitChildren(ctx);
         const regex = /\r\n/g;
@@ -379,6 +342,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return number;
     }
 
+    // Feuille finale, on crée la strucutre minimal utile , analyse précdéement de ce que c'est un node est récupérer les infos les + utiles
     visitTerminal(node: TerminalNode) {
         console.log("Node", node)
         console.log("Node symbol", node._symbol);
