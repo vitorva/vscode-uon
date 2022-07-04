@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 import { AbstractParseTreeVisitor, RuleNode, TerminalNode } from "antlr4ts/tree";
-import { BooleanContext, Json_mapContext, Json_pairContext, Json_seqContext, NumberContext, SchemaContext, StringContext } from "../generated/UONParser";
+import { AttributeContext, AttributesContext, BooleanContext, Json_mapContext, Json_pairContext, Json_seqContext, NumberContext, SchemaContext, StringContext } from "../generated/UONParser";
 import { UONVisitor } from "../generated/UONVisitor";
 
 export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<any> {
@@ -61,69 +61,102 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return null;
     }
 
-    visitSchema(ctx: SchemaContext) {
-        this.level = this.level + 1;
-        var children = this.visitChildren(ctx);
-        this.level = this.level - 1;
-        console.log(children);
 
-        if (this.level === 0) {
-            var response = [];
+    visitAttributes(ctx: AttributesContext) {
+        const children = this.visitChildren(ctx);
+        return children;
 
-            for (var i = 0; i < children.length; i++) {
-                if (children[i] instanceof vscode.DocumentSymbol) {
-                    response.push(children[i]);
-                }
+    }
+
+    visitAttribute(ctx: AttributeContext) {
+        const children = this.visitChildren(ctx);
+
+        var response = [];
+
+        for (var i = 0; i < children.length; i++) {
+            if (children[i] instanceof vscode.DocumentSymbol) {
+                response.push(children[i]);
             }
-            return response;
         }
 
-        const head = children.shift();
+        console.log(response);
+        // TODO gérer les proprités partout
+        /*
+        !!mySensor: !schema ( description : "provide great infos") {
+        descriptions :  !int ( max : 32 ),
+        pression ( optional : True ) : !float,
+        names: !str ,
+        located: !bool  
+        }
+        
+        / description ^provide great infos^
+        {} description
+            {} !int
+                # max 32
+                # min : 12
+            {} pression
+                / Optional true
+                !float
+        */
 
+        const head = response[0];
+        const tail = response[response.length - 1];
+
+        if (response.length > 1) {
+            const tmp = tail.name;
+            tail.detail = tmp;
+            tail.name = head.name;
+        }
+
+        return tail;
+    }
+
+    visitSchema(ctx: SchemaContext) {
+        return this.structure(ctx, vscode.SymbolKind.Object);
+    }
+
+    createDocumentSymbol(word: any, kind: any, text = " ") {
         const regex = /\r\n/g;
 
-        var line = this.text.slice(0, head.stop).match(regex)?.length;
+        // on prend le texte global, on drop jusqu'à head.stop et à l'aide de la regex on peut savoir le nombre d'espace donc de ligne
+        // start et stop doivent représente leur emplaccement dans la chaine de texte
+        var line = this.text.slice(0, word.stop).match(regex)?.length;
 
         var beginWord;
         var endWord;
 
-        if (line === undefined) {
+        if (line === undefined) { // Normalement jamais atteint, au cas ou si erreur
             line = 0;
-            beginWord = head.start;
-            endWord = head.stop;
+            beginWord = word.start;
+            endWord = word.stop;
         } else {
-            console.log(this.text.slice(0, head.stop));
+            console.log(this.text.slice(0, word.stop));
 
-            const lastocc = this.text.slice(0, head.stop).lastIndexOf("\r\n");
+            const lastNewLinePosition = this.text.slice(0, word.stop).lastIndexOf("\r\n");
 
-            console.log(this.text.slice(0, head.stop).lastIndexOf("\r\n"));
+            console.log(this.text.slice(0, word.stop).lastIndexOf("\r\n"));
 
-            beginWord = head.start - lastocc;
-            endWord = beginWord + head.text.length;
+            // calcul pour représenter la position selon vscode dans le niveau colonne
+            beginWord = word.start - lastNewLinePosition;
+            endWord = beginWord + word.text.length;
         }
 
         const start = new vscode.Position(line, beginWord);
         const end = new vscode.Position(line, endWord);
         const range = new vscode.Range(start, end);
 
-        console.log(head.range);
+        console.log(word.range);
 
-        let schema = new vscode.DocumentSymbol(
+        let structure = new vscode.DocumentSymbol(
+            text,
             " ",
-            " ",
-            vscode.SymbolKind.Object,
+            kind,
             range, range);
 
-        for (var i = 0; i < children.length; i++) {
-            if (children[i] instanceof vscode.DocumentSymbol) {
-                schema.children.push(children[i]);
-            }
-        }
-
-        return [schema];
+        return structure;
     }
 
-    structure(ctx: any, kind : any) {
+    structure(ctx: any, kind: any) {
         this.level = this.level + 1;
         var children = this.visitChildren(ctx);
         this.level = this.level - 1;
@@ -141,43 +174,8 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
 
         // On récupère le première enfant...
         const head = children.shift(); // C'est quoi head concrêtement ? // Comme c'est un dfs ici çA représentera normalement le {
-        const regex = /\r\n/g;
 
-        // on prend le texte global, on drop jusqu'à head.stop et à l'aide de la regex on peut savoir le nombre d'espace donc de ligne
-        // start et stop doivent représente leur emplaccement dans la chaine de texte
-        var line = this.text.slice(0, head.stop).match(regex)?.length;
-
-        var beginWord;
-        var endWord;
-
-        if (line === undefined) { // Normalement jamais atteint, au cas ou si erreur
-            line = 0;
-            beginWord = head.start;
-            endWord = head.stop;
-        } else {
-            console.log(this.text.slice(0, head.stop));
-
-            const lastNewLinePosition = this.text.slice(0, head.stop).lastIndexOf("\r\n");
-
-            console.log(this.text.slice(0, head.stop).lastIndexOf("\r\n"));
-
-            // calcul pour représenter la position selon vscode dans le niveau colonne
-            beginWord = head.start - lastNewLinePosition;
-            endWord = beginWord + head.text.length;
-        }
-
-        const start = new vscode.Position(line, beginWord);
-        const end = new vscode.Position(line, endWord);
-        const range = new vscode.Range(start, end);
-
-        console.log(head.range);
-
-       
-        let structure = new vscode.DocumentSymbol(
-            " ",
-            " ",
-            kind,
-            range, range);
+        let structure = this.createDocumentSymbol(head, kind);
 
         for (var i = 0; i < children.length; i++) {
             if (children[i] instanceof vscode.DocumentSymbol) {
@@ -186,19 +184,18 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         }
 
         return [structure]; // tableau pour représenter une strucuture...
-
-
     }
 
     visitJson_map(ctx: Json_mapContext) {
-        return  this.structure(ctx, vscode.SymbolKind.Object);
+        return this.structure(ctx, vscode.SymbolKind.Object);
     }
 
     // traitement particulier...
     //
     visitJson_pair(ctx: Json_pairContext) { // name(....) : !str toto
         var children = this.visitChildren(ctx); // cool dfs garde l'ordre donc agrlable à manipuler car c'est ce qu'on attend à recevoir
-        console.log("visitJson_pair", children);
+
+        //console.log("visitJson_pair", children);
 
         const head = children[0];
         const tail = children[children.length - 1];
@@ -206,7 +203,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         if (tail.kind === vscode.SymbolKind.Object) {
             // {} name
             tail.name = head.name;
-        } else {
+        } else { // On fait les modifs pour obtenir le résultat visuel suivant :
             //[abc] name paul
             const tmp = tail.name;
             tail.detail = tmp;
@@ -230,114 +227,27 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return this.structure(ctx, vscode.SymbolKind.Array);
     }
 
-    visitString?(ctx: StringContext) {
+    visitString(ctx: StringContext) {
         const child = this.visitChildren(ctx);
-        const regex = /\r\n/g;
 
-        var line = this.text.slice(0, child.stop).match(regex)?.length;
-
-        var beginWord;
-        var endWord;
-
-        if (line === undefined) {
-            line = 0;
-            beginWord = child.start;
-            endWord = child.stop;
-        } else {
-            console.log(this.text.slice(0, child.stop));
-
-            const lastocc = this.text.slice(0, child.stop).lastIndexOf("\r\n");
-
-            console.log(this.text.slice(0, child.stop).lastIndexOf("\r\n"));
-
-            beginWord = child.start - lastocc;
-            endWord = beginWord + child.text.length;
-        }
-
-        const start = new vscode.Position(line, beginWord);
-        const end = new vscode.Position(line, endWord);
-        const range = new vscode.Range(start, end);
-
-        let string = new vscode.DocumentSymbol(
-            child.text,
-            " ",
-            vscode.SymbolKind.String,
-            range, range);
+        let string = this.createDocumentSymbol(child, vscode.SymbolKind.String, child.text);
 
         return string;
     }
 
     visitBoolean(ctx: BooleanContext) {
         const child = this.visitChildren(ctx);
-        const regex = /\r\n/g;
 
-        var line = this.text.slice(0, child.stop).match(regex)?.length;
+        let bool = this.createDocumentSymbol(child, vscode.SymbolKind.Boolean, child.text);
 
-        var beginWord;
-        var endWord;
-
-        if (line === undefined) {
-            line = 0;
-            beginWord = child.start;
-            endWord = child.stop;
-        } else {
-            console.log(this.text.slice(0, child.stop));
-
-            const lastocc = this.text.slice(0, child.stop).lastIndexOf("\r\n");
-
-            console.log(this.text.slice(0, child.stop).lastIndexOf("\r\n"));
-
-            beginWord = child.start - lastocc;
-            endWord = beginWord + child.text.length;
-        }
-
-        const start = new vscode.Position(line, beginWord);
-        const end = new vscode.Position(line, endWord);
-        const range = new vscode.Range(start, end);
-
-        let boolean = new vscode.DocumentSymbol(
-            child.text,
-            " ",
-            vscode.SymbolKind.Boolean,
-            range, range);
-
-        return boolean;
+        return bool;
     }
 
     // traitement pour la position + afficher #(number)
     visitNumber(ctx: NumberContext) {
         const child = this.visitChildren(ctx);
-        const regex = /\r\n/g;
 
-        var line = this.text.slice(0, child.stop).match(regex)?.length;
-
-        var beginWord;
-        var endWord;
-
-        if (line === undefined) {
-            line = 0;
-            beginWord = child.start;
-            endWord = child.stop;
-        } else {
-            console.log(this.text.slice(0, child.stop));
-
-            const lastocc = this.text.slice(0, child.stop).lastIndexOf("\r\n");
-
-            console.log(this.text.slice(0, child.stop).lastIndexOf("\r\n"));
-
-            beginWord = child.start - lastocc;
-            endWord = beginWord + child.text.length;
-        }
-
-        const start = new vscode.Position(line, beginWord);
-        const end = new vscode.Position(line, endWord);
-        const range = new vscode.Range(start, end);
-
-        let number = new vscode.DocumentSymbol(
-            child.text,
-            " ",
-            vscode.SymbolKind.Number,
-            range, range);
+        let number = this.createDocumentSymbol(child, vscode.SymbolKind.Number, child.text);
 
         return number;
     }
@@ -350,11 +260,12 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         console.log("Node stop", node._symbol.stopIndex);
 
         // TODO aussi retourner et traiter start et stop index
-        const test = {
+        const terminalNode = {
             "text": node.text,
             "start": node._symbol.startIndex,
             "stop": node._symbol.stopIndex
-        }
-        return test;
+        };
+
+        return terminalNode;
     }
 }
