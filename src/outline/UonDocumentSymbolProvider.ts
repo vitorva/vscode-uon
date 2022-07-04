@@ -44,6 +44,8 @@ export class UonDocumentSymbolProvider implements DocumentSymbolProvider {
             parser.buildParseTree = true;
             let tree = parser.uon();  // parse Tree
 
+            console.log("tree.toStringTree", tree.toStringTree(parser));
+
             // Create the visitor
             const uonASTVisitor = new UonASTVisitor(text);
 

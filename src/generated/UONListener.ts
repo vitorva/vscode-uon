@@ -8,6 +8,13 @@ import { Json_collectionContext } from "./UONParser";
 import { Json_mapContext } from "./UONParser";
 import { Json_seqContext } from "./UONParser";
 import { Pair_keyContext } from "./UONParser";
+import { Types_propertiesContext } from "./UONParser";
+import { Types_propertieContext } from "./UONParser";
+import { CommentContext } from "./UONParser";
+import { Number_presentationContext } from "./UONParser";
+import { Number_presentation_propertiesContext } from "./UONParser";
+import { Number_presentation_propertieContext } from "./UONParser";
+import { UnitContext } from "./UONParser";
 import { Json_pairContext } from "./UONParser";
 import { Presentation_propertiesContext } from "./UONParser";
 import { Presentation_propertyContext } from "./UONParser";
@@ -121,6 +128,83 @@ export interface UONListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitPair_key?: (ctx: Pair_keyContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.types_properties`.
+	 * @param ctx the parse tree
+	 */
+	enterTypes_properties?: (ctx: Types_propertiesContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.types_properties`.
+	 * @param ctx the parse tree
+	 */
+	exitTypes_properties?: (ctx: Types_propertiesContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.types_propertie`.
+	 * @param ctx the parse tree
+	 */
+	enterTypes_propertie?: (ctx: Types_propertieContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.types_propertie`.
+	 * @param ctx the parse tree
+	 */
+	exitTypes_propertie?: (ctx: Types_propertieContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.comment`.
+	 * @param ctx the parse tree
+	 */
+	enterComment?: (ctx: CommentContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.comment`.
+	 * @param ctx the parse tree
+	 */
+	exitComment?: (ctx: CommentContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.number_presentation`.
+	 * @param ctx the parse tree
+	 */
+	enterNumber_presentation?: (ctx: Number_presentationContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.number_presentation`.
+	 * @param ctx the parse tree
+	 */
+	exitNumber_presentation?: (ctx: Number_presentationContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.number_presentation_properties`.
+	 * @param ctx the parse tree
+	 */
+	enterNumber_presentation_properties?: (ctx: Number_presentation_propertiesContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.number_presentation_properties`.
+	 * @param ctx the parse tree
+	 */
+	exitNumber_presentation_properties?: (ctx: Number_presentation_propertiesContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.number_presentation_propertie`.
+	 * @param ctx the parse tree
+	 */
+	enterNumber_presentation_propertie?: (ctx: Number_presentation_propertieContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.number_presentation_propertie`.
+	 * @param ctx the parse tree
+	 */
+	exitNumber_presentation_propertie?: (ctx: Number_presentation_propertieContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.unit`.
+	 * @param ctx the parse tree
+	 */
+	enterUnit?: (ctx: UnitContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.unit`.
+	 * @param ctx the parse tree
+	 */
+	exitUnit?: (ctx: UnitContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `UONParser.json_pair`.

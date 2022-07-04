@@ -8,6 +8,13 @@ import { Json_collectionContext } from "./UONParser";
 import { Json_mapContext } from "./UONParser";
 import { Json_seqContext } from "./UONParser";
 import { Pair_keyContext } from "./UONParser";
+import { Types_propertiesContext } from "./UONParser";
+import { Types_propertieContext } from "./UONParser";
+import { CommentContext } from "./UONParser";
+import { Number_presentationContext } from "./UONParser";
+import { Number_presentation_propertiesContext } from "./UONParser";
+import { Number_presentation_propertieContext } from "./UONParser";
+import { UnitContext } from "./UONParser";
 import { Json_pairContext } from "./UONParser";
 import { Presentation_propertiesContext } from "./UONParser";
 import { Presentation_propertyContext } from "./UONParser";
@@ -104,6 +111,55 @@ export interface UONVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitPair_key?: (ctx: Pair_keyContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.types_properties`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitTypes_properties?: (ctx: Types_propertiesContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.types_propertie`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitTypes_propertie?: (ctx: Types_propertieContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.comment`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitComment?: (ctx: CommentContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.number_presentation`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitNumber_presentation?: (ctx: Number_presentationContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.number_presentation_properties`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitNumber_presentation_properties?: (ctx: Number_presentation_propertiesContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.number_presentation_propertie`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitNumber_presentation_propertie?: (ctx: Number_presentation_propertieContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.unit`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitUnit?: (ctx: UnitContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `UONParser.json_pair`.

@@ -1,32 +1,47 @@
 grammar UON;
 
 uon
-   : root_value?
+   : root_value
    ;
 
 json_collection : json_map | json_seq;
 
 json_map
-   : (MAPPING_TYPE)? OPEN_C_BRA (json_pair (COMMA json_pair)*)? CLOSE_C_BRA
+   : (MAPPING_TYPE | ORDERED_MAPPING_TYPE)? OPEN_C_BRA (json_pair (COMMA json_pair)*)? CLOSE_C_BRA
    ;
 
 json_seq
-   : (SEQUENCE_TYPE)? OPEN_S_BRA (json_value (COMMA json_value)*)? CLOSE_S_BRA
+   : (SEQUENCE_TYPE | ORDERED_SEQUENCE_TYPE)? OPEN_S_BRA (json_value (COMMA json_value)*)? CLOSE_S_BRA
    ;
 
 pair_key
    : string (presentation_properties)?
    ;
 
-json_pair: pair_key COLON json_value;
+
+types_properties : OPEN_PAR (types_propertie (COMMA types_propertie)*)? CLOSE_PAR;
+types_propertie : comment | description | optional;
+comment : COMMENT COLON string;
+
+
+number_presentation : types_propertie | number_presentation_propertie;
+number_presentation_properties : OPEN_PAR (number_presentation (COMMA number_presentation)*)? CLOSE_PAR ;
+number_presentation_propertie : unit;
+unit : 'unit' COLON number; // TODO
+
+
+
+
+// json_pair: pair_key COLON (json_value)?; pour avoir genre test : , "" -> null
+json_pair: pair_key COLON (json_value)?;
 
 presentation_properties: OPEN_PAR (presentation_property (COMMA presentation_property)*)? CLOSE_PAR;
 
 presentation_property : optional | description;
-description: 'description' COLON string;
-optional: 'optional' COLON boolean;
+description: DESCRIPTION COLON string; 
+optional: OPTIONAL COLON boolean;
 
-string
+string // TODO : change ?
    : literal
    | QUOTED_STRING
    | UNQUOTED_STRING
@@ -43,7 +58,7 @@ scalar
    | url
    ;
 
-string_scalar: (STR_TYPE)? string;
+string_scalar: (STR_TYPE (types_properties)? )? string;
 
 // string ?
 boolean_scalar: (BOOL_TYPE)? boolean;
@@ -52,7 +67,7 @@ url: (URL_TYPE)? string;
 quantity_scalar: numeric_scalar (quantity)?;
 numeric_scalar: coercible_numeric_scalar | number;
 
-coercible_numeric_scalar : number_type (coercible_numeric_scalar | number);
+coercible_numeric_scalar : (number_type (number_presentation_properties)?) (coercible_numeric_scalar | number);
 
 quantity: length | mass | time | temperature;
 
@@ -86,9 +101,10 @@ attribute: pair_key COLON validation_properties;
 schema_presentations: OPEN_PAR (schema_presentation (COMMA schema_presentation)*)? CLOSE_PAR;
 schema_presentation: schema_name | schema_uuid | description;
 
-schema_name: 'name' COLON string;
-schema_uuid: 'uuid' COLON url;
+schema_name: NAME COLON string;
+schema_uuid: UUID COLON url;
 
+// Validation properties
 validation_properties: string_validation
                       | number_validation
                       | boolean_validation
@@ -101,8 +117,8 @@ string_property
 		|  string_min
 		;
 
-string_max: 'max' COLON string;
-string_min: 'min' COLON string;
+string_max: MAX COLON string;
+string_min: MIN COLON string;
 
 url_validation: URL_TYPE;
 
@@ -114,8 +130,8 @@ number_properties: OPEN_PAR (number_property (COMMA number_property)*)? CLOSE_PA
 
 number_property: number_max | number_min | quantity_validation;
 
-number_max: 'max' COLON number;
-number_min: 'min' COLON number;
+number_max: MAX COLON number;
+number_min: MIN COLON number;
 number_validation_type: FLOAT_TYPE | INT_TYPE | UINT_TYPE;
 
 quantity_validation: 'quantity' COLON quantity_validation_types;
@@ -126,7 +142,7 @@ true : 'true' | 'True';
 false : 'false' | 'False';
 null: 'null' | 'none' | 'None';
 
-literal : LENGTH | MASS | TEMPERATURE | TIME | boolean | null;
+literal : LENGTH | MASS | TEMPERATURE | TIME | NAME | UUID | DESCRIPTION | OPTIONAL | boolean | null;
 
 number
    : SYMBOL?
@@ -135,6 +151,7 @@ number
       )
    ;
 
+// UNITS
 METERS: 'm';
 KILOMETERS: 'km';
 
@@ -142,11 +159,14 @@ GRAMS: 'g';
 KILOGRAMS: 'kg';
 
 SECOND: 's';
-//min -> minute to avoid ambiguity with minimum
-MINUTE: 'minute';
+MINUTE: 'minute'; //min -> minute to avoid ambiguity with minimum
 CELSIUS: 'C';
 
+AMPERE: 'A';
 KELVIN: 'K';
+MOLE: 'mol';
+CANDELA : 'cd'; 
+
 
 CT : '!!';
 
@@ -176,6 +196,14 @@ LENGTH : 'length';
 MASS : 'mass';
 TEMPERATURE : 'temperature';
 TIME : 'time';
+
+NAME : 'name';
+UUID : 'uuid';
+
+DESCRIPTION : 'description';
+OPTIONAL : 'optional';
+
+COMMENT : 'comment';
 
 QUOTED_STRING
    : '"' DOUBLE_QUOTE_CHAR* '"'
@@ -250,7 +278,6 @@ fragment IDENTIFIER_PART
    | '\u200D'
    ;
 
-
 fragment HEX
    : [0-9a-fA-F]
    ;
@@ -278,5 +305,7 @@ CLOSE_S_BRA: ']';
 COMMA:		 ',';
 COLON:		 ':';
 MAPPING_TYPE: '!map';
+ORDERED_MAPPING_TYPE: '!omap';
 SEQUENCE_TYPE: '!seq';
+ORDERED_SEQUENCE_TYPE: '!oseq';
 SCHEMA_TYPE: '!schema';
