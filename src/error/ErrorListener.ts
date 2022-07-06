@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { ANTLRErrorListener, CommonToken, RecognitionException, Recognizer, Token } from "antlr4ts";
 import { UONParser } from '../generated/UONParser';
 
+
 export class ErrorListener implements ANTLRErrorListener<CommonToken> {
 
     level = 0;
@@ -24,7 +25,6 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
                 code: '',
                 message: msg,
                 range: range,
-
                 severity: vscode.DiagnosticSeverity.Error,
                 source: '',
                 relatedInformation: [
@@ -32,6 +32,7 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
                 ]
             });
             collection.set(document.uri, this.errorList);
+
         } else {
             collection.clear();
         }
@@ -75,8 +76,9 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
         console.log("charPositionInLine", charPositionInLine);
 
         const size = offendingSymbol?.text === undefined ? 0 : offendingSymbol.text.length;
+        
         if (vscode.window.activeTextEditor) {
-            const range = new vscode.Range(new vscode.Position((line - 1), charPositionInLine), new vscode.Position((line - 1), charPositionInLine));
+            const range = new vscode.Range(new vscode.Position((line - 1), charPositionInLine), new vscode.Position((line - 1), charPositionInLine + size));
             this.updateDiagnostics(vscode.window.activeTextEditor.document, this.collection, msg, range);
         }
     }
