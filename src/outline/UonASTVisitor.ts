@@ -93,7 +93,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         const text = word.text;
 
         const start = new vscode.Position(word.line -1 , word.column);
-        const end = new vscode.Position(word.line -1, word.column);
+        const end = new vscode.Position(word.line -1, word.column + word.text.length);
         const range = new vscode.Range(start, end);
 
         console.log(word.range);

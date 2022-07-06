@@ -74,6 +74,7 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
 
         console.log("charPositionInLine", charPositionInLine);
 
+        const size = offendingSymbol?.text === undefined ? 0 : offendingSymbol.text.length;
         if (vscode.window.activeTextEditor) {
             const range = new vscode.Range(new vscode.Position((line - 1), charPositionInLine), new vscode.Position((line - 1), charPositionInLine));
             this.updateDiagnostics(vscode.window.activeTextEditor.document, this.collection, msg, range);
