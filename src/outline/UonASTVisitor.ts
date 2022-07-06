@@ -16,7 +16,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     }
 
     defaultResult() {
-        return null;
+        return [];
     }
 
     shouldVisitNextChild(node: RuleNode, currentResult: any) {
@@ -24,45 +24,24 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     }
 
     visitChildren(node: RuleNode) {
-        // let result = this.defaultResult(); --> ne sert à rien
-        let result: any; // any pour retourner un tableau ou non / plus de default 
+        let result: any = this.defaultResult();
         let n = node.childCount;
-        if (n > 1) { // Si on a plus de 1 enfant alors on créer une structure pour garder les enfants
-            result = [];
-        }
-
-        //// algo de parcours modifié -> on agregera dans la structure "racine"
         for (let i = 0; i < n; i++) {
             if (!this.shouldVisitNextChild(node, result)) {
                 break;
             }
             let c = node.getChild(i);
             let childResult = c.accept(this);
-            //result = this.aggregateResult(result, childResult);
-            ////    
-
-            // Si on est une strucutre contenant des enfants alors on push les enfants dans un tableau
-            if (n > 1) {
-                result.push(childResult);
-            }
-            else { // sinon on retourne directement l'enfant
-                result = [];
-                result.push(childResult);
-                //result = childResult;
-                //return result;
-            }
+            result = this.aggregateResult(result, childResult);
         }
-
-        // pourqouoi faire un flat ? [ [], [], ] -> TODO
-        const flatResult = result.flat();
-        return flatResult;
+        return result;
     }
 
     // Ne fait rien car on aggretate plus ici
     aggregateResult(aggregate: any, nextResult: any) {
-        return null;
+        let tmp = aggregate.concat(nextResult);
+        return tmp;
     }
-
 
     visitAttributes(ctx: AttributesContext) {
         const children = this.visitChildren(ctx);
@@ -117,7 +96,8 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return this.structure(ctx, vscode.SymbolKind.Object);
     }
 
-    createDocumentSymbol(word: any, kind: any, text = " ") {
+    createDocumentSymbol(word: any, kind: any) {
+        const text = word.text;
         const regex = /\r\n/g;
 
         // on prend le texte global, on drop jusqu'à head.stop et à l'aide de la regex on peut savoir le nombre d'espace donc de ligne
@@ -232,7 +212,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     visitString(ctx: StringContext) {
         const child = this.visitChildren(ctx);
 
-        let string = this.createDocumentSymbol(child[0], vscode.SymbolKind.String, child[0].text);
+        let string = this.createDocumentSymbol(child[0], vscode.SymbolKind.String);
 
         return string;
     }
@@ -240,7 +220,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     visitBoolean(ctx: BooleanContext) {
         const child = this.visitChildren(ctx);
 
-        let bool = this.createDocumentSymbol(child[0], vscode.SymbolKind.Boolean, child[0].text);
+        let bool = this.createDocumentSymbol(child[0], vscode.SymbolKind.Boolean);
 
         return bool;
     }
@@ -249,7 +229,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     visitNumber(ctx: NumberContext) {
         const child = this.visitChildren(ctx);
 
-        let number = this.createDocumentSymbol(child[0], vscode.SymbolKind.Number, child[0].text);
+        let number = this.createDocumentSymbol(child[0], vscode.SymbolKind.Number);
 
         return number;
     }
