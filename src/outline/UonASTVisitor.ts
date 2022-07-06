@@ -46,8 +46,10 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
                 result.push(childResult);
             }
             else { // sinon on retourne directement l'enfant
-                result = childResult;
-                return result;
+                result = [];
+                result.push(childResult);
+                //result = childResult;
+                //return result;
             }
         }
 
@@ -230,7 +232,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     visitString(ctx: StringContext) {
         const child = this.visitChildren(ctx);
 
-        let string = this.createDocumentSymbol(child, vscode.SymbolKind.String, child.text);
+        let string = this.createDocumentSymbol(child[0], vscode.SymbolKind.String, child[0].text);
 
         return string;
     }
@@ -238,7 +240,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     visitBoolean(ctx: BooleanContext) {
         const child = this.visitChildren(ctx);
 
-        let bool = this.createDocumentSymbol(child, vscode.SymbolKind.Boolean, child.text);
+        let bool = this.createDocumentSymbol(child[0], vscode.SymbolKind.Boolean, child[0].text);
 
         return bool;
     }
@@ -247,7 +249,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     visitNumber(ctx: NumberContext) {
         const child = this.visitChildren(ctx);
 
-        let number = this.createDocumentSymbol(child, vscode.SymbolKind.Number, child.text);
+        let number = this.createDocumentSymbol(child[0], vscode.SymbolKind.Number, child[0].text);
 
         return number;
     }
