@@ -9,6 +9,7 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
     collection: vscode.DiagnosticCollection;
     context: vscode.ExtensionContext; // vscode.ExtensionContext !!!! ???
     parser: UONParser;
+    errorList: any = [];
 
     constructor(document: vscode.TextDocument, collection: vscode.DiagnosticCollection, context: vscode.ExtensionContext, parser: UONParser) {
         this.document = document;
@@ -19,16 +20,18 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
 
     public updateDiagnostics(document: vscode.TextDocument, collection: vscode.DiagnosticCollection, msg: string, range: vscode.Range): void {
         if (document) {
-            collection.set(document.uri, [{
+            this.errorList.push({
                 code: '',
                 message: msg,
                 range: range,
+
                 severity: vscode.DiagnosticSeverity.Error,
                 source: '',
                 relatedInformation: [
                     new vscode.DiagnosticRelatedInformation(new vscode.Location(document.uri, range), "")
                 ]
-            }]);
+            });
+            collection.set(document.uri, this.errorList);
         } else {
             collection.clear();
         }
@@ -65,9 +68,6 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
 
         //console.log(this.parser.vocabulary.getDisplayName(expectedTokens[0]));
 
-        if (this.errorCount > 0) {
-            return
-        }
         ++this.errorCount;
 
         console.log("ERROR", line + "-" + charPositionInLine + " : " + msg);
