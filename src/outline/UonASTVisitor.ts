@@ -7,13 +7,6 @@ import { UONVisitor } from "../generated/UONVisitor";
 export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<any> {
 
     level = 0; // Pour savoir si on est à la racine du document ou non
-    text: String;
-
-    // Keep in memory the document and the texte for what ???
-    constructor(text: String) {
-        super();
-        this.text = text;
-    }
 
     defaultResult() {
         return [];
@@ -98,33 +91,9 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
 
     createDocumentSymbol(word: any, kind: any) {
         const text = word.text;
-        const regex = /\r\n/g;
 
-        // on prend le texte global, on drop jusqu'à head.stop et à l'aide de la regex on peut savoir le nombre d'espace donc de ligne
-        // start et stop doivent représente leur emplaccement dans la chaine de texte
-        var line = this.text.slice(0, word.stop).match(regex)?.length;
-
-        var beginWord;
-        var endWord;
-
-        if (line === undefined) { // Normalement jamais atteint, au cas ou si erreur
-            line = 0;
-            beginWord = word.start;
-            endWord = word.stop;
-        } else {
-            console.log(this.text.slice(0, word.stop));
-
-            const lastNewLinePosition = this.text.slice(0, word.stop).lastIndexOf("\r\n");
-
-            console.log(this.text.slice(0, word.stop).lastIndexOf("\r\n"));
-
-            // calcul pour représenter la position selon vscode dans le niveau colonne
-            beginWord = word.start - lastNewLinePosition;
-            endWord = beginWord + word.text.length;
-        }
-
-        const start = new vscode.Position(line, beginWord);
-        const end = new vscode.Position(line, endWord);
+        const start = new vscode.Position(word.line -1 , word.column);
+        const end = new vscode.Position(word.line -1, word.column);
         const range = new vscode.Range(start, end);
 
         console.log(word.range);
@@ -244,8 +213,8 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         // TODO aussi retourner et traiter start et stop index
         const terminalNode = {
             "text": node.text,
-            "start": node._symbol.startIndex,
-            "stop": node._symbol.stopIndex
+            "line" : node._symbol.line,
+            "column" : node._symbol.charPositionInLine
         };
 
         return terminalNode;
