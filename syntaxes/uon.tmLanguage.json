@@ -233,13 +233,10 @@
 			]
 		},
 		"number": {
-			"match": "(?x)-?(?:0|[1-9]\\d*)(?:(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)?([ ])* (kg|min|m|k|m|g|s|C|K)?",
+			"match": "([+-]?(0|[1-9]\\d*)(.\\d*)?([Ee][+-]?\\d*)?)",
 			"captures": {
 				"0": {
 					"name": "constant.numeric.uon"
-				},
-				"2": {
-					"name": "constant.language.uon"
 				}
 			}
 		},
@@ -528,7 +525,7 @@
 			]
 		},
 		"number_presentation": {
-			"begin": "!float(128|64|32)?|!int(128|64|32)?|!uint(128|64|32)?\\(",
+			"begin": "(!float(128|64|32)?|!int(128|64|32)?|!uint(128|64|32)?)\\(",
 			"beginCaptures": {
 				"1": {
 					"name": "yes.uon"
