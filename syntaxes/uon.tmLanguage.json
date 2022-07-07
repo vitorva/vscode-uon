@@ -78,28 +78,10 @@
 					"name": "meta.structure.mapping.value.uon",
 					"patterns": [
 						{
-							"begin": "!str\\(",
-							"beginCaptures": {
-								"1": {
-									"name": "yes.uon"
-								}
-							},
-							"end": "\\)",
-							"endCaptures": {
-								"1": {
-									"name": "no.uon"
-								}
-							},
-							"name": "meta.structure.uon",
-							"patterns": [
-								{
-									"match": "comment|description|optional",
-									"name": "support.type.property-name2.uon"
-								},
-								{
-									"include": "#inside_value"
-								}
-							]
+							"include": "#number_presentation"
+						},
+						{
+							"include": "#type_presentation"
 						},
 						{
 							"comment": "the uon object value",
@@ -511,6 +493,61 @@
 				{
 					"match": "[^\\s\\}]",
 					"name": "invalid.illegal.expected-propriety-value.uon"
+				}
+			]
+		},
+		"type_presentation_properties": {
+			"patterns": [
+				{
+					"match": "comment|description|optional",
+					"name": "support.type.property-name2.uon"
+				},
+				{
+					"include": "#inside_value"
+				}
+			]
+		},
+		"type_presentation": {
+			"begin": "!([\\p{L}]|[\\p{L}]|[\\p{L}]|[\\p{L}]|$|-)+\\(",
+			"beginCaptures": {
+				"1": {
+					"name": "yes.uon"
+				}
+			},
+			"end": "\\)",
+			"endCaptures": {
+				"1": {
+					"name": "no.uon"
+				}
+			},
+			"name": "meta.structure.uon",
+			"patterns": [
+				{
+					"include": "#type_presentation_properties"
+				}
+			]
+		},
+		"number_presentation": {
+			"begin": "!float(128|64|32)?|!int(128|64|32)?|!uint(128|64|32)?\\(",
+			"beginCaptures": {
+				"1": {
+					"name": "yes.uon"
+				}
+			},
+			"end": "\\)",
+			"endCaptures": {
+				"1": {
+					"name": "no.uon"
+				}
+			},
+			"name": "meta.structure.uon",
+			"patterns": [
+				{
+					"match": "unit",
+					"name": "support.type.property-name2.uon"
+				},
+				{
+					"include": "#type_presentation_properties"
 				}
 			]
 		},
