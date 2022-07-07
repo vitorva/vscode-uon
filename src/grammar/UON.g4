@@ -238,29 +238,21 @@ fragment EXP
    : [Ee] SYMBOL? [0-9]*
    ;
 
+fragment HEX
+   : [0-9a-fA-F]
+   ;
+
 UNQUOTED_STRING
    : IDENTIFIER+
    ;
 
 IDENTIFIER
-   : [\p{L}] // matches a single code point in the category "letter"
-   | [\p{M}]  // a character intended to be combined with another character (e.g. accents, umlauts, enclosing boxes, etc.)
-   | [\p{N}]  // matches any kind of numeric character in any script.
-   | [\p{Pc}] //  punctuation character such as an underscore that connects words.
+   : [\p{L}]   // matches a single code point in the category "letter"
+   | [\p{M}]   // a character intended to be combined with another character (e.g. accents, umlauts, enclosing boxes, etc.)
+   | [\p{N}]   // matches any kind of numeric character in any script.
+   | [\p{Pc}]  //  punctuation character such as an underscore that connects words.
    | '$'
    | '-'
-   ;
-
-fragment HEX
-   : [0-9a-fA-F]
-   ;
-
-fragment UNICODE_SEQUENCE
-   : 'u' HEX HEX HEX HEX
-   ;
-fragment NEWLINE
-   : '\r\n'
-   | [\r\n\t]
    ;
 
 WS: [ \n\r\t] -> channel(HIDDEN);
