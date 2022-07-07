@@ -29,16 +29,13 @@ number_presentation_properties : OPEN_PAR (number_presentation (COMMA number_pre
 number_presentation_propertie : unit;
 unit : 'unit' COLON number; // TODO
 
-
-
-
-// json_pair: pair_key COLON (json_value)?; pour avoir genre test : , "" -> null
+// exemple : value : , 
 json_pair: pair_key COLON (json_value)?;
 
 presentation_properties: OPEN_PAR (presentation_property (COMMA presentation_property)*)? CLOSE_PAR;
 
 presentation_property : optional | description;
-description: DESCRIPTION COLON string; 
+description: DESCRIPTION COLON string;
 optional: OPTIONAL COLON boolean;
 
 string // TODO : change ?
@@ -142,7 +139,7 @@ true : 'true' | 'True';
 false : 'false' | 'False';
 null: 'null' | 'none' | 'None';
 
-literal : LENGTH | MASS | TEMPERATURE | TIME | NAME | UUID | DESCRIPTION | OPTIONAL | boolean | null;
+literal : LENGTH | MASS | TEMPERATURE | TIME | NAME | UUID | DESCRIPTION | OPTIONAL | number | boolean | null;
 
 number
    : SYMBOL?
@@ -165,8 +162,7 @@ CELSIUS: 'C';
 AMPERE: 'A';
 KELVIN: 'K';
 MOLE: 'mol';
-CANDELA : 'cd'; 
-
+CANDELA : 'cd';
 
 CT : '!!';
 
@@ -211,35 +207,23 @@ QUOTED_STRING
    ;
 
 fragment DOUBLE_QUOTE_CHAR
-   : ~["\\\r\n]
-   | ESCAPE_SEQUENCE
+   : ~["]
    ;
 
 fragment SINGLE_QUOTE_CHAR
-   : ~['\\\r\n]
-   | ESCAPE_SEQUENCE
-   ;
-
-fragment ESCAPE_SEQUENCE
-   : '\\'
-   ( NEWLINE
-   | UNICODE_SEQUENCE       // \u1234
-   | ['"\\/bfnrtv]          // single escape char
-   | ~['"\\bfnrtv0-9xu\r\n] // non escape char
-   | '0'                    // \0
-   | 'x' HEX HEX            // \x3a
-   )
+   : ~[']
    ;
 
 NUMBER
    : INT ('.' [0-9]*)? EXP? // +1.e2, 1234, 1234.5
    | '.' [0-9]+ EXP?        // -.2e3
    | '0' [xX] HEX+          // 0x12345678
+   | '0' [oO] HEX+          // 0o12345678
    ;
 
 NUMERIC_LITERAL
-   : 'Infinity'
-   | 'NaN'
+   : 'inf'
+   | 'nan'
    ;
 
 SYMBOL
@@ -255,27 +239,16 @@ fragment EXP
    ;
 
 UNQUOTED_STRING
-   : IDENTIFIER
+   : IDENTIFIER+
    ;
 
 IDENTIFIER
-   : IDENTIFIER_START IDENTIFIER_PART*
-   ;
-
-fragment IDENTIFIER_START
-   : [\p{L}]
+   : [\p{L}] // matches a single code point in the category "letter"
+   | [\p{M}]  // a character intended to be combined with another character (e.g. accents, umlauts, enclosing boxes, etc.)
+   | [\p{N}]  // matches any kind of numeric character in any script.
+   | [\p{Pc}] //  punctuation character such as an underscore that connects words.
    | '$'
-   | '_'
-   | '\\' UNICODE_SEQUENCE
-   ;
-
-fragment IDENTIFIER_PART
-   : IDENTIFIER_START
-   | [\p{M}]
-   | [\p{N}]
-   | [\p{Pc}]
-   | '\u200C'
-   | '\u200D'
+   | '-'
    ;
 
 fragment HEX
@@ -287,15 +260,13 @@ fragment UNICODE_SEQUENCE
    ;
 fragment NEWLINE
    : '\r\n'
-   | [\r\n\u2028\u2029]
+   | [\r\n\t]
    ;
-
-// \- since - means "range" inside [...]
 
 WS: [ \n\r\t] -> channel(HIDDEN);
 
 LINE_COMMENT: '#' ~[\r\n]* -> skip;
-   
+
 OPEN_PAR:    '(';
 CLOSE_PAR:   ')';
 OPEN_C_BRA:  '{';

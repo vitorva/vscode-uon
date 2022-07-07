@@ -38,26 +38,6 @@
 				}
 			]
 		},
-		"yaml_seq": {
-			"match": "(-)(?!\\S)",
-			"name": "punctuation.definition.yaml.sequence.item.uon"
-
-		},
-		"yaml_map": {
-			"match": "([a-zA-Z]+)(.*)(:)",
-			"captures": {
-				"1": {
-					"name": "entity.name.tag.uon"
-				},
-				"2": {
-					"patterns" : [
-						{
-							"include" : "#string_description"
-						}
-					]
-				}
-			}
-		},
 		"json_map": {
 			"begin": "\\{",
 			"end": "\\}",
@@ -98,15 +78,35 @@
 					"name": "meta.structure.mapping.value.uon",
 					"patterns": [
 						{
-							"match" : "!seq|!map",
-							"name": "markup.bold.uon"
+							"begin": "!str\\(",
+							"beginCaptures": {
+								"1": {
+									"name": "yes.uon"
+								}
+							},
+							"end": "\\)",
+							"endCaptures": {
+								"1": {
+									"name": "no.uon"
+								}
+							},
+							"name": "meta.structure.uon",
+							"patterns": [
+								{
+									"match": "comment|description|optional",
+									"name": "support.type.property-name2.uon"
+								},
+								{
+									"include": "#inside_value"
+								}
+							]
 						},
 						{
 							"comment": "the uon object value",
 							"include": "#json_value"
 						},
 						{
-							"match": "[^\\s,]",
+							"match": "[^\\s,!]",
 							"name": "invalid.illegal.expected-mapping-separator.uon"
 						}
 					]
@@ -154,7 +154,7 @@
 									"name": "string.uon support.type.property-name.uon"
 								},
 								{
-									"include" : "#string_scalar"
+									"include": "#inside_value"
 								}
 							]
 						},
@@ -201,7 +201,7 @@
 											"name": "string.uon support.type.property-name2.uon"
 										},
 										{
-											"include" : "#string_scalar"
+											"include": "#inside_value"
 										}
 									]
 								},
@@ -228,7 +228,10 @@
 											"include": "#validationProperties"
 										},
 										{
-											"match": "[^\\s,]",
+											"include": "#string_scalar"
+										},
+										{
+											"match": "[^\\s,!]",
 											"name": "invalid.illegal.expected-dictionary-separator.uon"
 										}
 									]
@@ -248,13 +251,13 @@
 			]
 		},
 		"number": {
-			"match": "(?x)-?(?:0|[1-9]\\d*)(?:(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)?([ ])* (kg|min|m|k|m|g|s|C|K)?" ,
-			"captures" : {
-				"0" : {
-					"name" : "constant.numeric.uon"
+			"match": "(?x)-?(?:0|[1-9]\\d*)(?:(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)?([ ])* (kg|min|m|k|m|g|s|C|K)?",
+			"captures": {
+				"0": {
+					"name": "constant.numeric.uon"
 				},
-				"2" : {
-					"name" : "constant.language.uon"
+				"2": {
+					"name": "constant.language.uon"
 				}
 			}
 		},
@@ -274,13 +277,14 @@
 			"name": "string.uon support.type.property-name.uon",
 			"patterns": [
 				{
-					"include": "#stringcontent"
+					"match": "~[\"]",
+					"name": "constant.character.escape.uon"
 				}
 			]
 		},
 		"unquotedObjectKey": {
-			"match": "[a-zA-Z]",
-			"name": "entity.name.tag.uon"
+			"match": "[\\p{L}]([\\p{L}]|[\\p{N}]|[\\p{Pc}])*",
+			"name": "entity.name.tag.unquotedObjectKey.uon"
 		},
 		"quotedString": {
 			"begin": "\"",
@@ -301,7 +305,8 @@
 			"name": "string.uon",
 			"patterns": [
 				{
-					"include": "#stringcontent"
+					"match": "~[\"]",
+					"name": "constant.character.escape.uon"
 				}
 			]
 		},
@@ -309,25 +314,10 @@
 			"match": "[a-zA-Z]",
 			"name": "string.unquoted.uon"
 		},
-		"stringcontent": {
-			"patterns": [
-				{
-					"match": "(?x)\\\\(?:[\"\\\\/bfnrt]|u[0-9a-fA-F]{4})",
-					"name": "constant.character.escape.uon"
-				},
-				{
-					"match": "\\\\.",
-					"name": "invalid.illegal.unrecognized-string-escape.uon"
-				}
-			]
-		},
 		"scalar": {
 			"patterns": [
 				{
 					"include": "#number"
-				},
-				{
-					"include": "#quantityValidation"
 				},
 				{
 					"include": "#boolean_scalar"
@@ -363,23 +353,26 @@
 					"name": "support.type.property-name2.uon"
 				},
 				{
-					"begin": ":",
-					"beginCaptures": {
-						"0": {
-							"name": "punctuation.separator.dictionary.key-value.uon"
-						}
-					},
-					"end": "(,)|(?=\\))",
-					"endCaptures": {
-						"1": {
-							"name": "punctuation.separator.dictionary.pair.uon"
-						}
-					},
-					"patterns" :[
-						{
-							"include" : "#string_scalar"
-						}
-					]
+					"include": "#inside_value"
+				}
+			]
+		},
+		"inside_value": {
+			"begin": ":",
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.separator.dictionary.key-value.uon"
+				}
+			},
+			"end": "(,)|(?=\\))",
+			"endCaptures": {
+				"1": {
+					"name": "punctuation.separator.dictionary.pair.uon"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#string_scalar"
 				}
 			]
 		},
@@ -399,19 +392,15 @@
 		},
 		"boolean_scalar": {
 			"name": "boolean-scalar.uon",
-			"patterns" : [
-					{
-						"match" : "(true|True|false|False)",
-						"name": "string.uon support.type.property-name.uon"
-					},
-					{
-						"include" : "#boolType"
-					}
+			"patterns": [
+				{
+					"match": "(true|True|false|False)",
+					"name": "string.uon support.type.property-name.uon"
+				},
+				{
+					"include": "#boolType"
+				}
 			]
-		},
-		"uonType" : {
-			"match": "!str|!bool|!url|!float(128|64|32)?|!int(128|64|32)?|!uint(128|64|32)?",
-			"name": "string.uon support.type.property-name.uon"
 		},
 		"strType": {
 			"match": "!str",
@@ -430,7 +419,7 @@
 			"name": "string.uon support.type.property-name.uon"
 		},
 		"quantityValidation": {
-			"match" : "length|mass|time|temperature",
+			"match": "length|mass|time|temperature",
 			"name": "string.uon"
 		},
 		"null": {
@@ -490,16 +479,16 @@
 					"patterns": [
 						{
 							"match": "max|min|quantity",
-							"name": "string.uon support.type.property-name2.uon"						
+							"name": "string.uon support.type.property-name2.uon"
 						},
 						{
-							"include" : "#local_validation"
+							"include": "#local_validation"
 						}
 					]
 				}
 			]
 		},
-		"local_validation" : {
+		"local_validation": {
 			"begin": ":",
 			"beginCaptures": {
 				"0": {
@@ -512,12 +501,12 @@
 					"name": "punctuation.separator.dictionary.pair.uon"
 				}
 			},
-			"patterns" :[
+			"patterns": [
 				{
-					"include" : "#number"
+					"include": "#number"
 				},
 				{
-					"include" : "#quantityValidation"
+					"include": "#quantityValidation"
 				},
 				{
 					"match": "[^\\s\\}]",
@@ -525,39 +514,22 @@
 				}
 			]
 		},
-
 		"root_value": {
 			"patterns": [
-				{
-					"match" : "!seq|!map",
-					"name": "markup.bold.uon"
-				},
 				{
 					"include": "#json_collection"
 				},
 				{
-					"include": "#yaml_collection"
-				},
-				{
 					"include": "#schema"
-				},
-				{
-					"include": "#scalar"
-				}
-			]
-		},
-		"yaml_collection": {
-			"patterns": [
-				{
-					"include": "#yaml_seq"
-				},
-				{
-					"include": "#yaml_map"
 				}
 			]
 		},
 		"json_collection": {
 			"patterns": [
+				{
+					"match": "!seq|!oseq|!map|!omap",
+					"name": "markup.bold.uon"
+				},
 				{
 					"include": "#json_seq"
 				},
