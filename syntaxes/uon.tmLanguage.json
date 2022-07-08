@@ -434,12 +434,6 @@
 			"patterns": [
 				{
 					"include": "#validation"
-				},
-				{
-					"include": "#boolType"
-				},
-				{
-					"include": "#urlType"
 				}
 			]
 		},
@@ -498,6 +492,12 @@
 				},
 				{
 					"include": "#strType"
+				},
+				{
+					"include": "#boolType"
+				},
+				{
+					"include": "#urlType"
 				}
 			]
 		},

@@ -4,10 +4,18 @@
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 
 import { UonContext } from "./UONParser";
+import { Root_valueContext } from "./UONParser";
 import { Json_collectionContext } from "./UONParser";
 import { Json_mapContext } from "./UONParser";
 import { Json_seqContext } from "./UONParser";
+import { Json_user_typeContext } from "./UONParser";
+import { Json_valueContext } from "./UONParser";
 import { Pair_keyContext } from "./UONParser";
+import { Json_pairContext } from "./UONParser";
+import { Presentation_propertiesContext } from "./UONParser";
+import { Presentation_propertyContext } from "./UONParser";
+import { DescriptionContext } from "./UONParser";
+import { OptionalContext } from "./UONParser";
 import { Types_propertiesContext } from "./UONParser";
 import { Types_propertieContext } from "./UONParser";
 import { CommentContext } from "./UONParser";
@@ -15,29 +23,6 @@ import { Number_presentationContext } from "./UONParser";
 import { Number_presentation_propertiesContext } from "./UONParser";
 import { Number_presentation_propertieContext } from "./UONParser";
 import { UnitContext } from "./UONParser";
-import { Json_pairContext } from "./UONParser";
-import { Presentation_propertiesContext } from "./UONParser";
-import { Presentation_propertyContext } from "./UONParser";
-import { DescriptionContext } from "./UONParser";
-import { OptionalContext } from "./UONParser";
-import { StringContext } from "./UONParser";
-import { Custom_typeContext } from "./UONParser";
-import { Json_user_typeContext } from "./UONParser";
-import { ScalarContext } from "./UONParser";
-import { String_scalarContext } from "./UONParser";
-import { Boolean_scalarContext } from "./UONParser";
-import { UrlContext } from "./UONParser";
-import { Quantity_scalarContext } from "./UONParser";
-import { Numeric_scalarContext } from "./UONParser";
-import { Coercible_numeric_scalarContext } from "./UONParser";
-import { QuantityContext } from "./UONParser";
-import { LengthContext } from "./UONParser";
-import { MassContext } from "./UONParser";
-import { TimeContext } from "./UONParser";
-import { TemperatureContext } from "./UONParser";
-import { Root_valueContext } from "./UONParser";
-import { Json_valueContext } from "./UONParser";
-import { Number_typeContext } from "./UONParser";
 import { SchemaContext } from "./UONParser";
 import { AttributesContext } from "./UONParser";
 import { AttributeContext } from "./UONParser";
@@ -61,10 +46,25 @@ import { Number_minContext } from "./UONParser";
 import { Number_validation_typeContext } from "./UONParser";
 import { Quantity_validationContext } from "./UONParser";
 import { Quantity_validation_typesContext } from "./UONParser";
+import { ScalarContext } from "./UONParser";
+import { Quantity_scalarContext } from "./UONParser";
+import { Numeric_scalarContext } from "./UONParser";
+import { Coercible_numeric_scalarContext } from "./UONParser";
+import { String_scalarContext } from "./UONParser";
+import { Boolean_scalarContext } from "./UONParser";
+import { UrlContext } from "./UONParser";
+import { QuantityContext } from "./UONParser";
+import { LengthContext } from "./UONParser";
+import { MassContext } from "./UONParser";
+import { TimeContext } from "./UONParser";
+import { TemperatureContext } from "./UONParser";
+import { Number_typeContext } from "./UONParser";
 import { BooleanContext } from "./UONParser";
 import { TrueContext } from "./UONParser";
 import { FalseContext } from "./UONParser";
 import { NullContext } from "./UONParser";
+import { Custom_typeContext } from "./UONParser";
+import { StringContext } from "./UONParser";
 import { LiteralContext } from "./UONParser";
 import { NumberContext } from "./UONParser";
 
@@ -84,6 +84,17 @@ export interface UONListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitUon?: (ctx: UonContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.root_value`.
+	 * @param ctx the parse tree
+	 */
+	enterRoot_value?: (ctx: Root_valueContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.root_value`.
+	 * @param ctx the parse tree
+	 */
+	exitRoot_value?: (ctx: Root_valueContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `UONParser.json_collection`.
@@ -119,6 +130,28 @@ export interface UONListener extends ParseTreeListener {
 	exitJson_seq?: (ctx: Json_seqContext) => void;
 
 	/**
+	 * Enter a parse tree produced by `UONParser.json_user_type`.
+	 * @param ctx the parse tree
+	 */
+	enterJson_user_type?: (ctx: Json_user_typeContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.json_user_type`.
+	 * @param ctx the parse tree
+	 */
+	exitJson_user_type?: (ctx: Json_user_typeContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.json_value`.
+	 * @param ctx the parse tree
+	 */
+	enterJson_value?: (ctx: Json_valueContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.json_value`.
+	 * @param ctx the parse tree
+	 */
+	exitJson_value?: (ctx: Json_valueContext) => void;
+
+	/**
 	 * Enter a parse tree produced by `UONParser.pair_key`.
 	 * @param ctx the parse tree
 	 */
@@ -128,6 +161,61 @@ export interface UONListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitPair_key?: (ctx: Pair_keyContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.json_pair`.
+	 * @param ctx the parse tree
+	 */
+	enterJson_pair?: (ctx: Json_pairContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.json_pair`.
+	 * @param ctx the parse tree
+	 */
+	exitJson_pair?: (ctx: Json_pairContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.presentation_properties`.
+	 * @param ctx the parse tree
+	 */
+	enterPresentation_properties?: (ctx: Presentation_propertiesContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.presentation_properties`.
+	 * @param ctx the parse tree
+	 */
+	exitPresentation_properties?: (ctx: Presentation_propertiesContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.presentation_property`.
+	 * @param ctx the parse tree
+	 */
+	enterPresentation_property?: (ctx: Presentation_propertyContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.presentation_property`.
+	 * @param ctx the parse tree
+	 */
+	exitPresentation_property?: (ctx: Presentation_propertyContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.description`.
+	 * @param ctx the parse tree
+	 */
+	enterDescription?: (ctx: DescriptionContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.description`.
+	 * @param ctx the parse tree
+	 */
+	exitDescription?: (ctx: DescriptionContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.optional`.
+	 * @param ctx the parse tree
+	 */
+	enterOptional?: (ctx: OptionalContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.optional`.
+	 * @param ctx the parse tree
+	 */
+	exitOptional?: (ctx: OptionalContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `UONParser.types_properties`.
@@ -205,259 +293,6 @@ export interface UONListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitUnit?: (ctx: UnitContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.json_pair`.
-	 * @param ctx the parse tree
-	 */
-	enterJson_pair?: (ctx: Json_pairContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.json_pair`.
-	 * @param ctx the parse tree
-	 */
-	exitJson_pair?: (ctx: Json_pairContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.presentation_properties`.
-	 * @param ctx the parse tree
-	 */
-	enterPresentation_properties?: (ctx: Presentation_propertiesContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.presentation_properties`.
-	 * @param ctx the parse tree
-	 */
-	exitPresentation_properties?: (ctx: Presentation_propertiesContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.presentation_property`.
-	 * @param ctx the parse tree
-	 */
-	enterPresentation_property?: (ctx: Presentation_propertyContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.presentation_property`.
-	 * @param ctx the parse tree
-	 */
-	exitPresentation_property?: (ctx: Presentation_propertyContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.description`.
-	 * @param ctx the parse tree
-	 */
-	enterDescription?: (ctx: DescriptionContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.description`.
-	 * @param ctx the parse tree
-	 */
-	exitDescription?: (ctx: DescriptionContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.optional`.
-	 * @param ctx the parse tree
-	 */
-	enterOptional?: (ctx: OptionalContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.optional`.
-	 * @param ctx the parse tree
-	 */
-	exitOptional?: (ctx: OptionalContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.string`.
-	 * @param ctx the parse tree
-	 */
-	enterString?: (ctx: StringContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.string`.
-	 * @param ctx the parse tree
-	 */
-	exitString?: (ctx: StringContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.custom_type`.
-	 * @param ctx the parse tree
-	 */
-	enterCustom_type?: (ctx: Custom_typeContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.custom_type`.
-	 * @param ctx the parse tree
-	 */
-	exitCustom_type?: (ctx: Custom_typeContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.json_user_type`.
-	 * @param ctx the parse tree
-	 */
-	enterJson_user_type?: (ctx: Json_user_typeContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.json_user_type`.
-	 * @param ctx the parse tree
-	 */
-	exitJson_user_type?: (ctx: Json_user_typeContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.scalar`.
-	 * @param ctx the parse tree
-	 */
-	enterScalar?: (ctx: ScalarContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.scalar`.
-	 * @param ctx the parse tree
-	 */
-	exitScalar?: (ctx: ScalarContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.string_scalar`.
-	 * @param ctx the parse tree
-	 */
-	enterString_scalar?: (ctx: String_scalarContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.string_scalar`.
-	 * @param ctx the parse tree
-	 */
-	exitString_scalar?: (ctx: String_scalarContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.boolean_scalar`.
-	 * @param ctx the parse tree
-	 */
-	enterBoolean_scalar?: (ctx: Boolean_scalarContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.boolean_scalar`.
-	 * @param ctx the parse tree
-	 */
-	exitBoolean_scalar?: (ctx: Boolean_scalarContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.url`.
-	 * @param ctx the parse tree
-	 */
-	enterUrl?: (ctx: UrlContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.url`.
-	 * @param ctx the parse tree
-	 */
-	exitUrl?: (ctx: UrlContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.quantity_scalar`.
-	 * @param ctx the parse tree
-	 */
-	enterQuantity_scalar?: (ctx: Quantity_scalarContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.quantity_scalar`.
-	 * @param ctx the parse tree
-	 */
-	exitQuantity_scalar?: (ctx: Quantity_scalarContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.numeric_scalar`.
-	 * @param ctx the parse tree
-	 */
-	enterNumeric_scalar?: (ctx: Numeric_scalarContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.numeric_scalar`.
-	 * @param ctx the parse tree
-	 */
-	exitNumeric_scalar?: (ctx: Numeric_scalarContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.coercible_numeric_scalar`.
-	 * @param ctx the parse tree
-	 */
-	enterCoercible_numeric_scalar?: (ctx: Coercible_numeric_scalarContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.coercible_numeric_scalar`.
-	 * @param ctx the parse tree
-	 */
-	exitCoercible_numeric_scalar?: (ctx: Coercible_numeric_scalarContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.quantity`.
-	 * @param ctx the parse tree
-	 */
-	enterQuantity?: (ctx: QuantityContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.quantity`.
-	 * @param ctx the parse tree
-	 */
-	exitQuantity?: (ctx: QuantityContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.length`.
-	 * @param ctx the parse tree
-	 */
-	enterLength?: (ctx: LengthContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.length`.
-	 * @param ctx the parse tree
-	 */
-	exitLength?: (ctx: LengthContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.mass`.
-	 * @param ctx the parse tree
-	 */
-	enterMass?: (ctx: MassContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.mass`.
-	 * @param ctx the parse tree
-	 */
-	exitMass?: (ctx: MassContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.time`.
-	 * @param ctx the parse tree
-	 */
-	enterTime?: (ctx: TimeContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.time`.
-	 * @param ctx the parse tree
-	 */
-	exitTime?: (ctx: TimeContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.temperature`.
-	 * @param ctx the parse tree
-	 */
-	enterTemperature?: (ctx: TemperatureContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.temperature`.
-	 * @param ctx the parse tree
-	 */
-	exitTemperature?: (ctx: TemperatureContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.root_value`.
-	 * @param ctx the parse tree
-	 */
-	enterRoot_value?: (ctx: Root_valueContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.root_value`.
-	 * @param ctx the parse tree
-	 */
-	exitRoot_value?: (ctx: Root_valueContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.json_value`.
-	 * @param ctx the parse tree
-	 */
-	enterJson_value?: (ctx: Json_valueContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.json_value`.
-	 * @param ctx the parse tree
-	 */
-	exitJson_value?: (ctx: Json_valueContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `UONParser.number_type`.
-	 * @param ctx the parse tree
-	 */
-	enterNumber_type?: (ctx: Number_typeContext) => void;
-	/**
-	 * Exit a parse tree produced by `UONParser.number_type`.
-	 * @param ctx the parse tree
-	 */
-	exitNumber_type?: (ctx: Number_typeContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `UONParser.schema`.
@@ -713,6 +548,149 @@ export interface UONListener extends ParseTreeListener {
 	exitQuantity_validation_types?: (ctx: Quantity_validation_typesContext) => void;
 
 	/**
+	 * Enter a parse tree produced by `UONParser.scalar`.
+	 * @param ctx the parse tree
+	 */
+	enterScalar?: (ctx: ScalarContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.scalar`.
+	 * @param ctx the parse tree
+	 */
+	exitScalar?: (ctx: ScalarContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.quantity_scalar`.
+	 * @param ctx the parse tree
+	 */
+	enterQuantity_scalar?: (ctx: Quantity_scalarContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.quantity_scalar`.
+	 * @param ctx the parse tree
+	 */
+	exitQuantity_scalar?: (ctx: Quantity_scalarContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.numeric_scalar`.
+	 * @param ctx the parse tree
+	 */
+	enterNumeric_scalar?: (ctx: Numeric_scalarContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.numeric_scalar`.
+	 * @param ctx the parse tree
+	 */
+	exitNumeric_scalar?: (ctx: Numeric_scalarContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.coercible_numeric_scalar`.
+	 * @param ctx the parse tree
+	 */
+	enterCoercible_numeric_scalar?: (ctx: Coercible_numeric_scalarContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.coercible_numeric_scalar`.
+	 * @param ctx the parse tree
+	 */
+	exitCoercible_numeric_scalar?: (ctx: Coercible_numeric_scalarContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.string_scalar`.
+	 * @param ctx the parse tree
+	 */
+	enterString_scalar?: (ctx: String_scalarContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.string_scalar`.
+	 * @param ctx the parse tree
+	 */
+	exitString_scalar?: (ctx: String_scalarContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.boolean_scalar`.
+	 * @param ctx the parse tree
+	 */
+	enterBoolean_scalar?: (ctx: Boolean_scalarContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.boolean_scalar`.
+	 * @param ctx the parse tree
+	 */
+	exitBoolean_scalar?: (ctx: Boolean_scalarContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.url`.
+	 * @param ctx the parse tree
+	 */
+	enterUrl?: (ctx: UrlContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.url`.
+	 * @param ctx the parse tree
+	 */
+	exitUrl?: (ctx: UrlContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.quantity`.
+	 * @param ctx the parse tree
+	 */
+	enterQuantity?: (ctx: QuantityContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.quantity`.
+	 * @param ctx the parse tree
+	 */
+	exitQuantity?: (ctx: QuantityContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.length`.
+	 * @param ctx the parse tree
+	 */
+	enterLength?: (ctx: LengthContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.length`.
+	 * @param ctx the parse tree
+	 */
+	exitLength?: (ctx: LengthContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.mass`.
+	 * @param ctx the parse tree
+	 */
+	enterMass?: (ctx: MassContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.mass`.
+	 * @param ctx the parse tree
+	 */
+	exitMass?: (ctx: MassContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.time`.
+	 * @param ctx the parse tree
+	 */
+	enterTime?: (ctx: TimeContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.time`.
+	 * @param ctx the parse tree
+	 */
+	exitTime?: (ctx: TimeContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.temperature`.
+	 * @param ctx the parse tree
+	 */
+	enterTemperature?: (ctx: TemperatureContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.temperature`.
+	 * @param ctx the parse tree
+	 */
+	exitTemperature?: (ctx: TemperatureContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.number_type`.
+	 * @param ctx the parse tree
+	 */
+	enterNumber_type?: (ctx: Number_typeContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.number_type`.
+	 * @param ctx the parse tree
+	 */
+	exitNumber_type?: (ctx: Number_typeContext) => void;
+
+	/**
 	 * Enter a parse tree produced by `UONParser.boolean`.
 	 * @param ctx the parse tree
 	 */
@@ -755,6 +733,28 @@ export interface UONListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitNull?: (ctx: NullContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.custom_type`.
+	 * @param ctx the parse tree
+	 */
+	enterCustom_type?: (ctx: Custom_typeContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.custom_type`.
+	 * @param ctx the parse tree
+	 */
+	exitCustom_type?: (ctx: Custom_typeContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.string`.
+	 * @param ctx the parse tree
+	 */
+	enterString?: (ctx: StringContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.string`.
+	 * @param ctx the parse tree
+	 */
+	exitString?: (ctx: StringContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `UONParser.literal`.

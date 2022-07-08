@@ -4,10 +4,18 @@
 import { ParseTreeVisitor } from "antlr4ts/tree/ParseTreeVisitor";
 
 import { UonContext } from "./UONParser";
+import { Root_valueContext } from "./UONParser";
 import { Json_collectionContext } from "./UONParser";
 import { Json_mapContext } from "./UONParser";
 import { Json_seqContext } from "./UONParser";
+import { Json_user_typeContext } from "./UONParser";
+import { Json_valueContext } from "./UONParser";
 import { Pair_keyContext } from "./UONParser";
+import { Json_pairContext } from "./UONParser";
+import { Presentation_propertiesContext } from "./UONParser";
+import { Presentation_propertyContext } from "./UONParser";
+import { DescriptionContext } from "./UONParser";
+import { OptionalContext } from "./UONParser";
 import { Types_propertiesContext } from "./UONParser";
 import { Types_propertieContext } from "./UONParser";
 import { CommentContext } from "./UONParser";
@@ -15,29 +23,6 @@ import { Number_presentationContext } from "./UONParser";
 import { Number_presentation_propertiesContext } from "./UONParser";
 import { Number_presentation_propertieContext } from "./UONParser";
 import { UnitContext } from "./UONParser";
-import { Json_pairContext } from "./UONParser";
-import { Presentation_propertiesContext } from "./UONParser";
-import { Presentation_propertyContext } from "./UONParser";
-import { DescriptionContext } from "./UONParser";
-import { OptionalContext } from "./UONParser";
-import { StringContext } from "./UONParser";
-import { Custom_typeContext } from "./UONParser";
-import { Json_user_typeContext } from "./UONParser";
-import { ScalarContext } from "./UONParser";
-import { String_scalarContext } from "./UONParser";
-import { Boolean_scalarContext } from "./UONParser";
-import { UrlContext } from "./UONParser";
-import { Quantity_scalarContext } from "./UONParser";
-import { Numeric_scalarContext } from "./UONParser";
-import { Coercible_numeric_scalarContext } from "./UONParser";
-import { QuantityContext } from "./UONParser";
-import { LengthContext } from "./UONParser";
-import { MassContext } from "./UONParser";
-import { TimeContext } from "./UONParser";
-import { TemperatureContext } from "./UONParser";
-import { Root_valueContext } from "./UONParser";
-import { Json_valueContext } from "./UONParser";
-import { Number_typeContext } from "./UONParser";
 import { SchemaContext } from "./UONParser";
 import { AttributesContext } from "./UONParser";
 import { AttributeContext } from "./UONParser";
@@ -61,10 +46,25 @@ import { Number_minContext } from "./UONParser";
 import { Number_validation_typeContext } from "./UONParser";
 import { Quantity_validationContext } from "./UONParser";
 import { Quantity_validation_typesContext } from "./UONParser";
+import { ScalarContext } from "./UONParser";
+import { Quantity_scalarContext } from "./UONParser";
+import { Numeric_scalarContext } from "./UONParser";
+import { Coercible_numeric_scalarContext } from "./UONParser";
+import { String_scalarContext } from "./UONParser";
+import { Boolean_scalarContext } from "./UONParser";
+import { UrlContext } from "./UONParser";
+import { QuantityContext } from "./UONParser";
+import { LengthContext } from "./UONParser";
+import { MassContext } from "./UONParser";
+import { TimeContext } from "./UONParser";
+import { TemperatureContext } from "./UONParser";
+import { Number_typeContext } from "./UONParser";
 import { BooleanContext } from "./UONParser";
 import { TrueContext } from "./UONParser";
 import { FalseContext } from "./UONParser";
 import { NullContext } from "./UONParser";
+import { Custom_typeContext } from "./UONParser";
+import { StringContext } from "./UONParser";
 import { LiteralContext } from "./UONParser";
 import { NumberContext } from "./UONParser";
 
@@ -83,6 +83,13 @@ export interface UONVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitUon?: (ctx: UonContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.root_value`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitRoot_value?: (ctx: Root_valueContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `UONParser.json_collection`.
@@ -106,11 +113,60 @@ export interface UONVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitJson_seq?: (ctx: Json_seqContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by `UONParser.json_user_type`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitJson_user_type?: (ctx: Json_user_typeContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.json_value`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitJson_value?: (ctx: Json_valueContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by `UONParser.pair_key`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	visitPair_key?: (ctx: Pair_keyContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.json_pair`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitJson_pair?: (ctx: Json_pairContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.presentation_properties`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitPresentation_properties?: (ctx: Presentation_propertiesContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.presentation_property`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitPresentation_property?: (ctx: Presentation_propertyContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.description`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitDescription?: (ctx: DescriptionContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.optional`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitOptional?: (ctx: OptionalContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `UONParser.types_properties`.
@@ -160,167 +216,6 @@ export interface UONVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitUnit?: (ctx: UnitContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.json_pair`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitJson_pair?: (ctx: Json_pairContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.presentation_properties`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitPresentation_properties?: (ctx: Presentation_propertiesContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.presentation_property`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitPresentation_property?: (ctx: Presentation_propertyContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.description`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitDescription?: (ctx: DescriptionContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.optional`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitOptional?: (ctx: OptionalContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.string`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitString?: (ctx: StringContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.custom_type`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitCustom_type?: (ctx: Custom_typeContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.json_user_type`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitJson_user_type?: (ctx: Json_user_typeContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.scalar`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitScalar?: (ctx: ScalarContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.string_scalar`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitString_scalar?: (ctx: String_scalarContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.boolean_scalar`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitBoolean_scalar?: (ctx: Boolean_scalarContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.url`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitUrl?: (ctx: UrlContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.quantity_scalar`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitQuantity_scalar?: (ctx: Quantity_scalarContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.numeric_scalar`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitNumeric_scalar?: (ctx: Numeric_scalarContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.coercible_numeric_scalar`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitCoercible_numeric_scalar?: (ctx: Coercible_numeric_scalarContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.quantity`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitQuantity?: (ctx: QuantityContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.length`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitLength?: (ctx: LengthContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.mass`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitMass?: (ctx: MassContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.time`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitTime?: (ctx: TimeContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.temperature`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitTemperature?: (ctx: TemperatureContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.root_value`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitRoot_value?: (ctx: Root_valueContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.json_value`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitJson_value?: (ctx: Json_valueContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `UONParser.number_type`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitNumber_type?: (ctx: Number_typeContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `UONParser.schema`.
@@ -484,6 +379,97 @@ export interface UONVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitQuantity_validation_types?: (ctx: Quantity_validation_typesContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by `UONParser.scalar`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitScalar?: (ctx: ScalarContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.quantity_scalar`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitQuantity_scalar?: (ctx: Quantity_scalarContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.numeric_scalar`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitNumeric_scalar?: (ctx: Numeric_scalarContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.coercible_numeric_scalar`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitCoercible_numeric_scalar?: (ctx: Coercible_numeric_scalarContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.string_scalar`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitString_scalar?: (ctx: String_scalarContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.boolean_scalar`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitBoolean_scalar?: (ctx: Boolean_scalarContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.url`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitUrl?: (ctx: UrlContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.quantity`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitQuantity?: (ctx: QuantityContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.length`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitLength?: (ctx: LengthContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.mass`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitMass?: (ctx: MassContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.time`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitTime?: (ctx: TimeContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.temperature`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitTemperature?: (ctx: TemperatureContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.number_type`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitNumber_type?: (ctx: Number_typeContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by `UONParser.boolean`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -510,6 +496,20 @@ export interface UONVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitNull?: (ctx: NullContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.custom_type`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitCustom_type?: (ctx: Custom_typeContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.string`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitString?: (ctx: StringContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `UONParser.literal`.
