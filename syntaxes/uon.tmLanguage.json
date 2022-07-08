@@ -210,7 +210,7 @@
 											"include": "#validationProperties"
 										},
 										{
-											"include": "#string_scalar"
+											"include": "#scalar"
 										},
 										{
 											"match": "[^\\s,!]",
@@ -293,7 +293,7 @@
 			]
 		},
 		"unquotedString": {
-			"match": "[a-zA-Z]",
+			"match": "[\\p{L}]([\\p{L}]|[\\p{N}]|[\\p{Pc}])*",
 			"name": "string.unquoted.uon"
 		},
 		"scalar": {
@@ -312,6 +312,9 @@
 				},
 				{
 					"include": "#numberType"
+				},
+				{
+					"include": "#userType"
 				}
 			]
 		},
@@ -354,7 +357,7 @@
 			},
 			"patterns": [
 				{
-					"include": "#string_scalar"
+					"include": "#scalar"
 				}
 			]
 		},
@@ -384,6 +387,10 @@
 				}
 			]
 		},
+		"userType": {
+			"match": "!([\\p{L}]|[\\p{L}]|[\\p{L}]|[\\p{L}]|$|-)*",
+			"name": "string.uon support.type.property-name.uon"
+		},
 		"strType": {
 			"match": "!str",
 			"name": "string.uon support.type.property-name.uon"
@@ -402,7 +409,7 @@
 		},
 		"quantityValidation": {
 			"match": "length|mass|time|temperature",
-			"name": "string.uon"
+			"name": "string2.uon"
 		},
 		"null": {
 			"match": "null|none|None",
@@ -439,13 +446,7 @@
 		"validation": {
 			"patterns": [
 				{
-					"include": "#numberType"
-				},
-				{
-					"include": "#strType"
-				},
-				{
-					"begin": "\\(",
+					"begin": "(!float(128|64|32)?|!int(128|64|32)?|!uint(128|64|32)?)\\(",
 					"beginCaptures": {
 						"0": {
 							"name": "punctuation.definition.schema-validation-property.begin.uon"
@@ -467,6 +468,36 @@
 							"include": "#local_validation"
 						}
 					]
+				},
+				{
+					"begin": "!str\\(",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.definition.schema-validation-property.begin.uon"
+						}
+					},
+					"end": "\\)",
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.definition.schema-validation-property.end.uon"
+						}
+					},
+					"name": "punctuation.definition.schema-validation-property.uon",
+					"patterns": [
+						{
+							"match": "max|min",
+							"name": "string.uon support.type.property-name2.uon"
+						},
+						{
+							"include": "#local_validation"
+						}
+					]
+				},
+				{
+					"include": "#numberType"
+				},
+				{
+					"include": "#strType"
 				}
 			]
 		},
@@ -485,10 +516,10 @@
 			},
 			"patterns": [
 				{
-					"include": "#number"
+					"include": "#quantityValidation"
 				},
 				{
-					"include": "#quantityValidation"
+					"include": "#scalar"
 				},
 				{
 					"match": "[^\\s\\}]",
