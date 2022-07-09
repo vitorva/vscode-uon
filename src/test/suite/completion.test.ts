@@ -1,13 +1,5 @@
-/*
- * This file is released under the MIT license.
- * Copyright (c) 2016, 2021 Mike Lischke
- *
- * See LICENSE file for more info.
- */
 
-// spell-checker: disable
-
-import { expect, assert } from "chai";
+import { expect } from "chai";
 import { UONParser } from "../../generated/UONParser";
 import { UONLexer } from "../../generated/UONLexer";
 
@@ -45,10 +37,22 @@ suite("antlr4-c3", function () {
             expect(errorListener.errorCount, "Test 1").equals(0);
 
             const core = new c3.CodeCompletionCore(parser);
+            core.ignoredTokens = new Set([
+                UONLexer.OPEN_C_BRA,
+                UONLexer.CLOSE_C_BRA,
+                UONLexer.OPEN_S_BRA,
+                UONLexer.CLOSE_S_BRA,
+                UONLexer.OPEN_PAR,
+                UONLexer.CLOSE_PAR,
+                UONLexer.COMMA,
+                UONLexer.COLON,
+                UONLexer.QUOTED_STRING,
+                UONLexer.UNQUOTED_STRING
+            ]);
 
             // 1) At the input start.
             let candidates = core.collectCandidates(0);
-            expect(candidates.tokens.size, "Test 2").to.equal(8);
+            expect(candidates.tokens.size, "Test 2").to.equal(5);
 
             /*
             expect(candidates.tokens.has(ExprLexer.VAR), "Test 3").to.equal(true);
