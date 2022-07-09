@@ -1,0 +1,75 @@
+# SYNTAX TEST "source.uon"
+
+># comment
+#^ source.uon comment.line.number-sign.uon punctuation.definition.comment.begin.uon
+# ^^^^^^^^ source.uon comment.line.number-sign.uon
+>!!mySensor: !schema ( description : "provide great infos") {
+#^^^^^^^^^^ source.uon meta.structure.schema.value.uon entity.other.attribute-name.uon
+#          ^ source.uon meta.structure.schema.value.uon
+#           ^ source.uon meta.structure.schema.value.uon
+#            ^^^^^^^ source.uon meta.structure.schema.value.uon markup.bold.uon
+#                   ^ source.uon meta.structure.schema.value.uon
+#                    ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema.uon punctuation.definition.schema-presentation.begin.uon
+#                     ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema.uon
+#                      ^^^^^^^^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema.uon string.uon support.type.property-name.uon
+#                                 ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema.uon
+#                                  ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema.uon punctuation.separator.dictionary.key-value.uon
+#                                   ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema.uon
+#                                    ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema.uon string.uon
+#                                     ^^^^^^^^^^^^^^^^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema.uon string.uon
+#                                                        ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema.uon string.uon string.unquoted.end.uon
+#                                                         ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema.uon punctuation.definition.schema-presentation.end.uon
+#                                                          ^ source.uon meta.structure.schema.value.uon
+#                                                           ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon punctuation.definition.schema-attribute.begin.uon
+>    descriptions :  !int( quantity : length),
+#^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon
+#    ^^^^^^^^^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon entity.name.tag.unquotedObjectKey.uon
+#                ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon
+#                 ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.separator.schema-validation.key-value.uon
+#                  ^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon
+#                    ^^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.definition.schema-validation-property.uon punctuation.definition.schema-validation-property.begin.uon
+#                         ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.definition.schema-validation-property.uon
+#                          ^^^^^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.definition.schema-validation-property.uon string.uon support.type.property-name2.uon
+#                                  ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.definition.schema-validation-property.uon
+#                                   ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.definition.schema-validation-property.uon punctuation.separator.dictionary.key-value.uon
+#                                    ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.definition.schema-validation-property.uon
+#                                     ^^^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.definition.schema-validation-property.uon string2.uon
+#                                           ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.definition.schema-validation-property.uon punctuation.definition.schema-validation-property.end.uon
+#                                            ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.separator.schema-validation.pair.uon
+>    pression ( optional : True ) : !float,
+#^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon
+#    ^^^^^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon entity.name.tag.unquotedObjectKey.uon
+#            ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon
+#             ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon punctuation.definition.schema-attribute-description.uon punctuation.definition.schema-attribute-description.begin.uon
+#              ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon punctuation.definition.schema-attribute-description.uon
+#               ^^^^^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon punctuation.definition.schema-attribute-description.uon string.uon support.type.property-name2.uon
+#                       ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon punctuation.definition.schema-attribute-description.uon
+#                        ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon punctuation.definition.schema-attribute-description.uon punctuation.separator.dictionary.key-value.uon
+#                         ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon punctuation.definition.schema-attribute-description.uon
+#                          ^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon punctuation.definition.schema-attribute-description.uon string.uon support.type.property-name.uon
+#                              ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon punctuation.definition.schema-attribute-description.uon
+#                               ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon punctuation.definition.schema-attribute-description.uon punctuation.definition.schema-attribute-description.end.uon
+#                                ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon
+#                                 ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.separator.schema-validation.key-value.uon
+#                                  ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon
+#                                   ^^^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon string.uon support.type.property-name.uon
+#                                         ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.separator.schema-validation.pair.uon
+>    names: !str sensor,
+#^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon
+#    ^^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon entity.name.tag.unquotedObjectKey.uon
+#         ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.separator.schema-validation.key-value.uon
+#          ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon
+#           ^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon string.uon support.type.property-name.uon
+#               ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon
+#                ^^^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon string.unquoted.uon
+#                      ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.separator.schema-validation.pair.uon
+>    located: !bool  
+#^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon
+#    ^^^^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon entity.name.tag.unquotedObjectKey.uon
+#           ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.separator.schema-validation.key-value.uon
+#            ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon
+#             ^^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon string.uon support.type.property-name.uon
+#                  ^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon
+>}  
+#^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon punctuation.definition.schema-attribute.end.uon
+# ^^^ source.uon meta.structure.schema.value.uon
