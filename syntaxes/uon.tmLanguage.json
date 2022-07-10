@@ -180,7 +180,7 @@
 									"patterns": [
 										{
 											"match": "description|optional",
-											"name": "string.uon support.type.property-name2.uon"
+											"name": "string.uon support.type.property.uon"
 										},
 										{
 											"include": "#inside_value"
@@ -335,7 +335,7 @@
 			"patterns": [
 				{
 					"match": "description|optional",
-					"name": "support.type.property-name2.uon"
+					"name": "support.type.property.uon"
 				},
 				{
 					"include": "#inside_value"
@@ -456,7 +456,7 @@
 					"patterns": [
 						{
 							"match": "max|min|quantity",
-							"name": "string.uon support.type.property-name2.uon"
+							"name": "string.uon support.type.property.uon"
 						},
 						{
 							"include": "#local_validation"
@@ -480,7 +480,7 @@
 					"patterns": [
 						{
 							"match": "max|min",
-							"name": "string.uon support.type.property-name2.uon"
+							"name": "string.uon support.type.property.uon"
 						},
 						{
 							"include": "#local_validation"
@@ -531,7 +531,7 @@
 			"patterns": [
 				{
 					"match": "comment|description|optional",
-					"name": "support.type.property-name2.uon"
+					"name": "support.type.property.uon"
 				},
 				{
 					"include": "#inside_value"
@@ -575,7 +575,7 @@
 			"patterns": [
 				{
 					"match": "unit",
-					"name": "support.type.property-name2.uon"
+					"name": "support.type.property.uon"
 				},
 				{
 					"include": "#type_presentation_properties"

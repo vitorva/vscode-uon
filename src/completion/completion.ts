@@ -1,29 +1,73 @@
 import * as vscode from 'vscode';
 import * as c3 from 'antlr4-c3';
-import { CharStreams, CommonTokenStream, Parser } from 'antlr4ts';
+import { ANTLRErrorListener, CharStreams, CommonToken, CommonTokenStream, Parser, RecognitionException, Recognizer, Token } from 'antlr4ts';
 import { CompletionItem, CompletionItemKind } from 'vscode';
 import { UonCompletionErrorStrategy } from '../error/UonCompletionErrorStrategy';
 import { UONLexer } from '../generated/UONLexer';
 import { UONParser } from '../generated/UONParser';
 
+class ErrorCompletionListener implements ANTLRErrorListener<CommonToken> {
+
+    public error = 0;
+    public line = 0;
+    public column = 0;
+
+    // TODO : Nouveau token à remplacer si possible
+    // TODO : Gérer plusieurs erreurs
+
+    public syntaxError<T extends Token>(recognizer: Recognizer<T, any>, offendingSymbol: T | undefined, line: number,
+        charPositionInLine: number, msg: string, e: RecognitionException | undefined): void {
+        if (this.error > 0) { return; }
+        this.error = this.error + 1;
+        this.line = line - 1;
+        this.column = charPositionInLine;
+    }
+}
+
 export function completionFor(text: string): CompletionItem[] {
     //Antlr setup
-    const inputStream = CharStreams.fromString(text);
-    const lexer = new UONLexer(inputStream);
-    const tokenStream = new CommonTokenStream(lexer);
-    const parser = new UONParser(tokenStream);
+    let inputStream = CharStreams.fromString(text);
+    let lexer = new UONLexer(inputStream);
+    let tokenStream = new CommonTokenStream(lexer);
+
+    let parser = new UONParser(tokenStream);
     parser.removeErrorListeners();
 
-    const errorStrategy = new UonCompletionErrorStrategy();
-    parser.errorHandler = errorStrategy;
+    let errorCompletionListener = new ErrorCompletionListener();
+
+    let errorListener = errorCompletionListener;
+    parser.addErrorListener(errorListener);
 
     parser.buildParseTree = true;
     let tree = parser.uon();  // Parse Tree
 
-    console.log("tree.toStringTree", tree.toStringTree(parser));
+    if (errorCompletionListener.error > 0) {
+        console.log("text", text);
+        console.log("line", errorCompletionListener.line);
+        console.log("colum", errorCompletionListener.column);
+
+        const lines = text.split('\r\n');
+        const left = lines.slice(0, errorCompletionListener.line);
+        const right = lines.slice(errorCompletionListener.line + 1, lines.length);
+        const newText = left.concat(right);
+        text = newText.join('\r\n');
+        console.log("text", text);
+
+        let inputStream = CharStreams.fromString(text);
+        lexer = new UONLexer(inputStream);
+        tokenStream = new CommonTokenStream(lexer);
+
+        parser = new UONParser(tokenStream);
+        parser.removeErrorListeners();
+
+        tree = parser.uon();
+
+        //TODO : supprimer "clé-valeur ," au lieu de toute la ligne
+    }
+
+    //console.log("tree.toStringTree", tree.toStringTree(parser));
 
     const completionTokenIndex = findCursorTokenIndex(tokenStream);
-
     let candidates = collectC3CompletionCandidates(parser, completionTokenIndex);
 
     const newCompletionItem = (
@@ -152,8 +196,6 @@ function collectC3CompletionCandidates(
         UONLexer.COLON,
         UONLexer.QUOTED_STRING,
         UONLexer.UNQUOTED_STRING,
-        UONLexer.MASS,
-        UONLexer.NAME
     ]);
 
     // TODO : RULES
@@ -162,18 +204,22 @@ function collectC3CompletionCandidates(
     //  UONParser.RULE_arr
     //]);
 
+    core.preferredRules = new Set([
+        UONParser.RULE_literal,
+    ]);
+
     return core.collectCandidates(completionTokenIndex);
 }
 
 
 function findCursorTokenIndex(tokenStream: CommonTokenStream): number {
-    /*
+
     let tokenStreamArray = [];
     for (let i = 0; i < tokenStream.size; i++) {
         const t = tokenStream.get(i);
         tokenStreamArray.push(t.text);
     }
-    */
+
     return tokenStream.size - 2;
 }
 
