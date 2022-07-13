@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 import { AbstractParseTreeVisitor, RuleNode, TerminalNode } from "antlr4ts/tree";
-import { AttributeContext, AttributesContext, BooleanContext, Json_mapContext, Json_pairContext, Json_seqContext, NumberContext, SchemaContext, StringContext, Yaml_mapContext, Yaml_seqContext } from "../generated/UONParser";
+import { AttributeContext, AttributesContext, BooleanContext, Json_mapContext, Json_pairContext, Json_seqContext, NumberContext, PairContext, SchemaContext, StringContext, Yaml_mapContext, Yaml_seqContext } from "../generated/UONParser";
 import { UONVisitor } from "../generated/UONVisitor";
 
 export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<any> {
@@ -181,6 +181,43 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     visitYaml_map(ctx: Yaml_mapContext) {
         return this.structure(ctx, vscode.SymbolKind.Object);
     }
+
+    visitPair(ctx: PairContext) {
+        var children = this.visitChildren(ctx); // cool dfs garde l'ordre donc agrlable à manipuler car c'est ce qu'on attend à recevoir
+
+        //console.log("visitJson_pair", children);
+
+        if(children[children.length - 1] === "DEDENT"){
+            console.log("ici")
+        }
+
+        const head = children[0];
+        const tail = children[children.length - 2];
+
+        if (tail.kind === vscode.SymbolKind.Object) {
+            // {} name
+            tail.name = head.name;
+        } else { // On fait les modifs pour obtenir le résultat visuel suivant :
+            //[abc] name paul
+            const tmp = tail.name;
+            tail.detail = tmp;
+            tail.name = head.name;
+        }
+
+        for (var i = 0; i < children.length; i++) {
+            if (children[i] instanceof vscode.DocumentSymbol) {
+                console.log("name : ", children[i].name);
+                console.log("name : ", children[i].name);
+                console.log("detail : ", children[i].detail);
+                console.log("kind : ", children[i].kind);
+                console.log("vscode.SymbolKind : ", vscode.SymbolKind);
+            }
+        }
+
+        return tail;
+    }
+
+
 
     visitYaml_seq(ctx: Yaml_seqContext) {
         return this.structure(ctx, vscode.SymbolKind.Array);

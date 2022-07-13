@@ -6,8 +6,7 @@ tokens {
 }
 
 @lexer::members {
-	
-	private ignoreWord: boolean = false;
+	private ignoreWord: boolean = true;
 	private tokens: any[] = [];
 	private indents: any[] = [];
 
@@ -55,25 +54,23 @@ tokens {
 		console.log(this.text);
 		let spaces: string = this.text.replace(/(\r\n)+/, "");
 
-		this.schedule(this.commonToken(UONLexer.NEWLINE2, "\n"));
-
+		this.schedule(this.commonToken(UONLexer.NEWLINE2, "NEWLINE2"));
 
 		let indent: number = this.getIndentationCount(spaces);
 		let previous: number = this.indents.length === 0 ? 0 : this.indents[0];
 
 		console.log("indent-previous", indent, previous);
 
-
 		if (indent === previous) {
-
+			// TODO
 		}
 		else if (indent > previous) {
 			this.indents.push(indent);
-			this.schedule(this.commonToken(UONParser.INDENT, spaces));
+			this.schedule(this.commonToken(UONParser.INDENT, "INDENT")); // spaces
 		} else {
-			while (this.indents.length === 0 && this.indents[0] > indent) {
+			while (this.indents.length !== 0 && this.indents[0] > indent) {
 				this.schedule(this.createDedent());
-				this.indents.pop();
+				this.indents.shift();
 			}
 		}
 
@@ -98,87 +95,44 @@ tokens {
 	}
 
 	private schedule(token: any) {
-		//throw new Error("Function not implemented.");
 		this.tokens.push(token);
 	}
 
 
 	@Override
 	public nextToken(): Token {
-		console.log("LENGHT", this.tokens.length);
-
 		if (this.tokens.length === 0) {
-			console.log("this.tokens.length", this.tokens.length, this.tokens);
 			let next: Token = super.nextToken();
 
+			if (next.type === UONLexer.MINUS) { // TODO
+				this.ignoreWord = false;
+			}
 
 			if (next.type === UONLexer.EOF) {
 				this.processEOF_NextToken();
-				next = this.tokens.pop();
+				next = this.tokens.shift();
 			} else if (next.type === UONLexer.NEWLINE2) {
 				this.processNEWLINE_NextToken();
-				next = this.tokens.pop();
-			}
-
-
-			if (this.lastToken !== null && this.lastToken?.type === UONLexer.MINUS) {
-				//this.tokens.push(this.commonToken(UONParser.MINUS, "-")); // TODO
-				//this.createAndScheduleIndent(this._tokenStartCharPositionInLine);
-
-				/*
-				let indent = this._tokenStartCharPositionInLine;
-
-				let afterNext: Token = super.nextToken();
-				console.log(next.type);
-				console.log(afterNext.type);
-
-				if (afterNext.type === UONLexer.EOF) {
-					this.processEOF_NextToken();
-				} else if (afterNext.type === UONLexer.NEWLINE2) {
-					this.processNEWLINE_NextToken();
-					//this.tokens.push(this.commonToken(UONParser.MINUS, "-")); // TODO
-					//this.createAndScheduleIndent(this._tokenStartCharPositionInLine);
-				}
-				else {
-					this.schedule(afterNext);
-				}
-				*/
-			}
-
-			if (this.lastToken !== null && this.lastToken?.type === UONLexer.BOOL_TYPE) {
-				//this.tokens.push(this.commonToken(UONParser.BOOL_TYPE, "!bool"));
-				//this.createAndScheduleIndent(this._tokenStartCharPositionInLine);
-			}
-
-			if (this.lastToken?.type === UONLexer.NEWLINE2) {
-				//TODO NOTHING
+				next = this.tokens.shift();
 			}
 
 			this.lastToken = next;
 
 		}
 		else {
-			this.lastToken = this.tokens.pop();
-			console.log(this.lastToken?.line)
-			console.log(this.lastToken?.type)
-			console.log("pop", this.lastToken?.text);
+			this.lastToken = this.tokens.shift();
 		}
 
-
-		//return this.emit(this.lastToken);
 		return this.lastToken!!;
 	}
 
 	public commonToken(number: number, text: string): CommonToken {
-		//return new CommonToken(this._tokenFactorySourcePair, type, DEFAULT_TOKEN_CHANNEL, start, stop);
-		//return new CommonToken(number, text);
 		return new CommonToken(number, text, this._tokenFactorySourcePair);
 	}
 
 	public atStartOfInput(): boolean {
 		return super.charPositionInLine === 0 && super.line === 1;
 	}
-
 }
 
 uon: NEWLINE2* root_value;
@@ -226,7 +180,7 @@ yaml_value:
 	| yaml_user_type
 	| null;
 
-yaml_user_type: custom_type yaml_map;
+yaml_user_type: NEWLINE2 INDENT custom_type yaml_map DEDENT;
 
 presentation_properties: OPEN_PAR (presentation_property (COMMA presentation_property)*)? CLOSE_PAR;
 presentation_property: optional | description;
@@ -346,7 +300,7 @@ literal:
 	| null;
 
 // Appoche + scientifique
-number: SYMBOL? ( NUMERIC_LITERAL | NUMBER);
+number:  (NUMERIC_LITERAL | NUMBER);
 
 // Lexer rules
 // UNITS
@@ -411,18 +365,16 @@ fragment DOUBLE_QUOTE_CHAR: ~["];
 fragment SINGLE_QUOTE_CHAR: ~['];
 
 NUMBER:
-	INT ('.' [0-9]*)? EXP? // +1.e2, 1234, 1234.5
+	(('+'|'-') INT ('.' [0-9]*)? EXP?) // +1.e2, 1234, 1234.5
 	| '.' [0-9]+ EXP? // -.2e3
-	| '0' [xX] HEX+ // 0x12345678
-	| '0' [oO] HEX+ ; // 0o12345678
+	| (('+'|'-') '0' [xX] HEX+) // 0x12345678
+	| (('+'|'-')'0' [oO] HEX+) ; // 0o12345678
 
-NUMERIC_LITERAL: 'inf' | 'nan';
-
-SYMBOL: '+';
+NUMERIC_LITERAL: 'inf' | 'nan' | '-inf' | '-nan' | '+inf' | '+nan';
 
 fragment INT: '0' | [1-9] [0-9]*;
 
-fragment EXP: [Ee] SYMBOL? [0-9]*;
+fragment EXP: [Ee] (('+'|'-') [0-9]*);
 
 fragment HEX: [0-9a-fA-F];
 
