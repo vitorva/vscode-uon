@@ -99,6 +99,19 @@
 				}
 			]
 		},
+		"yaml_seq": {
+			"match": "(-)(?!\\S)",
+			"name": "punctuation.definition.yaml.sequence.item.uon"
+
+		},
+		"yaml_map": {
+			"match": "(([\\p{L}]([\\p{L}]|[\\p{N}]|[\\p{Pc}])*))( *:)",
+			"captures": {
+				"2": {
+					"name": "entity.name.tag.uon"
+				}
+			}
+		},
 		"schema": {
 			"begin": "(!!([a-zA-Z]*))(( *)?:)",
 			"beginCaptures": {
@@ -233,7 +246,7 @@
 			]
 		},
 		"number": {
-			"match": "[+-]?((0|[1-9]\\d*)(.\\d*)?([Ee][+-]?\\d*)?|(.\\d+([Ee][+-]?\\d*)?)|(0[xX][0-9a-fA-F]+)|(0[oO][0-9a-fA-F]+))( *)(kg|min|m|k|m|g|s|C|K)?",
+			"match": "[+-]?((0|[1-9]\\d*)(\\.\\d*)?([Ee][+-]?\\d*)?|(.\\d+([Ee][+-]?\\d*)?)|(0[xX][0-9a-fA-F]+)|(0[oO][0-9a-fA-F]+))( *)(kg|min|m|k|m|g|s|C|K)?",
 			"captures": {
 				"0": {
 					"name": "constant.numeric.uon"
@@ -588,7 +601,23 @@
 					"include": "#json_collection"
 				},
 				{
+					"include": "#yaml_collection"
+				},
+				{
 					"include": "#schema"
+				},
+				{
+					"include": "#scalar"
+				}
+			]
+		},
+		"yaml_collection": {
+			"patterns": [
+				{
+					"include": "#yaml_seq"
+				},
+				{
+					"include": "#yaml_map"
 				}
 			]
 		},
