@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 import { AbstractParseTreeVisitor, RuleNode, TerminalNode } from "antlr4ts/tree";
-import { AttributeContext, AttributesContext, BooleanContext, Json_mapContext, Json_pairContext, Json_seqContext, NumberContext, PairContext, SchemaContext, StringContext, Yaml_mapContext, Yaml_seqContext } from "../generated/UONParser";
+import { AttributeContext, AttributesContext, BooleanContext, Json_mapContext, Json_pairContext, Json_seqContext, NumberContext, PairContext, SchemaContext, StringContext, Validation_propertiesContext, Yaml_mapContext, Yaml_seqContext } from "../generated/UONParser";
 import { UONVisitor } from "../generated/UONVisitor";
 
 export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<any> {
@@ -35,7 +35,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         let tmp = aggregate.concat(nextResult);
         return tmp;
     }
-
+    
     visitAttributes(ctx: AttributesContext) {
         const children = this.visitChildren(ctx);
         return children;
@@ -88,6 +88,22 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     visitSchema(ctx: SchemaContext) {
         return this.structure(ctx, vscode.SymbolKind.Object);
     }
+
+    visitValidation_properties(ctx: Validation_propertiesContext){
+        var children = this.visitChildren(ctx);
+
+        const properties = this.createDocumentSymbol(children[0], vscode.SymbolKind.Object);
+
+        for (let index = 1; index < children.length; index++) {
+            const element = children[index];
+            if(element.text !== "(" && element.text !== ")" && element.text !== ":" && element.text !== ","){ // TODO
+                properties.children.push(this.createDocumentSymbol(element, vscode.SymbolKind.String));
+            }
+        }
+
+        return properties;
+    }
+
 
     createDocumentSymbol(word: any, kind: any) {
         const text = word.text;
