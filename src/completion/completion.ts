@@ -44,31 +44,30 @@ export function completionFor(text: string): CompletionItem[] {
     parser.buildParseTree = true;
     let tree = parser.uon();  // Parse Tree
 
-    /*
     if (errorCompletionListener.error > 0) {
         console.log("text", text);
         console.log("line", errorCompletionListener.line);
         console.log("colum", errorCompletionListener.column);
 
         const lines = text.split('\r\n');
-        const left = lines.slice(0, errorCompletionListener.line);
-        const right = lines.slice(errorCompletionListener.line + 1, lines.length);
-        const newText = left.concat(right);
-        text = newText.join('\r\n');
-        console.log("text", text);
 
-        let inputStream = CharStreams.fromString(text);
-        lexer = new UONLexer(inputStream);
-        tokenStream = new CommonTokenStream(lexer);
-
-        parser = new UONParser(tokenStream);
-        parser.removeErrorListeners();
-
-        tree = parser.uon();
-
-        //TODO : supprimer "clé-valeur ," au lieu de toute la ligne
+        if (errorCompletionListener.line + 1  < lines.length) {
+            const left = lines.slice(0, errorCompletionListener.line);
+            const right = lines.slice(errorCompletionListener.line + 1, lines.length);
+            const newText = left.concat(right);
+            text = newText.join('\r\n');
+            console.log("text", text);
+    
+            let inputStream = CharStreams.fromString(text);
+            lexer = new UONLexer(inputStream);
+            tokenStream = new CommonTokenStream(lexer);
+    
+            parser = new UONParser(tokenStream);
+            parser.removeErrorListeners();
+    
+            tree = parser.uon();
+        }
     }
-    */
 
     //console.log("tree.toStringTree", tree.toStringTree(parser));
 
@@ -222,6 +221,6 @@ function findCursorTokenIndex(tokenStream: CommonTokenStream): number {
         tokenStreamArray.push(t.text);
     }
 
-    return tokenStream.size - 2;
+    return tokenStream.size - 3;
 }
 
