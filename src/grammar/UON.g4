@@ -6,7 +6,7 @@ tokens {
 }
 
 @lexer::members {
-	private ignoreWord: boolean = true;
+	private ignoreWord: boolean = false;
 	private tokens: any[] = [];
 	private indents: any[] = [];
 
@@ -18,14 +18,6 @@ tokens {
 			return super.emit(token);
 		}
 		return super.emit();
-	}
-
-	private createAndScheduleIndent(indent: any) {
-		const previous = this.indents.length ? 0 : this.indents[0];
-		if (indent > previous) {
-			this.indents.push(indent);
-			this.tokens.push(this.commonToken(UONParser.INDENT, "INDENT"));
-		}
 	}
 
 	private processEOF_NextToken() {
@@ -104,8 +96,8 @@ tokens {
 		if (this.tokens.length === 0) {
 			let next: Token = super.nextToken();
 
-			if (next.type === UONLexer.MINUS) { // TODO
-				this.ignoreWord = false;
+			if (next.type === UONLexer.COMMA || next.type === UONLexer.OPEN_C_BRA) { // TODO
+				this.ignoreWord = true;
 			}
 
 			if (next.type === UONLexer.EOF) {
@@ -365,10 +357,10 @@ fragment DOUBLE_QUOTE_CHAR: ~["];
 fragment SINGLE_QUOTE_CHAR: ~['];
 
 NUMBER:
-	(('+'|'-') INT ('.' [0-9]*)? EXP?) // +1.e2, 1234, 1234.5
+	(('+'|'-')? INT ('.' [0-9]*)? EXP?) // +1.e2, 1234, 1234.5
 	| '.' [0-9]+ EXP? // -.2e3
-	| (('+'|'-') '0' [xX] HEX+) // 0x12345678
-	| (('+'|'-')'0' [oO] HEX+) ; // 0o12345678
+	| (('+'|'-')? '0' [xX] HEX+) // 0x12345678
+	| (('+'|'-')? '0' [oO] HEX+) ; // 0o12345678
 
 NUMERIC_LITERAL: 'inf' | 'nan' | '-inf' | '-nan' | '+inf' | '+nan';
 

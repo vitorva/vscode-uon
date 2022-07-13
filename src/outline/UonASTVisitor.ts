@@ -218,7 +218,6 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     }
 
 
-
     visitYaml_seq(ctx: Yaml_seqContext) {
         return this.structure(ctx, vscode.SymbolKind.Array);
     }

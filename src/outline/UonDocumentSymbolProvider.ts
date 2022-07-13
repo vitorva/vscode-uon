@@ -56,7 +56,9 @@ export class UonDocumentSymbolProvider implements DocumentSymbolProvider {
             let nodes = [symbols];
 
             for (var i = 0; i < ast.length; i++) {
-                nodes[nodes.length - 1].push(ast[i]);
+                if (ast[i] instanceof vscode.DocumentSymbol) { // Pour ignorer les tokens de retour à la ligne
+                    nodes[nodes.length - 1].push(ast[i]);
+                }
             }
 
             resolve(symbols);
