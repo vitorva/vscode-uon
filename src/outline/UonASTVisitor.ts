@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 import { AbstractParseTreeVisitor, RuleNode, TerminalNode } from "antlr4ts/tree";
-import { AttributeContext, AttributesContext, BooleanContext, Json_mapContext, Json_pairContext, Json_seqContext, NumberContext, SchemaContext, StringContext } from "../generated/UONParser";
+import { AttributeContext, AttributesContext, BooleanContext, Json_mapContext, Json_pairContext, Json_seqContext, NumberContext, SchemaContext, StringContext, Yaml_mapContext, Yaml_seqContext } from "../generated/UONParser";
 import { UONVisitor } from "../generated/UONVisitor";
 
 export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<any> {
@@ -175,6 +175,14 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     }
 
     visitJson_seq(ctx: Json_seqContext) {
+        return this.structure(ctx, vscode.SymbolKind.Array);
+    }
+
+    visitYaml_map(ctx: Yaml_mapContext) {
+        return this.structure(ctx, vscode.SymbolKind.Object);
+    }
+
+    visitYaml_seq(ctx: Yaml_seqContext) {
         return this.structure(ctx, vscode.SymbolKind.Array);
     }
 

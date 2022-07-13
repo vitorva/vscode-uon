@@ -38,9 +38,13 @@ export function completionFor(text: string): CompletionItem[] {
     let errorListener = errorCompletionListener;
     parser.addErrorListener(errorListener);
 
+    const errorStrategy = new UonCompletionErrorStrategy();
+    parser.errorHandler = errorStrategy;
+
     parser.buildParseTree = true;
     let tree = parser.uon();  // Parse Tree
 
+    /*
     if (errorCompletionListener.error > 0) {
         console.log("text", text);
         console.log("line", errorCompletionListener.line);
@@ -64,6 +68,7 @@ export function completionFor(text: string): CompletionItem[] {
 
         //TODO : supprimer "clé-valeur ," au lieu de toute la ligne
     }
+    */
 
     //console.log("tree.toStringTree", tree.toStringTree(parser));
 
@@ -100,15 +105,16 @@ export function completionFor(text: string): CompletionItem[] {
         let item = new vscode.CompletionItem(str, vscode.CompletionItemKind.Keyword);
         tokenNames.push(str);
 
-        if (candidate[1].length > 1) {
+
+        // Fonctionne uniquement si il n'y a seulement qu'une suite possible : TODO
+        if (candidate[1].length > 0) {
 
             for (let index = 0; index < candidate[1].length; index++) {
                 const element = candidate[1][index];
-                str = str + "" + parser.vocabulary.getDisplayName(element).replace(/'/g, "");
+                str = str + " " + parser.vocabulary.getDisplayName(element).replace(/'/g, "");
                 tokenNames.push(str);
+                keywords.push(new vscode.CompletionItem(str, vscode.CompletionItemKind.Keyword));
             }
-
-            keywords.push(new vscode.CompletionItem(str, vscode.CompletionItemKind.Keyword));
         }
 
 
@@ -184,7 +190,8 @@ function collectC3CompletionCandidates(
 ): c3.CandidatesCollection {
     const core = new c3.CodeCompletionCore(parser);
     core.translateRulesTopDown = false;
-    // TODO : Ignorer les tokens literal
+    //core.showDebugOutput = true;
+
     core.ignoredTokens = new Set([
         UONLexer.OPEN_C_BRA,
         UONLexer.CLOSE_C_BRA,
@@ -198,19 +205,14 @@ function collectC3CompletionCandidates(
         UONLexer.UNQUOTED_STRING,
     ]);
 
-    // TODO : RULES
-    //core.preferredRules = new Set([
-    //  UONParser.RULE_obj,
-    //  UONParser.RULE_arr
-    //]);
 
+    // Ignore les tokens literal
     core.preferredRules = new Set([
         UONParser.RULE_literal,
     ]);
 
     return core.collectCandidates(completionTokenIndex);
 }
-
 
 function findCursorTokenIndex(tokenStream: CommonTokenStream): number {
 
