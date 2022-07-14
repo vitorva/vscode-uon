@@ -37,11 +37,30 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     }
 
     visitPresentation_properties(ctx: Presentation_propertiesContext) {
+
         const children = this.visitChildren(ctx);
-        return children;
+
+        children.shift();
+        children.pop();
+
+
+        let properties = new vscode.DocumentSymbol(
+            "properties",
+            "",
+            vscode.SymbolKind.Property,
+            children[0].range, children[0].range);
+
+        for (let index = 0; index < children.length; index++) {
+            if (children[index].text != ",") {
+                properties.children.push(children[index]);
+            }
+        }
+
+        return properties;
     }
 
     visitPresentation_property(ctx: Presentation_propertyContext) {
+        /*
         const children = this.visitChildren(ctx);
 
         const head = this.createDocumentSymbol(children[0], vscode.SymbolKind.String);
@@ -50,10 +69,24 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         head;
 
         return head;
+
+        */
+
+        var children = this.visitChildren(ctx);
+
+        /*
+        const start = new vscode.Position(children[2].line - 1, children[2].column);
+        const end = new vscode.Position(children[2].line - 1, children[2].column + children[2].text.length);
+        const range = new vscode.Range(start, end);
+        */
+
+        let presentationProperty = new vscode.DocumentSymbol(
+            children[0].text,
+            children[2].name,
+            children[2].kind,
+            children[2].range, children[2].range);
+        return presentationProperty;
     }
-
-
-
 
     visitAttributes(ctx: AttributesContext) {
         const children = this.visitChildren(ctx);
@@ -203,33 +236,52 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         const head = children[0];
         let tail = children[children.length - 1];
 
-        if (tail.kind === vscode.SymbolKind.Object) {
+        if (tail.kind === vscode.SymbolKind.Object || tail.kind === vscode.SymbolKind.Array) {
             // {} name
             tail.name = head.name;
-            if (children[2] instanceof vscode.DocumentSymbol) {
-                tail.children.push(children[2]);
+
+
+            if (children[1] instanceof vscode.DocumentSymbol) {
+                tail.children.push(children[1]);
             }
+
+            /*
+            if (children[2] instanceof vscode.DocumentSymbol) {
+
+                let properties = new vscode.DocumentSymbol(
+                    "properties",
+                    "",
+                    vscode.SymbolKind.Property,
+                    children[2].range, children[2].range);
+
+                properties.children.push(children[2]);
+
+                tail.children.push(properties);
+            }
+            */
         } else { // On fait les modifs pour obtenir le résultat visuel suivant :
             //[abc] name paul
             const tmp = tail.name;
             tail.detail = tmp;
             tail.name = head.name;
-            tail.kind = vscode.SymbolKind.Object;
 
-            if (children[2] instanceof vscode.DocumentSymbol) {
+            if (children[1] instanceof vscode.DocumentSymbol) {
                 //tail.children.push(children[2]); // TODO : ERREUR ???'
+                tail.children.push(children[1]);
             }
 
 
+            /*
             if (children[2] instanceof vscode.DocumentSymbol) {
                 let structure = new vscode.DocumentSymbol(
-                    "ok",
-                    "'name'",
+                    "Properties",
+                    "",
                     vscode.SymbolKind.String,
                     children[2].range, children[2].range);
                 structure.children.push(children[2]);
                 tail = structure;
             }
+            */
 
         }
 
