@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 import { AbstractParseTreeVisitor, RuleNode, TerminalNode } from "antlr4ts/tree";
-import { AttributeContext, AttributesContext, BooleanContext, Json_mapContext, Json_pairContext, Json_seqContext, NumberContext, PairContext, SchemaContext, StringContext, Validation_propertiesContext, Yaml_mapContext, Yaml_seqContext } from "../generated/UONParser";
+import { AttributeContext, AttributesContext, BooleanContext, Json_mapContext, Json_pairContext, Json_seqContext, NumberContext, Number_propertyContext, PairContext, Presentation_propertiesContext, Presentation_propertyContext, SchemaContext, StringContext, Validation_propertiesContext, Yaml_mapContext, Yaml_seqContext } from "../generated/UONParser";
 import { UONVisitor } from "../generated/UONVisitor";
 
 export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<any> {
@@ -35,11 +35,29 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         let tmp = aggregate.concat(nextResult);
         return tmp;
     }
-    
+
+    visitPresentation_properties(ctx: Presentation_propertiesContext) {
+        const children = this.visitChildren(ctx);
+        return children;
+    }
+
+    visitPresentation_property(ctx: Presentation_propertyContext) {
+        const children = this.visitChildren(ctx);
+
+        const head = this.createDocumentSymbol(children[0], vscode.SymbolKind.String);
+        const tail = children[2];
+
+        head;
+
+        return head;
+    }
+
+
+
+
     visitAttributes(ctx: AttributesContext) {
         const children = this.visitChildren(ctx);
         return children;
-
     }
 
     visitAttribute(ctx: AttributeContext) {
@@ -89,15 +107,33 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return this.structure(ctx, vscode.SymbolKind.Object);
     }
 
-    visitValidation_properties(ctx: Validation_propertiesContext){
+    visitNumber_property(ctx: Number_propertyContext) {
         var children = this.visitChildren(ctx);
 
-        const properties = this.createDocumentSymbol(children[0], vscode.SymbolKind.Object);
+        /*
+        const start = new vscode.Position(children[2].line - 1, children[2].column);
+        const end = new vscode.Position(children[2].line - 1, children[2].column + children[2].text.length);
+        const range = new vscode.Range(start, end);
+        */
+
+        let numberProperty = new vscode.DocumentSymbol(
+            children[0].text,
+            children[2].name,
+            children[2].kind,
+            children[2].range, children[2].range);
+        return numberProperty;
+    }
+
+    visitValidation_properties(ctx: Validation_propertiesContext) {
+        var children = this.visitChildren(ctx);
+
+        const properties = this.createDocumentSymbol(children[0], vscode.SymbolKind.Property);
 
         for (let index = 1; index < children.length; index++) {
             const element = children[index];
-            if(element.text !== "(" && element.text !== ")" && element.text !== ":" && element.text !== ","){ // TODO
-                properties.children.push(this.createDocumentSymbol(element, vscode.SymbolKind.String));
+            if (element.text !== "(" && element.text !== ")" && element.text !== ":" && element.text !== ",") { // TODO
+                //properties.children.push(this.createDocumentSymbol(element, vscode.SymbolKind.String));
+                properties.children.push(element);
             }
         }
 
@@ -108,8 +144,8 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     createDocumentSymbol(word: any, kind: any) {
         const text = word.text;
 
-        const start = new vscode.Position(word.line -1 , word.column);
-        const end = new vscode.Position(word.line -1, word.column + word.text.length);
+        const start = new vscode.Position(word.line - 1, word.column);
+        const end = new vscode.Position(word.line - 1, word.column + word.text.length);
         const range = new vscode.Range(start, end);
 
         console.log(word.range);
@@ -165,17 +201,39 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         //console.log("visitJson_pair", children);
 
         const head = children[0];
-        const tail = children[children.length - 1];
+        let tail = children[children.length - 1];
 
         if (tail.kind === vscode.SymbolKind.Object) {
             // {} name
             tail.name = head.name;
+            if (children[2] instanceof vscode.DocumentSymbol) {
+                tail.children.push(children[2]);
+            }
         } else { // On fait les modifs pour obtenir le résultat visuel suivant :
             //[abc] name paul
             const tmp = tail.name;
             tail.detail = tmp;
             tail.name = head.name;
+            tail.kind = vscode.SymbolKind.Object;
+
+            if (children[2] instanceof vscode.DocumentSymbol) {
+                //tail.children.push(children[2]); // TODO : ERREUR ???'
+            }
+
+
+            if (children[2] instanceof vscode.DocumentSymbol) {
+                let structure = new vscode.DocumentSymbol(
+                    "ok",
+                    "'name'",
+                    vscode.SymbolKind.String,
+                    children[2].range, children[2].range);
+                structure.children.push(children[2]);
+                tail = structure;
+            }
+
         }
+
+
 
         for (var i = 0; i < children.length; i++) {
             if (children[i] instanceof vscode.DocumentSymbol) {
@@ -203,7 +261,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
 
         //console.log("visitJson_pair", children);
 
-        if(children[children.length - 1] === "DEDENT"){
+        if (children[children.length - 1] === "DEDENT") {
             console.log("ici")
         }
 
@@ -273,8 +331,8 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         // TODO aussi retourner et traiter start et stop index
         const terminalNode = {
             "text": node.text,
-            "line" : node._symbol.line,
-            "column" : node._symbol.charPositionInLine
+            "line": node._symbol.line,
+            "column": node._symbol.charPositionInLine
         };
 
         return terminalNode;
