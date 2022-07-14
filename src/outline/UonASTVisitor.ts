@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 import { AbstractParseTreeVisitor, RuleNode, TerminalNode } from "antlr4ts/tree";
-import { AttributeContext, AttributesContext, BooleanContext, Json_mapContext, Json_pairContext, Json_seqContext, NumberContext, Number_propertyContext, PairContext, Presentation_propertiesContext, Presentation_propertyContext, SchemaContext, StringContext, Validation_propertiesContext, Yaml_mapContext, Yaml_seqContext } from "../generated/UONParser";
+import { AttributeContext, AttributesContext, BooleanContext, Json_mapContext, Json_pairContext, Json_seqContext, NumberContext, Number_propertyContext, PairContext, Presentation_propertiesContext, Presentation_propertyContext, Quantity_scalarContext, SchemaContext, Schema_presentationContext, StringContext, Validation_propertiesContext, Yaml_mapContext, Yaml_seqContext } from "../generated/UONParser";
 import { UONVisitor } from "../generated/UONVisitor";
 
 export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<any> {
@@ -138,6 +138,33 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
 
     visitSchema(ctx: SchemaContext) {
         return this.structure(ctx, vscode.SymbolKind.Object);
+    }
+
+    visitSchema_presentation(ctx: Schema_presentationContext){
+        var children = this.visitChildren(ctx);
+
+        /*
+        const start = new vscode.Position(children[2].line - 1, children[2].column);
+        const end = new vscode.Position(children[2].line - 1, children[2].column + children[2].text.length);
+        const range = new vscode.Range(start, end);
+        */
+
+        let schemaPresentation = new vscode.DocumentSymbol(
+            children[0].text,
+            children[2].name,
+            children[2].kind,
+            children[2].range, children[2].range);
+        return schemaPresentation;
+    }
+
+    visitQuantity_scalar(ctx: Quantity_scalarContext){
+        var children = this.visitChildren(ctx);
+
+        if(!(children[children.length -1 ] instanceof vscode.DocumentSymbol)){ // ça veut dire qu'on a une quantité
+            children[children.length -2 ].name = children[children.length -2 ].name + " " + children[children.length -1 ].text;
+            children.pop();
+        }
+        return children;
     }
 
     visitNumber_property(ctx: Number_propertyContext) {
