@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 import { completionFor } from './completion/completion';
 import { UonDocumentSymbolProvider } from './outline/UonDocumentSymbolProvider';
 
-const hoverJson = require("./hover.json");
+import hoverJson = require("./hover.json");
 
 export function activate(extensionContext: vscode.ExtensionContext) {
 
@@ -27,17 +27,19 @@ export function activate(extensionContext: vscode.ExtensionContext) {
 
   extensionContext.subscriptions.push(completion);
 
+  // https://stackoverflow.com/questions/57438198/typescript-element-implicitly-has-an-any-type-because-expression-of-type-st
   const hover = vscode.languages.registerHoverProvider({ scheme: "file", language: "uon" }, {
     provideHover(document, position) {
       const range = document.getWordRangeAtPosition(position);
-      const word = document.getText(range);
+      const word : string = document.getText(range);
 
-      const hover = Object.keys(hoverJson.content);
+      const hoverKey = Object.keys(hoverJson);
 
-      if (hover.includes(word)) {
-        console.log(hoverJson.content[word]);
+      const hover : any = hoverJson;
+
+      if (hoverKey.includes(word)) {        
         return new vscode.Hover(
-          new vscode.MarkdownString(hoverJson.content[word]));
+          new vscode.MarkdownString(hover[word]));
       }
     }
   });
