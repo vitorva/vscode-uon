@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 import { AbstractParseTreeVisitor, RuleNode, TerminalNode } from "antlr4ts/tree";
-import { AttributeContext, AttributesContext, BooleanContext, Json_mapContext, Json_pairContext, Json_seqContext, NumberContext, Number_propertyContext, PairContext, Presentation_propertiesContext, Presentation_propertyContext, Quantity_scalarContext, SchemaContext, Schema_presentationContext, StringContext, Validation_propertiesContext, Yaml_mapContext, Yaml_seqContext } from "../generated/UONParser";
+import { AttributeContext, AttributesContext, BooleanContext, Json_mapContext, Json_pairContext, Json_seqContext, NumberContext, Number_presentation_propertieContext, Number_presentation_propertiesContext, Number_propertyContext, PairContext, Presentation_propertiesContext, Presentation_propertyContext, Quantity_scalarContext, SchemaContext, Schema_presentationContext, Seq_itemContext, StringContext, String_scalarContext, Types_propertieContext, Types_propertiesContext, Validation_propertiesContext, Yaml_mapContext, Yaml_seqContext } from "../generated/UONParser";
 import { UONVisitor } from "../generated/UONVisitor";
 
 export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<any> {
@@ -36,6 +36,108 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return tmp;
     }
 
+
+    visitNumber_presentation_properties(ctx: Number_presentation_propertiesContext){
+        const children = this.visitChildren(ctx);
+
+        children.shift();
+        children.pop();
+
+        let properties = new vscode.DocumentSymbol(
+            "value props",
+            "",
+            vscode.SymbolKind.Property,
+            children[0].range, children[0].range);
+
+        for (let index = 0; index < children.length; index++) {
+            if (children[index].text != ",") {
+                properties.children.push(children[index]);
+            }
+        }
+
+        return properties;
+    }
+
+    visitNumber_presentation_propertie(ctx: Number_presentation_propertieContext){
+                        /*
+        const children = this.visitChildren(ctx);
+
+        const head = this.createDocumentSymbol(children[0], vscode.SymbolKind.String);
+        const tail = children[2];
+
+        head;
+
+        return head;
+
+        */
+
+        var children = this.visitChildren(ctx);
+
+        /*
+        const start = new vscode.Position(children[2].line - 1, children[2].column);
+        const end = new vscode.Position(children[2].line - 1, children[2].column + children[2].text.length);
+        const range = new vscode.Range(start, end);
+        */
+
+        let presentationProperty = new vscode.DocumentSymbol(
+            children[0].text,
+            children[2].name,
+            children[2].kind,
+            children[2].range, children[2].range);
+        return presentationProperty;
+    }
+
+
+    visitTypes_properties(ctx: Types_propertiesContext){
+        const children = this.visitChildren(ctx);
+
+        children.shift();
+        children.pop();
+
+        let properties = new vscode.DocumentSymbol(
+            "value props",
+            "",
+            vscode.SymbolKind.Property,
+            children[0].range, children[0].range);
+
+        for (let index = 0; index < children.length; index++) {
+            if (children[index].text != ",") {
+                properties.children.push(children[index]);
+            }
+        }
+
+        return properties;
+    }
+
+    visitTypes_propertie(ctx: Types_propertieContext){
+                /*
+        const children = this.visitChildren(ctx);
+
+        const head = this.createDocumentSymbol(children[0], vscode.SymbolKind.String);
+        const tail = children[2];
+
+        head;
+
+        return head;
+
+        */
+
+        var children = this.visitChildren(ctx);
+
+        /*
+        const start = new vscode.Position(children[2].line - 1, children[2].column);
+        const end = new vscode.Position(children[2].line - 1, children[2].column + children[2].text.length);
+        const range = new vscode.Range(start, end);
+        */
+
+        let presentationProperty = new vscode.DocumentSymbol(
+            children[0].text,
+            children[2].name,
+            children[2].kind,
+            children[2].range, children[2].range);
+        return presentationProperty;
+    }
+
     visitPresentation_properties(ctx: Presentation_propertiesContext) {
 
         const children = this.visitChildren(ctx);
@@ -45,7 +147,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
 
 
         let properties = new vscode.DocumentSymbol(
-            "properties",
+            "key props",
             "",
             vscode.SymbolKind.Property,
             children[0].range, children[0].range);
@@ -133,6 +235,10 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
             tail.name = head.name;
         }
 
+        if (children[1] instanceof vscode.DocumentSymbol) {
+            tail.children.push(children[1]);
+        }
+
         return tail;
     }
 
@@ -183,6 +289,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
             children[2].range, children[2].range);
         return numberProperty;
     }
+    
 
     visitValidation_properties(ctx: Validation_propertiesContext) {
         var children = this.visitChildren(ctx);
@@ -267,9 +374,11 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
             // {} name
             tail.name = head.name;
 
-
-            if (children[1] instanceof vscode.DocumentSymbol) {
-                tail.children.push(children[1]);
+            for (let index = 0; index < children.length; index++) {
+                const element = children[index];
+                if (element instanceof vscode.DocumentSymbol && (element.name === "key props" || element.name === "value props")) {
+                    tail.children.push(element);
+                } 
             }
 
             /*
@@ -292,9 +401,11 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
             tail.detail = tmp;
             tail.name = head.name;
 
-            if (children[1] instanceof vscode.DocumentSymbol) {
-                //tail.children.push(children[2]); // TODO : ERREUR ???'
-                tail.children.push(children[1]);
+            for (let index = 0; index < children.length; index++) {
+                const element = children[index];
+                if (element instanceof vscode.DocumentSymbol && (element.name === "key props" || element.name === "value props")) {
+                    tail.children.push(element);
+                } 
             }
 
 
@@ -368,6 +479,12 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         }
 
         return tail;
+    }
+
+    visitSeq_item(ctx: Seq_itemContext){
+        var children = this.visitChildren(ctx);
+        children[0].text = " "; // TODO :
+        return children;
     }
 
 
