@@ -5,6 +5,7 @@ import { CompletionItem, CompletionItemKind } from 'vscode';
 import { UonCompletionErrorStrategy } from '../error/UonCompletionErrorStrategy';
 import { UONLexer } from '../generated/UONLexer';
 import { UONParser } from '../generated/UONParser';
+import hoverJson = require("../hover.json");
 
 class ErrorCompletionListener implements ANTLRErrorListener<CommonToken> {
 
@@ -102,8 +103,16 @@ export function completionFor(text: string): CompletionItem[] {
         str = str.replace(/'/g, "");
 
         let item = new vscode.CompletionItem(str, vscode.CompletionItemKind.Keyword);
-        tokenNames.push(str);
 
+        const hoverKey = Object.keys(hoverJson);
+
+        const hover: any = hoverJson;
+
+        if (hoverKey.includes(str)) {
+            item.documentation = hover[str];
+        }
+
+        tokenNames.push(str);
 
         // Fonctionne uniquement si il n'y a seulement qu'une suite possible : TODO
         if (candidate[1].length > 0) {
