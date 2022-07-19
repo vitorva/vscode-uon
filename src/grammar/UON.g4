@@ -21,7 +21,7 @@ tokens {
 	}
 
 	private processEOF_NextToken() {
-		this.schedule(this.commonToken(UONLexer.NEWLINE2, "\n"));
+		this.schedule(this.commonToken(UONLexer.NEWLINE, "\n"));
 
 		if (this.indents.length !== 0) {
 
@@ -46,7 +46,7 @@ tokens {
 		console.log(this.text);
 		let spaces: string = this.text.replace(/(\r\n)+/, "");
 
-		this.schedule(this.commonToken(UONLexer.NEWLINE2, "NEWLINE2"));
+		this.schedule(this.commonToken(UONLexer.NEWLINE, "NEWLINE"));
 
 		let indent: number = this.getIndentationCount(spaces);
 		let previous: number = this.indents.length === 0 ? 0 : this.indents[0];
@@ -103,7 +103,7 @@ tokens {
 			if (next.type === UONLexer.EOF) {
 				this.processEOF_NextToken();
 				next = this.tokens.shift();
-			} else if (next.type === UONLexer.NEWLINE2) {
+			} else if (next.type === UONLexer.NEWLINE) {
 				this.processNEWLINE_NextToken();
 				next = this.tokens.shift();
 			}
@@ -127,14 +127,14 @@ tokens {
 	}
 }
 
-uon: NEWLINE2* root_value;
+uon: NEWLINE* root_value;
 
 root_value: json_collection | yaml_collection| schema;
 
 // Collection
 json_collection: json_map | json_seq;
 
-yaml_collection_nested: NEWLINE2 (INDENT yaml_collection DEDENT);
+yaml_collection_nested: NEWLINE (INDENT yaml_collection DEDENT);
 
 json_map: (MAPPING_TYPE | ORDERED_MAPPING_TYPE)? OPEN_C_BRA (json_pair (COMMA json_pair)*)? CLOSE_C_BRA;
 
@@ -167,12 +167,12 @@ seq_item: MINUS yaml_value;
 pair: pair_key COLON yaml_value;
 
 yaml_value:
-	| scalar NEWLINE2+
+	| scalar NEWLINE+
 	| yaml_collection_nested
 	| yaml_user_type
 	| null;
 
-yaml_user_type: NEWLINE2 INDENT custom_type yaml_map DEDENT;
+yaml_user_type: NEWLINE INDENT custom_type yaml_map DEDENT;
 
 presentation_properties: OPEN_PAR (presentation_property (COMMA presentation_property)*)? CLOSE_PAR;
 presentation_property: optional | description;
@@ -349,12 +349,15 @@ OPTIONAL: 'optional';
 COMMENT: 'comment';
 
 QUOTED_STRING:
-	'"' DOUBLE_QUOTE_CHAR* '"'
-	| '\'' SINGLE_QUOTE_CHAR* '\'';
+    '"' DOUBLE_QUOTE_CHAR* '"'
+    | '"''"''"' DOUBLE_QUOTE_CHAR* '"''"''"'
+    | '\'' SINGLE_QUOTE_CHAR* '\'';
 
-fragment DOUBLE_QUOTE_CHAR: ~["];
+fragment DOUBLE_QUOTE_CHAR: ~["\\\r\n];
 
-fragment SINGLE_QUOTE_CHAR: ~['];
+fragment MULTILINE_QUOTE_CHAR: ~["];
+
+fragment SINGLE_QUOTE_CHAR: ~['\\\r\n];
 
 NUMBER:
 	(('+'|'-')? INT ('.' [0-9]*)? EXP?) // +1.e2, 1234, 1234.5
@@ -373,10 +376,10 @@ fragment HEX: [0-9a-fA-F];
 UNQUOTED_STRING: IDENTIFIER+;
 
 IDENTIFIER
-	: [\p{L}]     // matches a single code point in the category "letter"
-	| [\p{M}]   // a character intended to be combined with another character (e.g. accents, umlauts, enclosing boxes, etc.)
-	| [\p{N}]   // matches any kind of numeric character in any script.
-	| [\p{Pc}]  //  punctuation character such as an underscore that connects words.
+	: [\p{L}]    // matches a single code point in the category "letter"
+	| [\p{M}]    // a character intended to be combined with another character (e.g. accents, umlauts, enclosing boxes, etc.)
+	| [\p{N}]    // matches any kind of numeric character in any script.
+	| [\p{Pc}]   //  punctuation character such as an underscore that connects words.
 	| '$';
 
 WS: [ \n\r\t] -> channel(HIDDEN);
@@ -385,7 +388,7 @@ LINE_COMMENT: '#' ~[\r\n]* -> skip;
 
 fragment SPACES: [ \t]+;
 
-NEWLINE2
+NEWLINE
  : ( {atStartOfInput()}?   SPACES
    | ( '\r'? '\n' | '\r' ) SPACES?
    ) {if(ignoreWord) this.skip();}
