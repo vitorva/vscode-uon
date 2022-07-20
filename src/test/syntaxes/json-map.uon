@@ -1,0 +1,8 @@
+# comment
+!map {
+    # comment
+    é2a : !str "paul",
+    "key" :  !int  12,
+    temperature : !seq [12]
+}
+# comment

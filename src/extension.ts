@@ -1,123 +1,109 @@
 'use strict';
 
-// src/extension.ts
-
 import * as vscode from 'vscode';
 
-export function activate(context: vscode.ExtensionContext) {
+import { completionFor } from './completion/completion';
+import { UonDocumentSymbolProvider } from './outline/UonDocumentSymbolProvider';
 
-    context.subscriptions.push(
-        vscode.languages.registerDocumentSymbolProvider(
-            {scheme: "file", language: "uon"}, 
-            new UonConfigDocumentSymbolProvider()
-        )
-    );
+import hoverJson = require("./hover.json");
+
+export function activate(extensionContext: vscode.ExtensionContext) {
+
+  const collection: vscode.DiagnosticCollection = vscode.languages.createDiagnosticCollection('test');
+
+  const completion = vscode.languages.registerCompletionItemProvider({ scheme: "file", language: "uon" }, {
+    async provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, completionContext: vscode.CompletionContext) {
+      //Find cursor position
+      let activeEditor = vscode.window.activeTextEditor;
+      let curPos = activeEditor?.selection.active;
+      let offset = document.offsetAt(curPos!!);
+
+      //Retrieve text from start to cursor position
+      const text = document.getText().slice(0, offset);
+
+      return completionFor(text);
+    }
+  }, " ", "\n");
+
+  extensionContext.subscriptions.push(completion);
+
+  // https://stackoverflow.com/questions/57438198/typescript-element-implicitly-has-an-any-type-because-expression-of-type-st
+  const hover = vscode.languages.registerHoverProvider({ scheme: "file", language: "uon" }, {
+    provideHover(document, position) {
+      const range = document.getWordRangeAtPosition(position);
+      const word : string = document.getText(range);
+
+      const hoverKey = Object.keys(hoverJson);
+
+      const hover : any = hoverJson;
+
+      if (hoverKey.includes(word)) {        
+        return new vscode.Hover(
+          new vscode.MarkdownString(hover[word]));
+      }
+    }
+  });
+
+  extensionContext.subscriptions.push(hover);
+
+  extensionContext.subscriptions.push(
+    vscode.languages.registerDocumentSymbolProvider(
+      { scheme: "file", language: "uon" },
+      new UonDocumentSymbolProvider(collection, extensionContext)
+    )
+  );
+
+  extensionContext.subscriptions.push(
+		vscode.languages.registerCodeActionsProvider({ scheme: "file", language: "uon" }, new QuickFixProvider(), {
+			providedCodeActionKinds: QuickFixProvider.providedCodeActionKinds
+		})
+	);
 }
 
-class UonConfigDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
+/**
+ * Provides code actions corresponding to diagnostic problems.
+ */
+ export class QuickFixProvider implements vscode.CodeActionProvider {
 
-    private format(cmd: string):string{
-        return cmd.substr(1).toLowerCase().replace(/^\w/, c => c.toUpperCase())
-    }
+	public static readonly providedCodeActionKinds = [
+		vscode.CodeActionKind.QuickFix
+	];
 
-    public provideDocumentSymbols(
-        document: vscode.TextDocument,
-        token: vscode.CancellationToken): Promise<vscode.DocumentSymbol[]> 
-        {
-        return new Promise((resolve, reject) => 
-        {
-            let symbols: vscode.DocumentSymbol[] = [];
-            let nodes = [symbols]
-            let inside_marker = false
-            let inside_run = false
-            let inside_userinput = false
+	provideCodeActions(document: vscode.TextDocument, range: vscode.Range | vscode.Selection, context: vscode.CodeActionContext, token: vscode.CancellationToken): vscode.CodeAction[] {
+		// for each diagnostic entry that has the matching `code`, create a code action command
 
-            let symbolkind_marker = vscode.SymbolKind.Field
-            let symbolkind_run = vscode.SymbolKind.Event
-            let symbolkind_cmd = vscode.SymbolKind.Function
+		//return context.diagnostics
+		//	.map(diagnostic => this.createCommandCodeAction(diagnostic));
 
-            for (var i = 0; i < document.lineCount; i++) {
-                var line = document.lineAt(i);
+    //const remove = this.createFix(document, range);
+    //remove.isPreferred = true;
+    //return [remove];
 
-                let tokens = line.text.split(" ")
+		return context.diagnostics
+			.map(diagnostic => this.createCommandCodeAction2(diagnostic, document, range));
+	}
 
-                if (line.text.startsWith("#BEGIN_COMP")) {
-					console.log("line.range", line.range)
+  private createFix(document: vscode.TextDocument, range: vscode.Range): vscode.CodeAction {
+		const fix = new vscode.CodeAction(`remove`, vscode.CodeActionKind.QuickFix);
+		fix.edit = new vscode.WorkspaceEdit();
+    const sizeWord =  range.end.character -range.start.character;
+		fix.edit.replace(document.uri, new vscode.Range(range.start, range.start.translate(0, sizeWord)), '');
+		return fix;
+	}
 
-                    let marker_symbol = new vscode.DocumentSymbol(
-                        this.format(tokens[0]) + " " + tokens[1],
-                        'Component',
-                        symbolkind_marker,
-                        line.range, line.range)
+	private createCommandCodeAction(diagnostic: vscode.Diagnostic): vscode.CodeAction {
+		const action = new vscode.CodeAction('Learn more...', vscode.CodeActionKind.QuickFix);
+    action.command = { command: 'code-actions-sample.command', title: 'Learn more about emojis', tooltip: 'This will open the unicode emoji page.' };
+		action.diagnostics = [diagnostic];
+		action.isPreferred = true;
+		return action;
+	}
 
-
-                    nodes[nodes.length-1].push(marker_symbol)
-                    if (!inside_marker) {
-                        nodes.push(marker_symbol.children)
-                        inside_marker = true
-                    }
-                    // marker_symbol.children.push(_boot)
-                }
-                else if (line.text.startsWith("#END_COMP")) {
-                    // TODO check if nodes has length 1 before popping.
-                    if (inside_marker) {
-                        nodes.pop()
-                        inside_marker = false
-                    }
-                }
-                else if (line.text.startsWith("#RUN") || line.text.startsWith("#END")) {
-                    
-                    let run_symbol = new vscode.DocumentSymbol(
-                        this.format(tokens[0]),
-                        'Session separator',
-                        symbolkind_run,
-                        line.range, line.range)
-
-                    if (inside_run) {
-                        nodes.pop()
-                    }
-    
-                    nodes[nodes.length-1].push(run_symbol)
-                    nodes.push(run_symbol.children)
-                    inside_run = true
-                }
-                else if (line.text.startsWith("#USERINPUTBEGIN")) {
-
-                    let user_symbol = new vscode.DocumentSymbol(
-                        this.format(tokens[0]),
-                        'User module',
-                        vscode.SymbolKind.Interface,
-                        line.range, line.range)
-
-
-                    nodes[nodes.length-1].push(user_symbol)
-                    if (!inside_userinput) {
-                        nodes.push(user_symbol.children)
-                        inside_userinput = true
-                    }
-                    // marker_symbol.children.push(_boot)
-                }
-                else if (line.text.startsWith("#USERINPUTEND")) {
-                    // TODO check if nodes has length 1 before popping.
-                    if (inside_userinput) {
-                        nodes.pop()
-                        inside_userinput = false
-                    }
-                }                
-                else if (line.text.startsWith("#")) {
-					
-
-                    let cmd_symbol = new vscode.DocumentSymbol(
-                        this.format(tokens[0]),
-                        '',
-                        symbolkind_cmd,
-                        line.range, line.range)
-
-                    nodes[nodes.length-1].push(cmd_symbol)
-                }
-            }
-
-            resolve(symbols);
-        });
-    }
+  private createCommandCodeAction2(diagnostic: vscode.Diagnostic, document : any, range : any): vscode.CodeAction {
+    const remove = this.createFix(document, range);
+    remove.isPreferred = true;
+    return remove;
+	}
 }
+
+

@@ -1,0 +1,7 @@
+# comment
+!!mySensor: !schema ( description : "provide great infos") {
+    descriptions :  !int( quantity : length),
+    pression ( optional : True ) : !float,
+    names: !str sensor,
+    located: !bool  
+}  

@@ -1,0 +1,53 @@
+# SYNTAX TEST "source.uon"
+
+># comment
+#^ source.uon comment.line.number-sign.uon punctuation.definition.comment.begin.uon
+# ^^^^^^^^ source.uon comment.line.number-sign.uon
+>!map {
+#^^^^ source.uon markup.bold.uon
+#    ^ source.uon
+#     ^ source.uon meta.structure.mapping.uon
+>    # comment
+#^^^^ source.uon meta.structure.mapping.uon
+#    ^ source.uon meta.structure.mapping.uon comment.line.number-sign.uon punctuation.definition.comment.begin.uon
+#     ^^^^^^^^ source.uon meta.structure.mapping.uon comment.line.number-sign.uon
+>    é2a : !str "paul",
+#^^^^ source.uon meta.structure.mapping.uon
+#    ^^^ source.uon meta.structure.mapping.uon entity.name.tag.unquotedObjectKey.uon
+#       ^ source.uon meta.structure.mapping.uon
+#        ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon punctuation.separator.mapping.key-value.uon
+#         ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
+#          ^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon string.uon support.type.property-name.uon
+#              ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
+#               ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon string.uon
+#                ^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon string.uon
+#                    ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon string.uon string.unquoted.end.uon
+#                     ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon punctuation.separator.mapping.pair.uon
+>    "key" :  !int  12,
+#^^^^ source.uon meta.structure.mapping.uon
+#    ^ source.uon meta.structure.mapping.uon string.uon support.type.property-name.uon entity.name.tag.uon.begin.uon
+#     ^^^ source.uon meta.structure.mapping.uon string.uon support.type.property-name.uon
+#        ^ source.uon meta.structure.mapping.uon string.uon support.type.property-name.uon entity.name.tag.uon.end.uon
+#         ^ source.uon meta.structure.mapping.uon
+#          ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon punctuation.separator.mapping.key-value.uon
+#           ^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
+#             ^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon string.uon support.type.property-name.uon
+#                 ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
+#                  ^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon constant.numeric.uon
+#                     ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon punctuation.separator.mapping.pair.uon
+>    temperature : !seq [12]
+#^^^^ source.uon meta.structure.mapping.uon
+#    ^^^^^^^^^^^ source.uon meta.structure.mapping.uon entity.name.tag.unquotedObjectKey.uon
+#               ^ source.uon meta.structure.mapping.uon
+#                ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon punctuation.separator.mapping.key-value.uon
+#                 ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
+#                  ^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon markup.bold.uon
+#                      ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
+#                       ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon punctuation.definition.json.sequence.begin.uon
+#                        ^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon constant.numeric.uon
+>}
+#^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon invalid.illegal.expected-sequence-separator.uon
+># comment
+#^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon comment.line.number-sign.uon punctuation.definition.comment.begin.uon
+# ^^^^^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon comment.line.number-sign.uon
+>

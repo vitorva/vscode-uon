@@ -1,0 +1,11 @@
+ { 
+    name ( description : a12 ) : !str( comment : ok , optional: False) ok,
+    age: !int 12, #comment
+    hobbys ( description : "what i like the most") : !seq [
+        "cinema", "sport", "etc..."],
+    license  :  !bool true,
+    car:   !bool false,
+    sensor ( optional : false) : !map {
+        type: "temperature",
+        parameters1: !seq [ 1,2,3,4,5]}
+}

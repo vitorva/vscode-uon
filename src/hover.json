@@ -1,0 +1,14 @@
+{
+    "!str": "Strings encoded in UTF-8\n\n Based on : **!scalar**",
+    "!bool": "Boolean, true or false\n\n Based on : **!scalar**",
+    "!map": "Unordered Mapping (also called HashMap or Dictionary )\n\n Based on : **!type**",
+    "!seq": "Ordered Sequence (also called List or Array)\n\n Based on : **!scalar**",
+    "!float128": "Quadruple precision floating point number\n\n Based on : **!float**",
+    "!float64": "Double precision floating point number\n\n Based on : **!float**",
+    "!float32": "Single precision floating point number\n\n Based on : **!float**",
+    "!float": "Floating point IEEE-754\n\n Based on : **!scalar**",
+    "!int128": "Signed Integer\n\n Based on : **!dec**",
+    "!int64": "Signed Integer\n\n Based on : **!dec**",
+    "!int32": "Signed Integer\n\n Based on : **!dec**",
+    "!int": "Variable length integer value\n\n Based on : **!real**"
+}

@@ -1,0 +1,153 @@
+# SYNTAX TEST "source.uon"
+
+> { 
+#^ source.uon
+# ^ source.uon meta.structure.mapping.uon
+#  ^^ source.uon meta.structure.mapping.uon
+>    name ( description : a12 ) : !str( comment : ok , optional: False) ok,
+#^^^^ source.uon meta.structure.mapping.uon
+#    ^^^^ source.uon meta.structure.mapping.uon entity.name.tag.unquotedObjectKey.uon
+#        ^ source.uon meta.structure.mapping.uon
+#         ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon punctuation.definition.string-description.begin.uon
+#          ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon
+#           ^^^^^^^^^^^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon support.type.property-name2.uon
+#                      ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon
+#                       ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon punctuation.separator.dictionary.key-value.uon
+#                        ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon
+#                         ^^^^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon constant.numeric.uon
+#                             ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon punctuation.definition.string-description.end.uon
+#                              ^ source.uon meta.structure.mapping.uon
+#                               ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon punctuation.separator.mapping.key-value.uon
+#                                ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
+#                                 ^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon
+#                                    ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon yes.uon
+#                                     ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon
+#                                      ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon
+#                                       ^^^^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon support.type.property-name2.uon
+#                                              ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon
+#                                               ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon punctuation.separator.dictionary.key-value.uon
+#                                                ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon
+#                                                 ^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon string.unquoted.uon
+#                                                   ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon
+#                                                    ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon punctuation.separator.dictionary.pair.uon
+#                                                     ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon
+#                                                      ^^^^^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon support.type.property-name2.uon
+#                                                              ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon punctuation.separator.dictionary.key-value.uon
+#                                                               ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon
+#                                                                ^^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon string.uon support.type.property-name.uon
+#                                                                     ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon
+#                                                                      ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
+#                                                                       ^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon string.unquoted.uon
+#                                                                         ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon punctuation.separator.mapping.pair.uon
+>    age: !int 12, #comment
+#^^^^ source.uon meta.structure.mapping.uon
+#    ^^^ source.uon meta.structure.mapping.uon entity.name.tag.unquotedObjectKey.uon
+#       ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon punctuation.separator.mapping.key-value.uon
+#        ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
+#         ^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon string.uon support.type.property-name.uon
+#             ^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon constant.numeric.uon
+#                ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon punctuation.separator.mapping.pair.uon
+#                 ^ source.uon meta.structure.mapping.uon
+#                  ^ source.uon meta.structure.mapping.uon comment.line.number-sign.uon punctuation.definition.comment.begin.uon
+#                   ^^^^^^^ source.uon meta.structure.mapping.uon comment.line.number-sign.uon
+>    hobbys ( description : "what i like the most") : !seq [
+#^^^^ source.uon meta.structure.mapping.uon
+#    ^^^^^^ source.uon meta.structure.mapping.uon entity.name.tag.unquotedObjectKey.uon
+#          ^ source.uon meta.structure.mapping.uon
+#           ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon punctuation.definition.string-description.begin.uon
+#            ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon
+#             ^^^^^^^^^^^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon support.type.property-name2.uon
+#                        ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon
+#                         ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon punctuation.separator.dictionary.key-value.uon
+#                          ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon
+#                           ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon string.uon
+#                            ^^^^^^^^^^^^^^^^^^^^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon string.uon
+#                                                ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon string.uon string.unquoted.end.uon
+#                                                 ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon punctuation.definition.string-description.end.uon
+#                                                  ^ source.uon meta.structure.mapping.uon
+#                                                   ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon punctuation.separator.mapping.key-value.uon
+#                                                    ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
+#                                                     ^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon markup.bold.uon
+#                                                         ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
+#                                                          ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon punctuation.definition.json.sequence.begin.uon
+>        "cinema", "sport", "etc..."],
+#^^^^^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon
+#        ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon string.uon
+#         ^^^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon string.uon
+#               ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon string.uon string.unquoted.end.uon
+#                ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon punctuation.separator.sequence.uon
+#                 ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon
+#                  ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon string.uon
+#                   ^^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon string.uon
+#                        ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon string.uon string.unquoted.end.uon
+#                         ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon punctuation.separator.sequence.uon
+#                          ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon
+#                           ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon string.uon
+#                            ^^^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon string.uon
+#                                  ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon string.uon string.unquoted.end.uon
+#                                   ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon punctuation.definition.json.sequence.end.uon
+#                                    ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon punctuation.separator.mapping.pair.uon
+>    license  :  !bool true,
+#^^^^ source.uon meta.structure.mapping.uon
+#    ^^^^^^^ source.uon meta.structure.mapping.uon entity.name.tag.unquotedObjectKey.uon
+#           ^^ source.uon meta.structure.mapping.uon
+#             ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon punctuation.separator.mapping.key-value.uon
+#              ^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
+#                ^^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon string.uon support.type.property-name.uon
+#                     ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
+#                      ^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon string.uon support.type.property-name.uon
+#                          ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon punctuation.separator.mapping.pair.uon
+>    car:   !bool false,
+#^^^^ source.uon meta.structure.mapping.uon
+#    ^^^ source.uon meta.structure.mapping.uon entity.name.tag.unquotedObjectKey.uon
+#       ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon punctuation.separator.mapping.key-value.uon
+#        ^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
+#           ^^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon string.uon support.type.property-name.uon
+#                ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
+#                 ^^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon string.uon support.type.property-name.uon
+#                      ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon punctuation.separator.mapping.pair.uon
+>    sensor ( optional : false) : !map {
+#^^^^ source.uon meta.structure.mapping.uon
+#    ^^^^^^ source.uon meta.structure.mapping.uon entity.name.tag.unquotedObjectKey.uon
+#          ^ source.uon meta.structure.mapping.uon
+#           ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon punctuation.definition.string-description.begin.uon
+#            ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon
+#             ^^^^^^^^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon support.type.property-name2.uon
+#                     ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon
+#                      ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon punctuation.separator.dictionary.key-value.uon
+#                       ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon
+#                        ^^^^^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon string.uon support.type.property-name.uon
+#                             ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon punctuation.definition.string-description.end.uon
+#                              ^ source.uon meta.structure.mapping.uon
+#                               ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon punctuation.separator.mapping.key-value.uon
+#                                ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
+#                                 ^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon markup.bold.uon
+#                                     ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
+#                                      ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon
+>        type: "temperature",
+#^^^^^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon
+#        ^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon entity.name.tag.unquotedObjectKey.uon
+#            ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon meta.structure.mapping.value.uon punctuation.separator.mapping.key-value.uon
+#             ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
+#              ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon meta.structure.mapping.value.uon string.uon
+#               ^^^^^^^^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon meta.structure.mapping.value.uon string.uon
+#                          ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon meta.structure.mapping.value.uon string.uon string.unquoted.end.uon
+#                           ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon meta.structure.mapping.value.uon punctuation.separator.mapping.pair.uon
+>        parameters1: !seq [ 1,2,3,4,5]}
+#^^^^^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon
+#        ^^^^^^^^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon entity.name.tag.unquotedObjectKey.uon
+#                   ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon meta.structure.mapping.value.uon punctuation.separator.mapping.key-value.uon
+#                    ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
+#                     ^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon meta.structure.mapping.value.uon markup.bold.uon
+#                         ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
+#                          ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon punctuation.definition.json.sequence.begin.uon
+#                           ^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon constant.numeric.uon
+#                             ^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon constant.numeric.uon
+#                               ^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon constant.numeric.uon
+#                                 ^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon constant.numeric.uon
+#                                   ^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon constant.numeric.uon
+#                                     ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon punctuation.definition.json.sequence.end.uon
+#                                      ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.mapping.uon punctuation.definition.mapping.end.uon
+>}
+#^ source.uon meta.structure.mapping.uon punctuation.definition.mapping.end.uon
+>
