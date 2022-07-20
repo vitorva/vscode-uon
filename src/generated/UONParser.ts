@@ -82,7 +82,7 @@ export class UONParser extends Parser {
 	public static readonly IDENTIFIER = 52;
 	public static readonly WS = 53;
 	public static readonly LINE_COMMENT = 54;
-	public static readonly NEWLINE2 = 55;
+	public static readonly NEWLINE = 55;
 	public static readonly MINUS = 56;
 	public static readonly OPEN_PAR = 57;
 	public static readonly CLOSE_PAR = 58;
@@ -211,7 +211,7 @@ export class UONParser extends Parser {
 		"INT_32_TYPE", "UINT_TYPE", "UINT_128_TYPE", "UINT_64_TYPE", "UINT_32_TYPE", 
 		"MAX", "MIN", "LENGTH", "MASS", "TEMPERATURE", "TIME", "NAME", "UUID", 
 		"DESCRIPTION", "OPTIONAL", "COMMENT", "QUOTED_STRING", "NUMBER", "NUMERIC_LITERAL", 
-		"UNQUOTED_STRING", "IDENTIFIER", "WS", "LINE_COMMENT", "NEWLINE2", "MINUS", 
+		"UNQUOTED_STRING", "IDENTIFIER", "WS", "LINE_COMMENT", "NEWLINE", "MINUS", 
 		"OPEN_PAR", "CLOSE_PAR", "OPEN_C_BRA", "CLOSE_C_BRA", "OPEN_S_BRA", "CLOSE_S_BRA", 
 		"COMMA", "COLON", "MAPPING_TYPE", "ORDERED_MAPPING_TYPE", "SEQUENCE_TYPE", 
 		"ORDERED_SEQUENCE_TYPE", "SCHEMA_TYPE", "INDENT", "DEDENT",
@@ -253,11 +253,11 @@ export class UONParser extends Parser {
 			this.state = 147;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while (_la === UONParser.NEWLINE2) {
+			while (_la === UONParser.NEWLINE) {
 				{
 				{
 				this.state = 144;
-				this.match(UONParser.NEWLINE2);
+				this.match(UONParser.NEWLINE);
 				}
 				}
 				this.state = 149;
@@ -381,7 +381,7 @@ export class UONParser extends Parser {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 161;
-			this.match(UONParser.NEWLINE2);
+			this.match(UONParser.NEWLINE);
 			{
 			this.state = 162;
 			this.match(UONParser.INDENT);
@@ -958,13 +958,13 @@ export class UONParser extends Parser {
 					{
 					{
 					this.state = 246;
-					this.match(UONParser.NEWLINE2);
+					this.match(UONParser.NEWLINE);
 					}
 					}
 					this.state = 249;
 					this._errHandler.sync(this);
 					_la = this._input.LA(1);
-				} while (_la === UONParser.NEWLINE2);
+				} while (_la === UONParser.NEWLINE);
 				}
 				break;
 
@@ -1015,7 +1015,7 @@ export class UONParser extends Parser {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 256;
-			this.match(UONParser.NEWLINE2);
+			this.match(UONParser.NEWLINE);
 			this.state = 257;
 			this.match(UONParser.INDENT);
 			this.state = 258;
@@ -3576,13 +3576,13 @@ export class UonContext extends ParserRuleContext {
 	public root_value(): Root_valueContext {
 		return this.getRuleContext(0, Root_valueContext);
 	}
-	public NEWLINE2(): TerminalNode[];
-	public NEWLINE2(i: number): TerminalNode;
-	public NEWLINE2(i?: number): TerminalNode | TerminalNode[] {
+	public NEWLINE(): TerminalNode[];
+	public NEWLINE(i: number): TerminalNode;
+	public NEWLINE(i?: number): TerminalNode | TerminalNode[] {
 		if (i === undefined) {
-			return this.getTokens(UONParser.NEWLINE2);
+			return this.getTokens(UONParser.NEWLINE);
 		} else {
-			return this.getToken(UONParser.NEWLINE2, i);
+			return this.getToken(UONParser.NEWLINE, i);
 		}
 	}
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
@@ -3687,7 +3687,7 @@ export class Json_collectionContext extends ParserRuleContext {
 
 
 export class Yaml_collection_nestedContext extends ParserRuleContext {
-	public NEWLINE2(): TerminalNode { return this.getToken(UONParser.NEWLINE2, 0); }
+	public NEWLINE(): TerminalNode { return this.getToken(UONParser.NEWLINE, 0); }
 	public INDENT(): TerminalNode | undefined { return this.tryGetToken(UONParser.INDENT, 0); }
 	public yaml_collection(): Yaml_collectionContext | undefined {
 		return this.tryGetRuleContext(0, Yaml_collectionContext);
@@ -4159,13 +4159,13 @@ export class Yaml_valueContext extends ParserRuleContext {
 	public scalar(): ScalarContext | undefined {
 		return this.tryGetRuleContext(0, ScalarContext);
 	}
-	public NEWLINE2(): TerminalNode[];
-	public NEWLINE2(i: number): TerminalNode;
-	public NEWLINE2(i?: number): TerminalNode | TerminalNode[] {
+	public NEWLINE(): TerminalNode[];
+	public NEWLINE(i: number): TerminalNode;
+	public NEWLINE(i?: number): TerminalNode | TerminalNode[] {
 		if (i === undefined) {
-			return this.getTokens(UONParser.NEWLINE2);
+			return this.getTokens(UONParser.NEWLINE);
 		} else {
-			return this.getToken(UONParser.NEWLINE2, i);
+			return this.getToken(UONParser.NEWLINE, i);
 		}
 	}
 	public yaml_collection_nested(): Yaml_collection_nestedContext | undefined {
@@ -4206,7 +4206,7 @@ export class Yaml_valueContext extends ParserRuleContext {
 
 
 export class Yaml_user_typeContext extends ParserRuleContext {
-	public NEWLINE2(): TerminalNode { return this.getToken(UONParser.NEWLINE2, 0); }
+	public NEWLINE(): TerminalNode { return this.getToken(UONParser.NEWLINE, 0); }
 	public INDENT(): TerminalNode { return this.getToken(UONParser.INDENT, 0); }
 	public custom_type(): Custom_typeContext {
 		return this.getRuleContext(0, Custom_typeContext);

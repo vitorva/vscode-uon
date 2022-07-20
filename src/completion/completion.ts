@@ -158,6 +158,8 @@ export function completionFor(text: string): CompletionItem[] {
 
     //snippets
 
+    // TODO : controler depuis le token stream quand a pas de token schema !
+
     if (tokenNames.includes("!str")) {
         let snippetCompletion = new vscode.CompletionItem('!str(comment: ... , description: .., optional: ...)');
         snippetCompletion.insertText = new vscode.SnippetString('!str(comment: ${1}, description: ${2}, optional: ${3})');
@@ -207,8 +209,8 @@ function collectC3CompletionCandidates(
         UONLexer.CLOSE_S_BRA,
         UONLexer.OPEN_PAR,
         UONLexer.CLOSE_PAR,
-        UONLexer.COMMA,
-        UONLexer.COLON,
+        //UONLexer.COMMA,
+        //UONLexer.COLON,
         UONLexer.QUOTED_STRING,
         UONLexer.UNQUOTED_STRING,
     ]);

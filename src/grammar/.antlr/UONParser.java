@@ -25,7 +25,7 @@ public class UONParser extends Parser {
 		MIN=38, LENGTH=39, MASS=40, TEMPERATURE=41, TIME=42, NAME=43, UUID=44, 
 		DESCRIPTION=45, OPTIONAL=46, COMMENT=47, QUOTED_STRING=48, NUMBER=49, 
 		NUMERIC_LITERAL=50, UNQUOTED_STRING=51, IDENTIFIER=52, WS=53, LINE_COMMENT=54, 
-		NEWLINE2=55, MINUS=56, OPEN_PAR=57, CLOSE_PAR=58, OPEN_C_BRA=59, CLOSE_C_BRA=60, 
+		NEWLINE=55, MINUS=56, OPEN_PAR=57, CLOSE_PAR=58, OPEN_C_BRA=59, CLOSE_C_BRA=60, 
 		OPEN_S_BRA=61, CLOSE_S_BRA=62, COMMA=63, COLON=64, MAPPING_TYPE=65, ORDERED_MAPPING_TYPE=66, 
 		SEQUENCE_TYPE=67, ORDERED_SEQUENCE_TYPE=68, SCHEMA_TYPE=69, INDENT=70, 
 		DEDENT=71;
@@ -98,7 +98,7 @@ public class UONParser extends Parser {
 			"UINT_64_TYPE", "UINT_32_TYPE", "MAX", "MIN", "LENGTH", "MASS", "TEMPERATURE", 
 			"TIME", "NAME", "UUID", "DESCRIPTION", "OPTIONAL", "COMMENT", "QUOTED_STRING", 
 			"NUMBER", "NUMERIC_LITERAL", "UNQUOTED_STRING", "IDENTIFIER", "WS", "LINE_COMMENT", 
-			"NEWLINE2", "MINUS", "OPEN_PAR", "CLOSE_PAR", "OPEN_C_BRA", "CLOSE_C_BRA", 
+			"NEWLINE", "MINUS", "OPEN_PAR", "CLOSE_PAR", "OPEN_C_BRA", "CLOSE_C_BRA", 
 			"OPEN_S_BRA", "CLOSE_S_BRA", "COMMA", "COLON", "MAPPING_TYPE", "ORDERED_MAPPING_TYPE", 
 			"SEQUENCE_TYPE", "ORDERED_SEQUENCE_TYPE", "SCHEMA_TYPE", "INDENT", "DEDENT"
 		};
@@ -158,9 +158,9 @@ public class UONParser extends Parser {
 		public Root_valueContext root_value() {
 			return getRuleContext(Root_valueContext.class,0);
 		}
-		public List<TerminalNode> NEWLINE2() { return getTokens(UONParser.NEWLINE2); }
-		public TerminalNode NEWLINE2(int i) {
-			return getToken(UONParser.NEWLINE2, i);
+		public List<TerminalNode> NEWLINE() { return getTokens(UONParser.NEWLINE); }
+		public TerminalNode NEWLINE(int i) {
+			return getToken(UONParser.NEWLINE, i);
 		}
 		public UonContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -178,11 +178,11 @@ public class UONParser extends Parser {
 			setState(147);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==NEWLINE2) {
+			while (_la==NEWLINE) {
 				{
 				{
 				setState(144);
-				match(NEWLINE2);
+				match(NEWLINE);
 				}
 				}
 				setState(149);
@@ -315,7 +315,7 @@ public class UONParser extends Parser {
 	}
 
 	public static class Yaml_collection_nestedContext extends ParserRuleContext {
-		public TerminalNode NEWLINE2() { return getToken(UONParser.NEWLINE2, 0); }
+		public TerminalNode NEWLINE() { return getToken(UONParser.NEWLINE, 0); }
 		public TerminalNode INDENT() { return getToken(UONParser.INDENT, 0); }
 		public Yaml_collectionContext yaml_collection() {
 			return getRuleContext(Yaml_collectionContext.class,0);
@@ -334,7 +334,7 @@ public class UONParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(161);
-			match(NEWLINE2);
+			match(NEWLINE);
 			{
 			setState(162);
 			match(INDENT);
@@ -1002,9 +1002,9 @@ public class UONParser extends Parser {
 		public ScalarContext scalar() {
 			return getRuleContext(ScalarContext.class,0);
 		}
-		public List<TerminalNode> NEWLINE2() { return getTokens(UONParser.NEWLINE2); }
-		public TerminalNode NEWLINE2(int i) {
-			return getToken(UONParser.NEWLINE2, i);
+		public List<TerminalNode> NEWLINE() { return getTokens(UONParser.NEWLINE); }
+		public TerminalNode NEWLINE(int i) {
+			return getToken(UONParser.NEWLINE, i);
 		}
 		public Yaml_collection_nestedContext yaml_collection_nested() {
 			return getRuleContext(Yaml_collection_nestedContext.class,0);
@@ -1046,13 +1046,13 @@ public class UONParser extends Parser {
 					{
 					{
 					setState(246);
-					match(NEWLINE2);
+					match(NEWLINE);
 					}
 					}
 					setState(249); 
 					_errHandler.sync(this);
 					_la = _input.LA(1);
-				} while ( _la==NEWLINE2 );
+				} while ( _la==NEWLINE );
 				}
 				break;
 			case 3:
@@ -1090,7 +1090,7 @@ public class UONParser extends Parser {
 	}
 
 	public static class Yaml_user_typeContext extends ParserRuleContext {
-		public TerminalNode NEWLINE2() { return getToken(UONParser.NEWLINE2, 0); }
+		public TerminalNode NEWLINE() { return getToken(UONParser.NEWLINE, 0); }
 		public TerminalNode INDENT() { return getToken(UONParser.INDENT, 0); }
 		public Custom_typeContext custom_type() {
 			return getRuleContext(Custom_typeContext.class,0);
@@ -1112,7 +1112,7 @@ public class UONParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(256);
-			match(NEWLINE2);
+			match(NEWLINE);
 			setState(257);
 			match(INDENT);
 			setState(258);

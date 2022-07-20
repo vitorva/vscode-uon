@@ -32,5 +32,6 @@ The autocompletion has been implement with the excellent [c3 engine](https://git
 ## How to contribute
 <!---
 TODO
--->
+
 The instructions are available in the [contribution guide](CONTRIBUTING.md).
+-->

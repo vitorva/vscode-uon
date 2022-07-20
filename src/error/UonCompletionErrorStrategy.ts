@@ -21,7 +21,7 @@ export class UonCompletionErrorStrategy extends DefaultErrorStrategy {
       const uonFollowSet = new IntervalSet();
       uonFollowSet.add(UONParser.DESCRIPTION);
       uonFollowSet.add(UONParser.OPTIONAL);
-      if (uonFollowSet.size > 0) { return uonFollowSet; };
+      //if (uonFollowSet.size > 0) { return uonFollowSet; };
     }
     return defaultRecoverySet;
   }
