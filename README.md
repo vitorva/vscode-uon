@@ -30,8 +30,3 @@ The grammar and the parser for UON for this library have been implemented using 
 The autocompletion has been implement with the excellent [c3 engine](https://github.com/mike-lischke/antlr4-c3).
 
 ## How to contribute
-<!---
-TODO
-
-The instructions are available in the [contribution guide](CONTRIBUTING.md).
--->
