@@ -30,14 +30,13 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return result;
     }
 
-    // Ne fait rien car on aggretate plus ici
     aggregateResult(aggregate: any, nextResult: any) {
         let tmp = aggregate.concat(nextResult);
         return tmp;
     }
 
 
-    visitNumber_presentation_properties(ctx: Number_presentation_propertiesContext){
+    visitNumber_presentation_properties(ctx: Number_presentation_propertiesContext) {
         const children = this.visitChildren(ctx);
 
         children.shift();
@@ -58,26 +57,8 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return properties;
     }
 
-    visitNumber_presentation_propertie(ctx: Number_presentation_propertieContext){
-                        /*
-        const children = this.visitChildren(ctx);
-
-        const head = this.createDocumentSymbol(children[0], vscode.SymbolKind.String);
-        const tail = children[2];
-
-        head;
-
-        return head;
-
-        */
-
+    visitNumber_presentation_propertie(ctx: Number_presentation_propertieContext) {
         var children = this.visitChildren(ctx);
-
-        /*
-        const start = new vscode.Position(children[2].line - 1, children[2].column);
-        const end = new vscode.Position(children[2].line - 1, children[2].column + children[2].text.length);
-        const range = new vscode.Range(start, end);
-        */
 
         let presentationProperty = new vscode.DocumentSymbol(
             children[0].text,
@@ -88,7 +69,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     }
 
 
-    visitTypes_properties(ctx: Types_propertiesContext){
+    visitTypes_properties(ctx: Types_propertiesContext) {
         const children = this.visitChildren(ctx);
 
         children.shift();
@@ -109,26 +90,8 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return properties;
     }
 
-    visitTypes_propertie(ctx: Types_propertieContext){
-                /*
-        const children = this.visitChildren(ctx);
-
-        const head = this.createDocumentSymbol(children[0], vscode.SymbolKind.String);
-        const tail = children[2];
-
-        head;
-
-        return head;
-
-        */
-
+    visitTypes_propertie(ctx: Types_propertieContext) {
         var children = this.visitChildren(ctx);
-
-        /*
-        const start = new vscode.Position(children[2].line - 1, children[2].column);
-        const end = new vscode.Position(children[2].line - 1, children[2].column + children[2].text.length);
-        const range = new vscode.Range(start, end);
-        */
 
         let presentationProperty = new vscode.DocumentSymbol(
             children[0].text,
@@ -144,7 +107,6 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
 
         children.shift();
         children.pop();
-
 
         let properties = new vscode.DocumentSymbol(
             "key props",
@@ -162,25 +124,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     }
 
     visitPresentation_property(ctx: Presentation_propertyContext) {
-        /*
-        const children = this.visitChildren(ctx);
-
-        const head = this.createDocumentSymbol(children[0], vscode.SymbolKind.String);
-        const tail = children[2];
-
-        head;
-
-        return head;
-
-        */
-
         var children = this.visitChildren(ctx);
-
-        /*
-        const start = new vscode.Position(children[2].line - 1, children[2].column);
-        const end = new vscode.Position(children[2].line - 1, children[2].column + children[2].text.length);
-        const range = new vscode.Range(start, end);
-        */
 
         let presentationProperty = new vscode.DocumentSymbol(
             children[0].text,
@@ -206,26 +150,6 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
             }
         }
 
-        console.log(response);
-        // TODO gérer les proprités partout
-        /*
-        !!mySensor: !schema ( description : "provide great infos") {
-        descriptions :  !int ( max : 32 ),
-        pression ( optional : True ) : !float,
-        names: !str ,
-        located: !bool  
-        }
-        
-        / description ^provide great infos^
-        {} description
-            {} !int
-                # max 32
-                # min : 12
-            {} pression
-                / Optional true
-                !float
-        */
-
         const head = response[0];
         const tail = response[response.length - 1];
 
@@ -246,14 +170,8 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return this.structure(ctx, vscode.SymbolKind.Object);
     }
 
-    visitSchema_presentation(ctx: Schema_presentationContext){
+    visitSchema_presentation(ctx: Schema_presentationContext) {
         var children = this.visitChildren(ctx);
-
-        /*
-        const start = new vscode.Position(children[2].line - 1, children[2].column);
-        const end = new vscode.Position(children[2].line - 1, children[2].column + children[2].text.length);
-        const range = new vscode.Range(start, end);
-        */
 
         let schemaPresentation = new vscode.DocumentSymbol(
             children[0].text,
@@ -263,15 +181,15 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return schemaPresentation;
     }
 
-    visitQuantity_scalar(ctx: Quantity_scalarContext){
+    visitQuantity_scalar(ctx: Quantity_scalarContext) {
         var children = this.visitChildren(ctx);
 
-        if(!(children[children.length -1 ] instanceof vscode.DocumentSymbol)){ // ça veut dire qu'on a une quantité
-            children[children.length -2 ].name = children[children.length -2 ].name + " " + children[children.length -1 ].text;
+        if (!(children[children.length - 1] instanceof vscode.DocumentSymbol)) { // ça veut dire qu'on a une quantité
+            children[children.length - 2].name = children[children.length - 2].name + " " + children[children.length - 1].text;
             children.pop();
         }
 
-        if (children[1] instanceof vscode.DocumentSymbol && children[1].name === "value props"){
+        if (children[1] instanceof vscode.DocumentSymbol && children[1].name === "value props") {
             children[2].children.push(children[1]);
         }
 
@@ -282,12 +200,6 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     visitNumber_property(ctx: Number_propertyContext) {
         var children = this.visitChildren(ctx);
 
-        /*
-        const start = new vscode.Position(children[2].line - 1, children[2].column);
-        const end = new vscode.Position(children[2].line - 1, children[2].column + children[2].text.length);
-        const range = new vscode.Range(start, end);
-        */
-
         let numberProperty = new vscode.DocumentSymbol(
             children[0].text,
             children[2].name,
@@ -295,7 +207,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
             children[2].range, children[2].range);
         return numberProperty;
     }
-    
+
 
     visitValidation_properties(ctx: Validation_propertiesContext) {
         var children = this.visitChildren(ctx);
@@ -304,8 +216,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
 
         for (let index = 1; index < children.length; index++) {
             const element = children[index];
-            if (element.text !== "(" && element.text !== ")" && element.text !== ":" && element.text !== ",") { // TODO
-                //properties.children.push(this.createDocumentSymbol(element, vscode.SymbolKind.String));
+            if (element.text !== "(" && element.text !== ")" && element.text !== ":" && element.text !== ",") {
                 properties.children.push(element);
             }
         }
@@ -320,8 +231,6 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         const start = new vscode.Position(word.line - 1, word.column);
         const end = new vscode.Position(word.line - 1, word.column + word.text.length);
         const range = new vscode.Range(start, end);
-
-        console.log(word.range);
 
         let structure = new vscode.DocumentSymbol(
             text,
@@ -338,7 +247,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         this.level = this.level - 1;
 
         if (this.level === 0) {
-            
+
             var response = [];
 
             for (var i = 0; i < children.length; i++) {
@@ -352,14 +261,12 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         // On récupère le première enfant...
         const head = children.shift(); // C'est quoi head concrêtement ? // Comme c'est un dfs ici çA représentera normalement le {
 
-        let structure ;
+        let structure;
         if (head instanceof vscode.DocumentSymbol) {
             structure = head;
-        }else{
-             structure = this.createDocumentSymbol(head, kind);
+        } else {
+            structure = this.createDocumentSymbol(head, kind);
         }
-
-        
 
         for (var i = 0; i < children.length; i++) {
             if (children[i] instanceof vscode.DocumentSymbol) {
@@ -379,8 +286,6 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     visitJson_pair(ctx: Json_pairContext) { // name(....) : !str toto
         var children = this.visitChildren(ctx); // cool dfs garde l'ordre donc agrlable à manipuler car c'est ce qu'on attend à recevoir
 
-        //console.log("visitJson_pair", children);
-
         const head = children[0];
         let tail = children[children.length - 1];
 
@@ -392,23 +297,9 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
                 const element = children[index];
                 if (element instanceof vscode.DocumentSymbol && (element.name === "key props")) {
                     tail.children.push(element);
-                } 
+                }
             }
 
-            /*
-            if (children[2] instanceof vscode.DocumentSymbol) {
-
-                let properties = new vscode.DocumentSymbol(
-                    "properties",
-                    "",
-                    vscode.SymbolKind.Property,
-                    children[2].range, children[2].range);
-
-                properties.children.push(children[2]);
-
-                tail.children.push(properties);
-            }
-            */
         } else { // On fait les modifs pour obtenir le résultat visuel suivant :
             //[abc] name paul
             const tmp = tail.name;
@@ -419,36 +310,9 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
                 const element = children[index];
                 if (element instanceof vscode.DocumentSymbol && (element.name === "key props")) {
                     tail.children.push(element);
-                } 
-            }
-
-
-            /*
-            if (children[2] instanceof vscode.DocumentSymbol) {
-                let structure = new vscode.DocumentSymbol(
-                    "Properties",
-                    "",
-                    vscode.SymbolKind.String,
-                    children[2].range, children[2].range);
-                structure.children.push(children[2]);
-                tail = structure;
-            }
-            */
-
-        }
-
-
-
-        for (var i = 0; i < children.length; i++) {
-            if (children[i] instanceof vscode.DocumentSymbol) {
-                console.log("name : ", children[i].name);
-                console.log("name : ", children[i].name);
-                console.log("detail : ", children[i].detail);
-                console.log("kind : ", children[i].kind);
-                console.log("vscode.SymbolKind : ", vscode.SymbolKind);
+                }
             }
         }
-
         return tail;
     }
 
@@ -461,13 +325,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     }
 
     visitPair(ctx: PairContext) {
-        var children = this.visitChildren(ctx); // cool dfs garde l'ordre donc agrlable à manipuler car c'est ce qu'on attend à recevoir
-
-        //console.log("visitJson_pair", children);
-
-        if (children[children.length - 1] === "DEDENT") {
-            console.log("ici")
-        }
+        var children = this.visitChildren(ctx);
 
         const head = children[0];
         const tail = children[children.length - 2];
@@ -480,23 +338,9 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
                 const element = children[index];
                 if (element instanceof vscode.DocumentSymbol && (element.name === "key props")) {
                     tail.children.push(element);
-                } 
+                }
             }
 
-            /*
-            if (children[2] instanceof vscode.DocumentSymbol) {
-
-                let properties = new vscode.DocumentSymbol(
-                    "properties",
-                    "",
-                    vscode.SymbolKind.Property,
-                    children[2].range, children[2].range);
-
-                properties.children.push(children[2]);
-
-                tail.children.push(properties);
-            }
-            */
         } else { // On fait les modifs pour obtenir le résultat visuel suivant :
             //[abc] name paul
             const tmp = tail.name;
@@ -507,42 +351,16 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
                 const element = children[index];
                 if (element instanceof vscode.DocumentSymbol && (element.name === "key props")) {
                     tail.children.push(element);
-                } 
-            }
-
-
-            /*
-            if (children[2] instanceof vscode.DocumentSymbol) {
-                let structure = new vscode.DocumentSymbol(
-                    "Properties",
-                    "",
-                    vscode.SymbolKind.String,
-                    children[2].range, children[2].range);
-                structure.children.push(children[2]);
-                tail = structure;
-            }
-            */
-
-        }
-
-
-
-        for (var i = 0; i < children.length; i++) {
-            if (children[i] instanceof vscode.DocumentSymbol) {
-                console.log("name : ", children[i].name);
-                console.log("name : ", children[i].name);
-                console.log("detail : ", children[i].detail);
-                console.log("kind : ", children[i].kind);
-                console.log("vscode.SymbolKind : ", vscode.SymbolKind);
+                }
             }
         }
 
         return tail;
     }
 
-    visitSeq_item(ctx: Seq_itemContext){
+    visitSeq_item(ctx: Seq_itemContext) {
         var children = this.visitChildren(ctx);
-        children[0].text = " "; // TODO :
+        children[0].text = " "; // TODO
         return children;
     }
 
@@ -578,20 +396,14 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
 
     // Feuille finale, on crée la strucutre minimal utile , analyse précdéement de ce que c'est un node est récupérer les infos les + utiles
     visitTerminal(node: TerminalNode) {
-        console.log("Node", node)
-        console.log("Node symbol", node._symbol);
-        console.log("Node start", node._symbol.startIndex);
-        console.log("Node stop", node._symbol.stopIndex);
-
         var text;
 
-        if(node.text === "[" || node.text === "]" || node.text === "{" || node.text === "}" || node.text === "-"){
+        if (node.text === "[" || node.text === "]" || node.text === "{" || node.text === "}" || node.text === "-") {
             text = " ";
-        }else{
+        } else {
             text = node.text;
         }
 
-        // TODO aussi retourner et traiter start et stop index
         const terminalNode = {
             "text": text,
             "line": node._symbol.line,
