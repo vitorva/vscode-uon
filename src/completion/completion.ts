@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as c3 from 'antlr4-c3';
 import { ANTLRErrorListener, CharStreams, CommonToken, CommonTokenStream, Parser, RecognitionException, Recognizer, Token } from 'antlr4ts';
-import { CompletionItem, CompletionItemKind } from 'vscode';
+import { CompletionItem } from 'vscode';
 import { UonCompletionErrorStrategy } from '../error/UonCompletionErrorStrategy';
 import { UONLexer } from '../generated/UONLexer';
 import { UONParser } from '../generated/UONParser';
@@ -12,9 +12,6 @@ class ErrorCompletionListener implements ANTLRErrorListener<CommonToken> {
     public error = 0;
     public line = 0;
     public column = 0;
-
-    // TODO : Nouveau token à remplacer si possible
-    // TODO : Gérer plusieurs erreurs
 
     public syntaxError<T extends Token>(recognizer: Recognizer<T, any>, offendingSymbol: T | undefined, line: number,
         charPositionInLine: number, msg: string, e: RecognitionException | undefined): void {
@@ -46,60 +43,33 @@ export function completionFor(text: string): CompletionItem[] {
     let tree = parser.uon();  // Parse Tree
 
     if (errorCompletionListener.error > 0) {
-        console.log("text", text);
-        console.log("line", errorCompletionListener.line);
-        console.log("colum", errorCompletionListener.column);
-
         const lines = text.split('\r\n');
 
-        if (errorCompletionListener.line + 1  < lines.length) {
+        if (errorCompletionListener.line + 1 < lines.length) { // ne traite pas une erreur sur la ligne ou se trouve le curseur
             const left = lines.slice(0, errorCompletionListener.line);
             const right = lines.slice(errorCompletionListener.line + 1, lines.length);
             const newText = left.concat(right);
             text = newText.join('\r\n');
-            console.log("text", text);
-    
+
             let inputStream = CharStreams.fromString(text);
             lexer = new UONLexer(inputStream);
             tokenStream = new CommonTokenStream(lexer);
-    
+
             parser = new UONParser(tokenStream);
             parser.removeErrorListeners();
-    
+
             tree = parser.uon();
         }
     }
 
-    //console.log("tree.toStringTree", tree.toStringTree(parser));
-
     const completionTokenIndex = findCursorTokenIndex(tokenStream);
     let candidates = collectC3CompletionCandidates(parser, completionTokenIndex);
-
-    const newCompletionItem = (
-        text: string,
-        kind: CompletionItemKind,
-        extraOptions?: Partial<CompletionItem>
-    ): CompletionItem => ({
-        label: text,
-        kind,
-        ...extraOptions,
-    });
-
-    /*
-    const newSnippetItem = (label: string, snippet: string, extraOptions?: Partial<CompletionItem>): CompletionItem =>
-      newCompletionItem(label, CompletionItemKind.Snippet, {
-        insertText: snippet,
-        insertTextFormat: InsertTextFormat.Snippet,
-        ...extraOptions,
-      });
-  */
 
     let keywords: CompletionItem[] = [];
     let tokenNames = [];
     for (let candidate of candidates.tokens) {
         let str = parser.vocabulary.getDisplayName(candidate[0]);
 
-        //https://stackoverflow.com/questions/19156148/i-want-to-remove-double-quotes-from-a-string
         str = str.replace(/'/g, "");
 
         let item = new vscode.CompletionItem(str, vscode.CompletionItemKind.Keyword);
@@ -114,52 +84,22 @@ export function completionFor(text: string): CompletionItem[] {
 
         tokenNames.push(str);
 
-        // Fonctionne uniquement si il n'y a seulement qu'une suite possible : TODO
+        // Fonctionne uniquement si il n'y a seulement qu'une suite possible
         if (candidate[1].length > 0) {
 
             for (let index = 0; index < candidate[1].length; index++) {
                 const element = candidate[1][index];
                 str = str + " " + parser.vocabulary.getDisplayName(element).replace(/'/g, "");
                 tokenNames.push(str);
-                keywords.push(new vscode.CompletionItem(str, vscode.CompletionItemKind.Keyword));
             }
+            keywords.push(new vscode.CompletionItem(str, vscode.CompletionItemKind.Keyword));
+        } else {
+            keywords.push(item);
         }
-
-
-        // TODO : Range pour texte collé
-
-        //const range = document.getWordRangeAtPosition(position);
-
-        //const range2 = new vscode.Range(new vscode.Position(position.line, position.character), position);
-
-        /*
-        if(tmp === null){
-           tmp = range2 ;
-        }else{
-          item.range = tmp;
-          tmp = range2;
-        }
-        */
-
-        //item.range = range2
-
-        /*
-        if(tmp === null){
-          tmp = new vscode.Position(position.line, position.character);
-       }else{
-         const range2 = new vscode.Range(new vscode.Position(tmp.line, tmp.character), position);
-         item.range = range2;
-         tmp = null;
-       }
-        */
-
-        keywords.push(item);
     }
 
-    //snippets
-
+    //snippets 
     // TODO : controler depuis le token stream quand a pas de token schema !
-
     if (tokenNames.includes("!str")) {
         let snippetCompletion = new vscode.CompletionItem('!str(comment: ... , description: .., optional: ...)');
         snippetCompletion.insertText = new vscode.SnippetString('!str(comment: ${1}, description: ${2}, optional: ${3})');
@@ -170,7 +110,6 @@ export function completionFor(text: string): CompletionItem[] {
         keywords.push(snippetCompletion);
     }
 
-    //match pour les listes ?
     if (tokenNames.includes("!int")) {
         let snippetCompletion = new vscode.CompletionItem('!int(comment: ... , description: ..., optional: ...)');
         snippetCompletion.insertText = new vscode.SnippetString('!int(comment: ${1}, description: ${2}, optional: ${3})');
@@ -181,16 +120,6 @@ export function completionFor(text: string): CompletionItem[] {
         keywords.push(snippetCompletion);
     }
 
-    // TODO : rajouter des snippets
-
-    //const snippetCompletion = new vscode.CompletionItem('description : ... , name : ... , uuid : ... ');
-    //snippetCompletion.insertText = new vscode.SnippetString('description : ${1}, name : ${2}, uuid : ${3}');
-
-    //snippetCompletion.insertText = new vscode.SnippetString('Good ${1|morning,afternoon,evening|}. It is ${1}, right?');
-    //keywords.push(new vscode.newS('(SELECT ... FROM ...)', '(SELECT $2 FROM $1)'));
-    //keywords.push(snippetCompletion);
-
-    console.log(keywords);
     return keywords;
 }
 
@@ -200,7 +129,6 @@ function collectC3CompletionCandidates(
 ): c3.CandidatesCollection {
     const core = new c3.CodeCompletionCore(parser);
     core.translateRulesTopDown = false;
-    //core.showDebugOutput = true;
 
     core.ignoredTokens = new Set([
         UONLexer.OPEN_C_BRA,
@@ -209,8 +137,7 @@ function collectC3CompletionCandidates(
         UONLexer.CLOSE_S_BRA,
         UONLexer.OPEN_PAR,
         UONLexer.CLOSE_PAR,
-        //UONLexer.COMMA,
-        //UONLexer.COLON,
+        UONLexer.COMMA,
         UONLexer.QUOTED_STRING,
         UONLexer.UNQUOTED_STRING,
     ]);
@@ -232,6 +159,6 @@ function findCursorTokenIndex(tokenStream: CommonTokenStream): number {
         tokenStreamArray.push(t.text);
     }
 
-    return tokenStream.size - 3;
+    return tokenStream.size - 3; // TODO -1 de plus si DEDENT
 }
 
