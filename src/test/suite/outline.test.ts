@@ -10,16 +10,19 @@ import {
     CharStreams, CommonTokenStream
 } from "antlr4ts";
 import { UonCompletionErrorStrategy } from "../../error/UonCompletionErrorStrategy";
-import { expect } from 'chai';
+
+import { UonASTVisitor } from '../../outline/UonASTVisitor';
 
 chai.use(deepEqualInAnyOrder);
+
+const { expect } = chai;
 
 // Begin of the tests.
 suite("Uon outline", function () {
 
     test("Test outline nodes", () => {
         //Antlr setup
-        const inputStream = CharStreams.fromString('!map {key : "value"}');
+        const inputStream = CharStreams.fromString('!map {key : value}');
         const lexer = new UONLexer(inputStream);
         const tokenStream = new CommonTokenStream(lexer);
         const parser = new UONParser(tokenStream);
@@ -29,24 +32,33 @@ suite("Uon outline", function () {
         parser.errorHandler = errorStrategy;
 
         parser.buildParseTree = true;
-        let tree = parser.uon();  
+        let tree = parser.uon();
 
-        const start = new vscode.Position(0, 0);
-        const end = new vscode.Position(0, 0);
+        // Create the visitor
+        const uonASTVisitor = new UonASTVisitor();
+
+        // Use the visitor entry point
+        const ast = uonASTVisitor.visit(tree);
+
+        let symbols: vscode.DocumentSymbol[] = [];
+        let nodes = [symbols];
+
+        for (var i = 0; i < ast.length; i++) {
+            if (ast[i] instanceof vscode.DocumentSymbol) { // Pour ignorer les tokens de retour à la ligne
+                nodes[nodes.length - 1].push(ast[i]);
+            }
+        }
+
+        const start = new vscode.Position(0, 12);
+        const end = new vscode.Position(0, 17);
         const range = new vscode.Range(start, end);
 
         let structure = new vscode.DocumentSymbol(
-            "test",
-            " ",
+            "key",
+            "value",
             vscode.SymbolKind.String,
             range, range);
 
-        let structure2 = new vscode.DocumentSymbol(
-            "test",
-            " ",
-            vscode.SymbolKind.String,
-            range, range);
-
-        expect(structure).to.deep.equals(structure2);
+        expect(nodes[0]).to.deep.equalInAnyOrder([structure]);
     });
 });
