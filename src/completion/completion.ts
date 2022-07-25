@@ -126,6 +126,9 @@ function collectC3CompletionCandidates(
         UONLexer.COMMA,
         UONLexer.QUOTED_STRING,
         UONLexer.UNQUOTED_STRING,
+        UONLexer.NEWLINE,
+        UONParser.DEDENT,
+        UONParser.INDENT,
     ]);
 
     // Ignore les tokens literal
@@ -137,11 +140,21 @@ function collectC3CompletionCandidates(
 }
 
 function findCursorTokenIndex(tokenStream: CommonTokenStream): number {
-    return tokenStream.size - 3; // TODO -1 de plus si DEDENT
+    let tokenIndex = tokenStream.size -3;
+
+    if(tokenStream.get(tokenStream.size -2).type === UONParser.DEDENT){
+        for (let i = tokenIndex ; i >= 0; i--) {
+            tokenIndex = i;
+            if(tokenStream.get(i).type !== UONParser.DEDENT){
+                return tokenIndex;
+            }  
+        }
+    }
+
+    return tokenIndex;
 }
 
 function getTokensStreamText(tokenStream: CommonTokenStream) {
-
     let tokenStreamArray = [];
     for (let i = 0; i < tokenStream.size; i++) {
         const t = tokenStream.get(i);
