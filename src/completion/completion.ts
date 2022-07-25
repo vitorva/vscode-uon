@@ -1,26 +1,13 @@
 import * as vscode from 'vscode';
 import * as c3 from 'antlr4-c3';
-import { ANTLRErrorListener, CharStreams, CommonToken, CommonTokenStream, Parser, RecognitionException, Recognizer, Token } from 'antlr4ts';
+import { CharStreams, CommonTokenStream, Parser } from 'antlr4ts';
 import { CompletionItem } from 'vscode';
 import { UonCompletionErrorStrategy } from '../error/UonCompletionErrorStrategy';
 import { UONLexer } from '../generated/UONLexer';
 import { UONParser } from '../generated/UONParser';
 import hoverJson = require("../hover.json");
+import { ErrorCompletionListener } from '../error/ErrorCompletionListener';
 
-class ErrorCompletionListener implements ANTLRErrorListener<CommonToken> {
-
-    public error = 0;
-    public line = 0;
-    public column = 0;
-
-    public syntaxError<T extends Token>(recognizer: Recognizer<T, any>, offendingSymbol: T | undefined, line: number,
-        charPositionInLine: number, msg: string, e: RecognitionException | undefined): void {
-        if (this.error > 0) { return; }
-        this.error = this.error + 1;
-        this.line = line - 1;
-        this.column = charPositionInLine;
-    }
-}
 
 export function completionFor(text: string): CompletionItem[] {
     //Antlr setup
@@ -84,9 +71,8 @@ export function completionFor(text: string): CompletionItem[] {
 
         tokenNames.push(str);
 
-        // Fonctionne uniquement si il n'y a seulement qu'une suite possible
+        // Fonctionne uniquement s'l n'y a seulement qu'une suite possible
         if (candidate[1].length > 0) {
-
             for (let index = 0; index < candidate[1].length; index++) {
                 const element = candidate[1][index];
                 str = str + " " + parser.vocabulary.getDisplayName(element).replace(/'/g, "");
@@ -98,9 +84,10 @@ export function completionFor(text: string): CompletionItem[] {
         }
     }
 
+    const tokenStreamText = getTokensStreamText(tokenStream);
+
     //snippets 
-    // TODO : controler depuis le token stream quand a pas de token schema !
-    if (tokenNames.includes("!str")) {
+    if (tokenNames.includes("!str") && tokenStreamText.includes("!schema") === false) {
         let snippetCompletion = new vscode.CompletionItem('!str(comment: ... , description: .., optional: ...)');
         snippetCompletion.insertText = new vscode.SnippetString('!str(comment: ${1}, description: ${2}, optional: ${3})');
         keywords.push(snippetCompletion);
@@ -110,7 +97,7 @@ export function completionFor(text: string): CompletionItem[] {
         keywords.push(snippetCompletion);
     }
 
-    if (tokenNames.includes("!int")) {
+    if (tokenNames.includes("!int") && tokenStreamText.includes("!schema") === false) {
         let snippetCompletion = new vscode.CompletionItem('!int(comment: ... , description: ..., optional: ...)');
         snippetCompletion.insertText = new vscode.SnippetString('!int(comment: ${1}, description: ${2}, optional: ${3})');
         keywords.push(snippetCompletion);
@@ -128,7 +115,6 @@ function collectC3CompletionCandidates(
     completionTokenIndex: number
 ): c3.CandidatesCollection {
     const core = new c3.CodeCompletionCore(parser);
-    core.translateRulesTopDown = false;
 
     core.ignoredTokens = new Set([
         UONLexer.OPEN_C_BRA,
@@ -142,7 +128,6 @@ function collectC3CompletionCandidates(
         UONLexer.UNQUOTED_STRING,
     ]);
 
-
     // Ignore les tokens literal
     core.preferredRules = new Set([
         UONParser.RULE_literal,
@@ -152,6 +137,10 @@ function collectC3CompletionCandidates(
 }
 
 function findCursorTokenIndex(tokenStream: CommonTokenStream): number {
+    return tokenStream.size - 3; // TODO -1 de plus si DEDENT
+}
+
+function getTokensStreamText(tokenStream: CommonTokenStream) {
 
     let tokenStreamArray = [];
     for (let i = 0; i < tokenStream.size; i++) {
@@ -159,6 +148,6 @@ function findCursorTokenIndex(tokenStream: CommonTokenStream): number {
         tokenStreamArray.push(t.text);
     }
 
-    return tokenStream.size - 3; // TODO -1 de plus si DEDENT
+    return tokenStreamArray;
 }
 
