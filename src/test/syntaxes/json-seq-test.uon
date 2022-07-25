@@ -10,7 +10,7 @@
 #        ^ source.uon meta.structure.mapping.uon
 #         ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon punctuation.definition.string-description.begin.uon
 #          ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon
-#           ^^^^^^^^^^^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon support.type.property-name2.uon
+#           ^^^^^^^^^^^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon support.type.property.uon
 #                      ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon
 #                       ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon punctuation.separator.dictionary.key-value.uon
 #                        ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon
@@ -20,10 +20,10 @@
 #                               ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon punctuation.separator.mapping.key-value.uon
 #                                ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
 #                                 ^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon
-#                                    ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon yes.uon
+#                                    ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon string.uon support.type.property-name.uon
 #                                     ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon
 #                                      ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon
-#                                       ^^^^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon support.type.property-name2.uon
+#                                       ^^^^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon support.type.property.uon
 #                                              ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon
 #                                               ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon punctuation.separator.dictionary.key-value.uon
 #                                                ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon
@@ -31,7 +31,7 @@
 #                                                   ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon
 #                                                    ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon punctuation.separator.dictionary.pair.uon
 #                                                     ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon
-#                                                      ^^^^^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon support.type.property-name2.uon
+#                                                      ^^^^^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon support.type.property.uon
 #                                                              ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon punctuation.separator.dictionary.key-value.uon
 #                                                               ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon
 #                                                                ^^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.uon string.uon support.type.property-name.uon
@@ -56,7 +56,7 @@
 #          ^ source.uon meta.structure.mapping.uon
 #           ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon punctuation.definition.string-description.begin.uon
 #            ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon
-#             ^^^^^^^^^^^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon support.type.property-name2.uon
+#             ^^^^^^^^^^^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon support.type.property.uon
 #                        ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon
 #                         ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon punctuation.separator.dictionary.key-value.uon
 #                          ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon
@@ -112,7 +112,7 @@
 #          ^ source.uon meta.structure.mapping.uon
 #           ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon punctuation.definition.string-description.begin.uon
 #            ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon
-#             ^^^^^^^^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon support.type.property-name2.uon
+#             ^^^^^^^^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon support.type.property.uon
 #                     ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon
 #                      ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon punctuation.separator.dictionary.key-value.uon
 #                       ^ source.uon meta.structure.mapping.uon punctuation.definition.string-description.uon

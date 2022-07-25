@@ -1,17 +1,22 @@
-import { expect } from "chai";
+import * as vscode from 'vscode';
+
 import { UONParser } from "../../generated/UONParser";
 import { UONLexer } from "../../generated/UONLexer";
-import { UonASTVisitorTest } from './outline/UonASTVisitorTest';
+
+const chai = require('chai');
+const deepEqualInAnyOrder = require('deep-equal-in-any-order');
 
 import {
     CharStreams, CommonTokenStream
 } from "antlr4ts";
 import { UonCompletionErrorStrategy } from "../../error/UonCompletionErrorStrategy";
+import { expect } from 'chai';
 
+chai.use(deepEqualInAnyOrder);
 
 // Begin of the tests.
 suite("Uon outline", function () {
-   
+
     test("Test outline nodes", () => {
         //Antlr setup
         const inputStream = CharStreams.fromString('!map {key : "value"}');
@@ -24,15 +29,24 @@ suite("Uon outline", function () {
         parser.errorHandler = errorStrategy;
 
         parser.buildParseTree = true;
-        let tree = parser.uon();  // parse Tree
+        let tree = parser.uon();  
 
-        // Create the visitor
-        const uonASTVisitorTest = new UonASTVisitorTest();
+        const start = new vscode.Position(0, 0);
+        const end = new vscode.Position(0, 0);
+        const range = new vscode.Range(start, end);
 
-        // Use the visitor entry point
-        const ast = uonASTVisitorTest.visit(tree);
+        let structure = new vscode.DocumentSymbol(
+            "test",
+            " ",
+            vscode.SymbolKind.String,
+            range, range);
 
-        expect(ast).to.equal(2);
+        let structure2 = new vscode.DocumentSymbol(
+            "test",
+            " ",
+            vscode.SymbolKind.String,
+            range, range);
 
+        expect(structure).to.deep.equals(structure2);
     });
 });
