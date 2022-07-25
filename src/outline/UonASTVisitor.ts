@@ -35,8 +35,81 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return aggregate.concat(nextResult);
     }
 
-    // proprités de valeur : ex !int, !str etc.
+    // Fonction utilitaires
+    createDocumentSymbol(word: any, kind: any) {
+        const text = word.text;
 
+        const start = new vscode.Position(word.line - 1, word.column);
+        const end = new vscode.Position(word.line - 1, word.column + word.text.length);
+        const range = new vscode.Range(start, end);
+
+        let structure = new vscode.DocumentSymbol(
+            text,
+            " ",
+            kind,
+            range, range);
+
+        return structure;
+    }
+
+    structure(ctx: any, kind: any) {
+        this.level = this.level + 1;
+        var children = this.visitChildren(ctx);
+        this.level = this.level - 1;
+
+        if (this.level === 0) {
+
+            var response = [];
+
+            for (var i = 0; i < children.length; i++) {
+                if (children[i] instanceof vscode.DocumentSymbol) {
+                    response.push(children[i]);
+                }
+            }
+            return response;
+        }
+
+        // On récupère le premier enfant
+        const head = children.shift();
+
+        let structure;
+        if (head instanceof vscode.DocumentSymbol) {
+            structure = head;
+        } else {
+            structure = this.createDocumentSymbol(head, kind);
+        }
+
+        for (var i = 0; i < children.length; i++) {
+            if (children[i] instanceof vscode.DocumentSymbol) {
+                structure.children.push(children[i]);
+            }
+        }
+
+        return [structure];
+    }
+
+    pair(children: any, head: any, tail: any) {
+        if (tail.kind === vscode.SymbolKind.Object || tail.kind === vscode.SymbolKind.Array) {
+            // {} name
+            tail.name = head.name;
+        } else {
+            //[abc] name paul
+            const tmp = tail.name;
+            tail.detail = tmp;
+            tail.name = head.name;
+        }
+
+        for (let index = 0; index < children.length; index++) {
+            const element = children[index];
+            if (element instanceof vscode.DocumentSymbol && (element.name === "key props")) {
+                tail.children.push(element);
+            }
+        }
+
+        return tail;
+    }
+
+    // proprités de valeur : ex !int, !str etc.
     valueProps(ctx: any) {
         const children = this.visitChildren(ctx);
 
@@ -58,12 +131,6 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return properties;
     }
 
-
-    visitNumber_presentation_properties(ctx: Number_presentation_propertiesContext) {
-        return this.valueProps(ctx);
-    }
-
-
     propertie(ctx: any) {
         var children = this.visitChildren(ctx);
 
@@ -75,8 +142,13 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return property;
     }
 
-    // Propriété de présentation
 
+    // Propriété de présentation
+    visitNumber_presentation_properties(ctx: Number_presentation_propertiesContext) {
+        return this.valueProps(ctx);
+    }
+
+    // valeur
     visitNumber_presentation_propertie(ctx: Number_presentation_propertieContext) {
         return this.propertie(ctx);
     }
@@ -89,6 +161,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return this.propertie(ctx);
     }
 
+    // clé
     visitPresentation_properties(ctx: Presentation_propertiesContext) {
 
         const children = this.visitChildren(ctx);
@@ -112,6 +185,16 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     }
 
     visitPresentation_property(ctx: Presentation_propertyContext) {
+        return this.propertie(ctx);
+    }
+
+
+    // Schema
+    visitSchema(ctx: SchemaContext) {
+        return this.structure(ctx, vscode.SymbolKind.Object);
+    }
+
+    visitSchema_presentation(ctx: Schema_presentationContext) {
         return this.propertie(ctx);
     }
 
@@ -147,25 +230,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return tail;
     }
 
-    visitSchema(ctx: SchemaContext) {
-        return this.structure(ctx, vscode.SymbolKind.Object);
-    }
-
-    visitSchema_presentation(ctx: Schema_presentationContext) {
-        return this.propertie(ctx);
-    }
-
-    visitQuantity_scalar(ctx: Quantity_scalarContext) {
-        var children = this.visitChildren(ctx);
-
-        if (!(children[children.length - 1] instanceof vscode.DocumentSymbol)) { // ça veut dire qu'on a une quantité
-            children[children.length - 2].name = children[children.length - 2].name + " " + children[children.length - 1].text;
-            children.pop();
-        }
-
-        return children;
-    }
-
+    // validation
     visitString_property(ctx: String_propertyContext) {
         return this.propertie(ctx);
     }
@@ -173,7 +238,6 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     visitNumber_property(ctx: Number_propertyContext) {
         return this.propertie(ctx);
     }
-
 
     visitValidation_properties(ctx: Validation_propertiesContext) {
         var children = this.visitChildren(ctx);
@@ -190,88 +254,13 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return properties;
     }
 
-
-    createDocumentSymbol(word: any, kind: any) {
-        const text = word.text;
-
-        const start = new vscode.Position(word.line - 1, word.column);
-        const end = new vscode.Position(word.line - 1, word.column + word.text.length);
-        const range = new vscode.Range(start, end);
-
-        let structure = new vscode.DocumentSymbol(
-            text,
-            " ",
-            kind,
-            range, range);
-
-        return structure;
-    }
-
-    structure(ctx: any, kind: any) {
-        this.level = this.level + 1;
-        var children = this.visitChildren(ctx);
-        this.level = this.level - 1;
-
-        if (this.level === 0) {
-
-            var response = [];
-
-            for (var i = 0; i < children.length; i++) {
-                if (children[i] instanceof vscode.DocumentSymbol) {
-                    response.push(children[i]);
-                }
-            }
-            return response;
-        }
-
-        // On récupère le première enfant...
-        const head = children.shift(); // C'est quoi head concrêtement ? // Comme c'est un dfs ici çA représentera normalement le {
-
-        let structure;
-        if (head instanceof vscode.DocumentSymbol) {
-            structure = head;
-        } else {
-            structure = this.createDocumentSymbol(head, kind);
-        }
-
-        for (var i = 0; i < children.length; i++) {
-            if (children[i] instanceof vscode.DocumentSymbol) {
-                structure.children.push(children[i]);
-            }
-        }
-
-        return [structure]; // tableau pour représenter une strucuture...
-    }
-
+    // JSON
     visitJson_map(ctx: Json_mapContext) {
         return this.structure(ctx, vscode.SymbolKind.Object);
     }
 
-
-    pair(children: any, head: any, tail: any) {
-        if (tail.kind === vscode.SymbolKind.Object || tail.kind === vscode.SymbolKind.Array) {
-            // {} name
-            tail.name = head.name;
-        } else {
-            //[abc] name paul
-            const tmp = tail.name;
-            tail.detail = tmp;
-            tail.name = head.name;
-        }
-
-        for (let index = 0; index < children.length; index++) {
-            const element = children[index];
-            if (element instanceof vscode.DocumentSymbol && (element.name === "key props")) {
-                tail.children.push(element);
-            }
-        }
-
-        return tail;
-    }
-
-
-    visitJson_pair(ctx: Json_pairContext) { // name(....) : !str toto
-        var children = this.visitChildren(ctx); // cool dfs garde l'ordre donc agrlable à manipuler car c'est ce qu'on attend à recevoir
+    visitJson_pair(ctx: Json_pairContext) {
+        var children = this.visitChildren(ctx); 
 
         const head = children[0];
         let tail = children[children.length - 1];
@@ -283,6 +272,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return this.structure(ctx, vscode.SymbolKind.Array);
     }
 
+    // YAML
     visitYaml_map(ctx: Yaml_mapContext) {
         return this.structure(ctx, vscode.SymbolKind.Object);
     }
@@ -306,32 +296,37 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return this.structure(ctx, vscode.SymbolKind.Array);
     }
 
+    // Terminaux
+    visitQuantity_scalar(ctx: Quantity_scalarContext) {
+        var children = this.visitChildren(ctx);
+
+        if (!(children[children.length - 1] instanceof vscode.DocumentSymbol)) { // ça veut dire qu'on a une quantité
+            children[children.length - 2].name = children[children.length - 2].name + " " + children[children.length - 1].text;
+            children.pop();
+        }
+
+        return children;
+    }
+
+    visitNumber(ctx: NumberContext) {
+        const child = this.visitChildren(ctx);
+        let number = this.createDocumentSymbol(child[0], vscode.SymbolKind.Number);
+        return number;
+    }
+
     visitString(ctx: StringContext) {
         const child = this.visitChildren(ctx);
-
         let string = this.createDocumentSymbol(child[0], vscode.SymbolKind.String);
-
         return string;
     }
 
     visitBoolean(ctx: BooleanContext) {
         const child = this.visitChildren(ctx);
-
         let bool = this.createDocumentSymbol(child[0], vscode.SymbolKind.Boolean);
-
         return bool;
     }
 
-    // traitement pour la position + afficher #(number)
-    visitNumber(ctx: NumberContext) {
-        const child = this.visitChildren(ctx);
-
-        let number = this.createDocumentSymbol(child[0], vscode.SymbolKind.Number);
-
-        return number;
-    }
-
-    // Feuille finale, on crée la strucutre minimal utile , analyse précdéement de ce que c'est un node est récupérer les infos les + utiles
+    // On crée la structure minimale utile
     visitTerminal(node: TerminalNode) {
         var text;
 
