@@ -62,9 +62,7 @@ export function completionFor(text: string): CompletionItem[] {
         let item = new vscode.CompletionItem(str, vscode.CompletionItemKind.Keyword);
 
         const hoverKey = Object.keys(hoverJson);
-
         const hover: any = hoverJson;
-
         if (hoverKey.includes(str)) {
             item.documentation = hover[str];
         }
@@ -146,7 +144,7 @@ function findCursorTokenIndex(tokenStream: CommonTokenStream): number {
     if(tokenStream.get(tokenStream.size -2).type === UONParser.DEDENT){
         for (let i = tokenIndex ; i >= 0; i--) {
             tokenIndex = i;
-            if(tokenStream.get(i).type !== UONParser.DEDENT){
+            if(tokenStream.get(i).type !== UONParser.DEDENT && tokenStream.get(i).text !== "\n" ){
                 return tokenIndex;
             }  
         }

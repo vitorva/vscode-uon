@@ -1,6 +1,10 @@
 // Generated from ../grammar/UON.g4 by ANTLR 4.9.0-SNAPSHOT
 
 
+	import { CommonToken, Token } from "antlr4ts";
+	import { UONParser } from "./UONParser";
+
+
 import { ATN } from "antlr4ts/atn/ATN";
 import { ATNDeserializer } from "antlr4ts/atn/ATNDeserializer";
 import { CharStream } from "antlr4ts/CharStream";
@@ -13,8 +17,6 @@ import { Vocabulary } from "antlr4ts/Vocabulary";
 import { VocabularyImpl } from "antlr4ts/VocabularyImpl";
 
 import * as Utils from "antlr4ts/misc/Utils";
-import { CommonToken, Token } from "antlr4ts";
-import { UONParser } from "./UONParser";
 
 
 export class UONLexer extends Lexer {
@@ -316,7 +318,7 @@ export class UONLexer extends Lexer {
 	private NEWLINE_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 0:
-			if(this.ignoreWord) {this.skip();}
+			if(this.ignoreWord) this.skip();
 			break;
 		}
 	}

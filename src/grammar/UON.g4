@@ -5,6 +5,11 @@ tokens {
 	DEDENT
 }
 
+@lexer::header {
+	import { CommonToken, Token } from "antlr4ts";
+	import { UONParser } from "./UONParser";
+}
+
 @lexer::members {
 	private ignoreWord: boolean = false;
 	private tokens: any[] = [];
@@ -397,9 +402,9 @@ LINE_COMMENT: '#' ~[\r\n]* -> skip;
 fragment SPACES: [ \t]+;
 
 NEWLINE
- : ( {atStartOfInput()}?   SPACES
+ : ( {this.atStartOfInput()}?   SPACES
    | ( '\r'? '\n' | '\r' ) SPACES?
-   ) {if(ignoreWord) this.skip();}
+   ) {if(this.ignoreWord) this.skip();}
  ;
 
 MINUS: '-';
