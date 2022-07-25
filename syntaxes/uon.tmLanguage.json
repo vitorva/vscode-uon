@@ -102,7 +102,6 @@
 		"yaml_seq": {
 			"match": "(-)(?!\\S)",
 			"name": "punctuation.definition.yaml.sequence.item.uon"
-
 		},
 		"yaml_map": {
 			"match": "(([\\p{L}]([\\p{L}]|[\\p{N}]|[\\p{Pc}])*))( *:)",
@@ -453,10 +452,10 @@
 		"validation": {
 			"patterns": [
 				{
-					"begin": "(!float(128|64|32)?|!int(128|64|32)?|!uint(128|64|32)?)\\(",
+					"begin": "(!float(128|64|32)?|!int(128|64|32)?|!uint(128|64|32)?)( *)\\(",
 					"beginCaptures": {
-						"0": {
-							"name": "punctuation.definition.schema-validation-property.begin.uon"
+						"1": {
+							"name": "string.uon support.type.property-name.uon"
 						}
 					},
 					"end": "\\)",
@@ -477,18 +476,13 @@
 					]
 				},
 				{
-					"begin": "!str\\(",
+					"begin": "(!str)( *)\\(",
 					"beginCaptures": {
-						"0": {
-							"name": "punctuation.definition.schema-validation-property.begin.uon"
+						"1": {
+							"name": "string.uon support.type.property-name.uon"
 						}
 					},
 					"end": "\\)",
-					"endCaptures": {
-						"0": {
-							"name": "punctuation.definition.schema-validation-property.end.uon"
-						}
-					},
 					"name": "punctuation.definition.schema-validation-property.uon",
 					"patterns": [
 						{
@@ -555,15 +549,10 @@
 			"begin": "!([\\p{L}]|[\\p{L}]|[\\p{L}]|[\\p{L}]|$|-)+\\(",
 			"beginCaptures": {
 				"1": {
-					"name": "yes.uon"
+					"name": "string.uon support.type.property-name.uon"
 				}
 			},
 			"end": "\\)",
-			"endCaptures": {
-				"1": {
-					"name": "no.uon"
-				}
-			},
 			"name": "meta.structure.uon",
 			"patterns": [
 				{
@@ -575,15 +564,10 @@
 			"begin": "(!float(128|64|32)?|!int(128|64|32)?|!uint(128|64|32)?)\\(",
 			"beginCaptures": {
 				"1": {
-					"name": "yes.uon"
+					"name": "string.uon support.type.property-name.uon"
 				}
 			},
 			"end": "\\)",
-			"endCaptures": {
-				"1": {
-					"name": "no.uon"
-				}
-			},
 			"name": "meta.structure.uon",
 			"patterns": [
 				{
