@@ -32,7 +32,7 @@ export function completionFor(text: string): CompletionItem[] {
     if (errorCompletionListener.error > 0) {
         const lines = text.split('\r\n');
 
-        if (errorCompletionListener.line + 1 < lines.length) { // ne traite pas une erreur sur la ligne ou se trouve le curseur
+        if (errorCompletionListener.line + 1 < lines.length) { // ne traite pas une erreur sur la ligne ou se trouve le curseur (dernière ligne)
             const left = lines.slice(0, errorCompletionListener.line);
             const right = lines.slice(errorCompletionListener.line + 1, lines.length);
             const newText = left.concat(right);
@@ -53,7 +53,7 @@ export function completionFor(text: string): CompletionItem[] {
     let candidates = collectC3CompletionCandidates(parser, completionTokenIndex);
 
     let keywords: CompletionItem[] = [];
-    let tokenNames = [];
+    let tokensType = [];
     for (let candidate of candidates.tokens) {
         let str = parser.vocabulary.getDisplayName(candidate[0]);
 
@@ -69,14 +69,14 @@ export function completionFor(text: string): CompletionItem[] {
             item.documentation = hover[str];
         }
 
-        tokenNames.push(str);
+        tokensType.push(candidate[0]);
 
         // Fonctionne uniquement s'l n'y a seulement qu'une suite possible
         if (candidate[1].length > 0) {
             for (let index = 0; index < candidate[1].length; index++) {
                 const element = candidate[1][index];
                 str = str + " " + parser.vocabulary.getDisplayName(element).replace(/'/g, "");
-                tokenNames.push(str);
+                tokensType.push(str);
             }
             keywords.push(new vscode.CompletionItem(str, vscode.CompletionItemKind.Keyword));
         } else {
@@ -84,10 +84,10 @@ export function completionFor(text: string): CompletionItem[] {
         }
     }
 
-    const tokenStreamText = getTokensStreamText(tokenStream);
+    const tokenStreamType = getTokensStreamType(tokenStream);
 
     //snippets 
-    if (tokenNames.includes("!str") && tokenStreamText.includes("!schema") === false) {
+    if (tokensType.includes(UONLexer.STR_TYPE) && tokenStreamType.includes(UONLexer.SCHEMA_TYPE) === false) {
         let snippetCompletion = new vscode.CompletionItem('!str(comment: ... , description: .., optional: ...)');
         snippetCompletion.insertText = new vscode.SnippetString('!str(comment: ${1}, description: ${2}, optional: ${3})');
         keywords.push(snippetCompletion);
@@ -97,7 +97,7 @@ export function completionFor(text: string): CompletionItem[] {
         keywords.push(snippetCompletion);
     }
 
-    if (tokenNames.includes("!int") && tokenStreamText.includes("!schema") === false) {
+    if (tokensType.includes(UONLexer.INT_TYPE) && tokenStreamType.includes(UONLexer.SCHEMA_TYPE) === false) {
         let snippetCompletion = new vscode.CompletionItem('!int(comment: ... , description: ..., optional: ...)');
         snippetCompletion.insertText = new vscode.SnippetString('!int(comment: ${1}, description: ${2}, optional: ${3})');
         keywords.push(snippetCompletion);
@@ -154,13 +154,13 @@ function findCursorTokenIndex(tokenStream: CommonTokenStream): number {
     return tokenIndex;
 }
 
-function getTokensStreamText(tokenStream: CommonTokenStream) {
-    let tokenStreamArray = [];
+function getTokensStreamType(tokenStream: CommonTokenStream) {
+    let tokensStreamType = [];
     for (let i = 0; i < tokenStream.size; i++) {
         const t = tokenStream.get(i);
-        tokenStreamArray.push(t.text);
+        tokensStreamType.push(t.type);
     }
 
-    return tokenStreamArray;
+    return tokensStreamType;
 }
 
