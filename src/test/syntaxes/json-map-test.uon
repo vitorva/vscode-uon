@@ -44,10 +44,11 @@
 #                  ^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon markup.bold.uon
 #                      ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon
 #                       ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon punctuation.definition.json.sequence.begin.uon
-#                        ^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon constant.numeric.uon
+#                        ^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon constant.numeric.uon
+#                          ^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon punctuation.definition.json.sequence.end.uon
 >}
-#^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon invalid.illegal.expected-sequence-separator.uon
+#^ source.uon meta.structure.mapping.uon punctuation.definition.mapping.end.uon
 ># comment
-#^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon comment.line.number-sign.uon punctuation.definition.comment.begin.uon
-# ^^^^^^^^ source.uon meta.structure.mapping.uon meta.structure.mapping.value.uon meta.structure.sequence.uon comment.line.number-sign.uon
+#^ source.uon comment.line.number-sign.uon punctuation.definition.comment.begin.uon
+# ^^^^^^^^ source.uon comment.line.number-sign.uon
 >

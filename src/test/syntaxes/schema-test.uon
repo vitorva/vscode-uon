@@ -27,9 +27,10 @@
 #                ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon
 #                 ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.separator.schema-validation.key-value.uon
 #                  ^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon
-#                    ^^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.definition.schema-validation-property.uon punctuation.definition.schema-validation-property.begin.uon
+#                    ^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.definition.schema-validation-property.uon string.uon support.type.property-name.uon
+#                        ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.definition.schema-validation-property.uon
 #                         ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.definition.schema-validation-property.uon
-#                          ^^^^^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.definition.schema-validation-property.uon string.uon support.type.property-name2.uon
+#                          ^^^^^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.definition.schema-validation-property.uon string.uon support.type.property.uon
 #                                  ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.definition.schema-validation-property.uon
 #                                   ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.definition.schema-validation-property.uon punctuation.separator.dictionary.key-value.uon
 #                                    ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon meta.structure.schema-validation.value.uon punctuation.definition.schema-validation-property.uon
@@ -42,7 +43,7 @@
 #            ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon
 #             ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon punctuation.definition.schema-attribute-description.uon punctuation.definition.schema-attribute-description.begin.uon
 #              ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon punctuation.definition.schema-attribute-description.uon
-#               ^^^^^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon punctuation.definition.schema-attribute-description.uon string.uon support.type.property-name2.uon
+#               ^^^^^^^^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon punctuation.definition.schema-attribute-description.uon string.uon support.type.property.uon
 #                       ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon punctuation.definition.schema-attribute-description.uon
 #                        ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon punctuation.definition.schema-attribute-description.uon punctuation.separator.dictionary.key-value.uon
 #                         ^ source.uon meta.structure.schema.value.uon punctuation.definition.schema-attribute.uon punctuation.definition.schema-attribute-description.uon

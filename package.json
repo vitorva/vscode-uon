@@ -2,14 +2,23 @@
 	"name": "vscode-uon",
 	"displayName": "UON",
 	"description": "UON Language Support",
-	"version": "0.1.8",
-	"publisher": "test2Publish",
+	"author": "Vitor Vaz Afonso",
+	"icon": "images/logo.png",
+	"version": "0.0.1",
+	"publisher": "vitorva",
+	"bugs": "https://github.com/vitorva/vscode-uon/issues",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/vitorva/vscode-uon"
+	  },
 	"engines": {
 		"vscode": "^1.65.0"
 	},
 	"categories": [
-		"Other"
-	],
+		"Programming Languages",
+		"Linters",
+		"Snippets"
+	  ],
 	"activationEvents": [
 		"onLanguage:uon"
 	],
@@ -47,7 +56,7 @@
 		"antlr4ts": "cd src/generated && antlr4ts -visitor ../grammar/UON.g4",
 		"build": "npm run antlr4ts",
 		"deploy": "vsce publish",
-		"syntax" : "vscode-tmgrammar-test src/test/syntaxes/json-map-test.uon && vscode-tmgrammar-test src/test/syntaxes/json-seq-test.uon && vscode-tmgrammar-test src/test/syntaxes/schema-test.uon "
+		"syntax": "vscode-tmgrammar-test src/test/syntaxes/json-map-test.uon && vscode-tmgrammar-test src/test/syntaxes/json-seq-test.uon && vscode-tmgrammar-test src/test/syntaxes/schema-test.uon "
 	},
 	"devDependencies": {
 		"@types/chai": "^4.3.1",
@@ -61,14 +70,17 @@
 		"antlr4ts-cli": "^0.5.0-alpha.4",
 		"eslint": "^8.9.0",
 		"glob": "^7.2.0",
+		"minimist": ">=1.2.6",
 		"mocha": "^9.2.1",
 		"typescript": "^4.5.5",
-		"vsce": "^2.9.2"
+		"vsce": "^2.9.2",
+		"vscode-tmgrammar-test": "^0.1.1"
 	},
 	"dependencies": {
 		"antlr4-c3": "^2.2.1",
 		"antlr4ts": "^0.5.0-alpha.4",
 		"chai": "^4.3.6",
+		"deep-equal-in-any-order": "^2.0.0",
 		"vscode-languageserver": "^7.0.0"
 	},
 	"__metadata": {

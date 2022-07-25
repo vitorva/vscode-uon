@@ -29,9 +29,20 @@ The grammar and the parser for UON for this library have been implemented using 
 
 The autocompletion has been implement with the excellent [c3 engine](https://github.com/mike-lischke/antlr4-c3).
 
-## How to contribute
-<!---
-TODO
+## How to launch the project locally
 
-The instructions are available in the [contribution guide](CONTRIBUTING.md).
--->
+First run :  
+```bash
+  npm install
+```
+Then open the project from the root and run the extension locally by pressing <kbd>F5</kbd> or select <kbd>run</kbd> in the menu ant then <kbd>Start debugging</kbd>
+
+## ANTLR grammar
+If you change the [grammar file](src/grammar/UON.g4),
+you need to re-generate the antlr files used by the extension by running :
+```bash
+  npm run antlr4ts
+```
+
+
+

@@ -75,6 +75,7 @@ import { Custom_typeContext } from "./UONParser";
 import { StringContext } from "./UONParser";
 import { LiteralContext } from "./UONParser";
 import { NumberContext } from "./UONParser";
+import { Numeric_literalContext } from "./UONParser";
 
 
 /**
@@ -588,5 +589,12 @@ export interface UONVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitNumber?: (ctx: NumberContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `UONParser.numeric_literal`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitNumeric_literal?: (ctx: Numeric_literalContext) => Result;
 }
 

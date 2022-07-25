@@ -75,6 +75,7 @@ import { Custom_typeContext } from "./UONParser";
 import { StringContext } from "./UONParser";
 import { LiteralContext } from "./UONParser";
 import { NumberContext } from "./UONParser";
+import { Numeric_literalContext } from "./UONParser";
 
 
 /**
@@ -873,5 +874,16 @@ export interface UONListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitNumber?: (ctx: NumberContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `UONParser.numeric_literal`.
+	 * @param ctx the parse tree
+	 */
+	enterNumeric_literal?: (ctx: Numeric_literalContext) => void;
+	/**
+	 * Exit a parse tree produced by `UONParser.numeric_literal`.
+	 * @param ctx the parse tree
+	 */
+	exitNumeric_literal?: (ctx: Numeric_literalContext) => void;
 }
 

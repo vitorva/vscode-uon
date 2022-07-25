@@ -5,6 +5,11 @@ tokens {
 	DEDENT
 }
 
+@lexer::header {
+	import { CommonToken, Token } from "antlr4ts";
+	import { UONParser } from "./UONParser";
+}
+
 @lexer::members {
 	private ignoreWord: boolean = false;
 	private tokens: any[] = [];
@@ -40,6 +45,14 @@ tokens {
 		let dedent: CommonToken = this.commonToken(UONParser.DEDENT, "DEDENT");
 		dedent.line = this.lastToken?.line!!;
 		return dedent;
+	}
+
+	private createAndScheduleIndent(indent: any) {
+		const previous = this.indents.length ? 0 : this.indents[0];
+		if (indent > previous) {
+			this.indents.push(indent);
+			this.tokens.push(this.commonToken(UONParser.INDENT, "INDENT"));
+		}
 	}
 
 	private processNEWLINE_NextToken() {
@@ -292,7 +305,7 @@ literal:
 	| null;
 
 // Appoche + scientifique
-number:  (NUMERIC_LITERAL | NUMBER);
+number:  (numeric_literal | NUMBER);
 
 // Lexer rules
 // UNITS
@@ -350,7 +363,7 @@ COMMENT: 'comment';
 
 QUOTED_STRING:
     '"' DOUBLE_QUOTE_CHAR* '"'
-    | '"''"''"' DOUBLE_QUOTE_CHAR* '"''"''"'
+    | '"''"''"' MULTILINE_QUOTE_CHAR* '"''"''"'
     | '\'' SINGLE_QUOTE_CHAR* '\'';
 
 fragment DOUBLE_QUOTE_CHAR: ~["\\\r\n];
@@ -365,7 +378,7 @@ NUMBER:
 	| (('+'|'-')? '0' [xX] HEX+) // 0x12345678
 	| (('+'|'-')? '0' [oO] HEX+) ; // 0o12345678
 
-NUMERIC_LITERAL: 'inf' | 'nan' | '-inf' | '-nan' | '+inf' | '+nan';
+numeric_literal: 'inf' | 'nan' | '-inf' | '-nan' | '+inf' | '+nan';
 
 fragment INT: '0' | [1-9] [0-9]*;
 
@@ -389,9 +402,9 @@ LINE_COMMENT: '#' ~[\r\n]* -> skip;
 fragment SPACES: [ \t]+;
 
 NEWLINE
- : ( {atStartOfInput()}?   SPACES
+ : ( {this.atStartOfInput()}?   SPACES
    | ( '\r'? '\n' | '\r' ) SPACES?
-   ) {if(ignoreWord) this.skip();}
+   ) {if(this.ignoreWord) this.skip();}
  ;
 
 MINUS: '-';
