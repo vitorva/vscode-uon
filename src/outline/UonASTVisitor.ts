@@ -31,8 +31,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     }
 
     aggregateResult(aggregate: any, nextResult: any) {
-        let tmp = aggregate.concat(nextResult);
-        return tmp;
+        return aggregate.concat(nextResult);
     }
 
     valueProps(ctx: any) {
@@ -48,7 +47,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
             children[0].range, children[0].range);
 
         for (let index = 0; index < children.length; index++) {
-            if (children[index].text != ",") {
+            if (children[index].text !== ",") {
                 properties.children.push(children[index]);
             }
         }
@@ -163,7 +162,6 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
             children[2].children.push(children[1]);
         }
 
-
         return children;
     }
 
@@ -248,14 +246,8 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return this.structure(ctx, vscode.SymbolKind.Object);
     }
 
-    // traitement particulier...
-    //
-    visitJson_pair(ctx: Json_pairContext) { // name(....) : !str toto
-        var children = this.visitChildren(ctx); // cool dfs garde l'ordre donc agrlable à manipuler car c'est ce qu'on attend à recevoir
 
-        const head = children[0];
-        let tail = children[children.length - 1];
-
+    pair(children: any, head: any, tail: any) {
         if (tail.kind === vscode.SymbolKind.Object || tail.kind === vscode.SymbolKind.Array) {
             // {} name
             tail.name = head.name;
@@ -281,6 +273,16 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
             }
         }
         return tail;
+    }
+
+
+    visitJson_pair(ctx: Json_pairContext) { // name(....) : !str toto
+        var children = this.visitChildren(ctx); // cool dfs garde l'ordre donc agrlable à manipuler car c'est ce qu'on attend à recevoir
+
+        const head = children[0];
+        let tail = children[children.length - 1];
+
+        return this.pair(children, head, tail);
     }
 
     visitJson_seq(ctx: Json_seqContext) {
@@ -297,40 +299,14 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         const head = children[0];
         const tail = children[children.length - 2];
 
-        if (tail.kind === vscode.SymbolKind.Object || tail.kind === vscode.SymbolKind.Array) {
-            // {} name
-            tail.name = head.name;
-
-            for (let index = 0; index < children.length; index++) {
-                const element = children[index];
-                if (element instanceof vscode.DocumentSymbol && (element.name === "key props")) {
-                    tail.children.push(element);
-                }
-            }
-
-        } else { // On fait les modifs pour obtenir le résultat visuel suivant :
-            //[abc] name paul
-            const tmp = tail.name;
-            tail.detail = tmp;
-            tail.name = head.name;
-
-            for (let index = 0; index < children.length; index++) {
-                const element = children[index];
-                if (element instanceof vscode.DocumentSymbol && (element.name === "key props")) {
-                    tail.children.push(element);
-                }
-            }
-        }
-
-        return tail;
+        return this.pair(children, head, tail);
     }
 
     visitSeq_item(ctx: Seq_itemContext) {
         var children = this.visitChildren(ctx);
-        children[0].text = " "; // TODO
+        children[0].text = " ";
         return children;
     }
-
 
     visitYaml_seq(ctx: Yaml_seqContext) {
         return this.structure(ctx, vscode.SymbolKind.Array);
