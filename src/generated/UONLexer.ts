@@ -99,45 +99,45 @@ export class UONLexer extends Lexer {
 	];
 
 	public static readonly ruleNames: string[] = [
-		"T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "T__6", "T__7", "T__8", 
-		"METERS", "KILOMETERS", "GRAMS", "KILOGRAMS", "SECOND", "MINUTE", "CELSIUS", 
-		"AMPERE", "KELVIN", "MOLE", "CANDELA", "CT", "STR_TYPE", "BOOL_TYPE", 
-		"URL_TYPE", "FLOAT_TYPE", "FLOAT_128_TYPE", "FLOAT_64_TYPE", "FLOAT_32_TYPE", 
-		"INT_TYPE", "INT_128_TYPE", "INT_64_TYPE", "INT_32_TYPE", "UINT_TYPE", 
-		"UINT_128_TYPE", "UINT_64_TYPE", "UINT_32_TYPE", "MAX", "MIN", "LENGTH", 
-		"MASS", "TEMPERATURE", "TIME", "NAME", "UUID", "DESCRIPTION", "OPTIONAL", 
-		"COMMENT", "QUOTED_STRING", "DOUBLE_QUOTE_CHAR", "MULTILINE_QUOTE_CHAR", 
-		"SINGLE_QUOTE_CHAR", "NUMBER", "NUMERIC_LITERAL", "INT", "EXP", "HEX", 
-		"UNQUOTED_STRING", "IDENTIFIER", "WS", "LINE_COMMENT", "SPACES", "NEWLINE", 
-		"MINUS", "OPEN_PAR", "CLOSE_PAR", "OPEN_C_BRA", "CLOSE_C_BRA", "OPEN_S_BRA", 
-		"CLOSE_S_BRA", "COMMA", "COLON", "MAPPING_TYPE", "ORDERED_MAPPING_TYPE", 
+		"T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "T__6", "T__7", "T__8",
+		"METERS", "KILOMETERS", "GRAMS", "KILOGRAMS", "SECOND", "MINUTE", "CELSIUS",
+		"AMPERE", "KELVIN", "MOLE", "CANDELA", "CT", "STR_TYPE", "BOOL_TYPE",
+		"URL_TYPE", "FLOAT_TYPE", "FLOAT_128_TYPE", "FLOAT_64_TYPE", "FLOAT_32_TYPE",
+		"INT_TYPE", "INT_128_TYPE", "INT_64_TYPE", "INT_32_TYPE", "UINT_TYPE",
+		"UINT_128_TYPE", "UINT_64_TYPE", "UINT_32_TYPE", "MAX", "MIN", "LENGTH",
+		"MASS", "TEMPERATURE", "TIME", "NAME", "UUID", "DESCRIPTION", "OPTIONAL",
+		"COMMENT", "QUOTED_STRING", "DOUBLE_QUOTE_CHAR", "MULTILINE_QUOTE_CHAR",
+		"SINGLE_QUOTE_CHAR", "NUMBER", "NUMERIC_LITERAL", "INT", "EXP", "HEX",
+		"UNQUOTED_STRING", "IDENTIFIER", "WS", "LINE_COMMENT", "SPACES", "NEWLINE",
+		"MINUS", "OPEN_PAR", "CLOSE_PAR", "OPEN_C_BRA", "CLOSE_C_BRA", "OPEN_S_BRA",
+		"CLOSE_S_BRA", "COMMA", "COLON", "MAPPING_TYPE", "ORDERED_MAPPING_TYPE",
 		"SEQUENCE_TYPE", "ORDERED_SEQUENCE_TYPE", "SCHEMA_TYPE",
 	];
 
 	private static readonly _LITERAL_NAMES: Array<string | undefined> = [
-		undefined, "'unit'", "'quantity'", "'true'", "'True'", "'false'", "'False'", 
-		"'null'", "'none'", "'None'", "'m'", "'km'", "'g'", "'kg'", "'s'", "'minute'", 
-		"'C'", "'A'", "'K'", "'mol'", "'cd'", "'!!'", "'!str'", "'!bool'", "'!url'", 
-		"'!float'", "'!float128'", "'!float64'", "'!float32'", "'!int'", "'!int128'", 
-		"'!int64'", "'!int32'", "'!uint'", "'!uint128'", "'!uint64'", "'!uint32'", 
-		"'max'", "'min'", "'length'", "'mass'", "'temperature'", "'time'", "'name'", 
-		"'uuid'", "'description'", "'optional'", "'comment'", undefined, undefined, 
-		undefined, undefined, undefined, undefined, undefined, undefined, "'-'", 
-		"'('", "')'", "'{'", "'}'", "'['", "']'", "','", "':'", "'!map'", "'!omap'", 
+		undefined, "'unit'", "'quantity'", "'true'", "'True'", "'false'", "'False'",
+		"'null'", "'none'", "'None'", "'m'", "'km'", "'g'", "'kg'", "'s'", "'minute'",
+		"'C'", "'A'", "'K'", "'mol'", "'cd'", "'!!'", "'!str'", "'!bool'", "'!url'",
+		"'!float'", "'!float128'", "'!float64'", "'!float32'", "'!int'", "'!int128'",
+		"'!int64'", "'!int32'", "'!uint'", "'!uint128'", "'!uint64'", "'!uint32'",
+		"'max'", "'min'", "'length'", "'mass'", "'temperature'", "'time'", "'name'",
+		"'uuid'", "'description'", "'optional'", "'comment'", undefined, undefined,
+		undefined, undefined, undefined, undefined, undefined, undefined, "'-'",
+		"'('", "')'", "'{'", "'}'", "'['", "']'", "','", "':'", "'!map'", "'!omap'",
 		"'!seq'", "'!oseq'", "'!schema'",
 	];
 	private static readonly _SYMBOLIC_NAMES: Array<string | undefined> = [
-		undefined, undefined, undefined, undefined, undefined, undefined, undefined, 
-		undefined, undefined, undefined, "METERS", "KILOMETERS", "GRAMS", "KILOGRAMS", 
-		"SECOND", "MINUTE", "CELSIUS", "AMPERE", "KELVIN", "MOLE", "CANDELA", 
-		"CT", "STR_TYPE", "BOOL_TYPE", "URL_TYPE", "FLOAT_TYPE", "FLOAT_128_TYPE", 
-		"FLOAT_64_TYPE", "FLOAT_32_TYPE", "INT_TYPE", "INT_128_TYPE", "INT_64_TYPE", 
-		"INT_32_TYPE", "UINT_TYPE", "UINT_128_TYPE", "UINT_64_TYPE", "UINT_32_TYPE", 
-		"MAX", "MIN", "LENGTH", "MASS", "TEMPERATURE", "TIME", "NAME", "UUID", 
-		"DESCRIPTION", "OPTIONAL", "COMMENT", "QUOTED_STRING", "NUMBER", "NUMERIC_LITERAL", 
-		"UNQUOTED_STRING", "IDENTIFIER", "WS", "LINE_COMMENT", "NEWLINE", "MINUS", 
-		"OPEN_PAR", "CLOSE_PAR", "OPEN_C_BRA", "CLOSE_C_BRA", "OPEN_S_BRA", "CLOSE_S_BRA", 
-		"COMMA", "COLON", "MAPPING_TYPE", "ORDERED_MAPPING_TYPE", "SEQUENCE_TYPE", 
+		undefined, undefined, undefined, undefined, undefined, undefined, undefined,
+		undefined, undefined, undefined, "METERS", "KILOMETERS", "GRAMS", "KILOGRAMS",
+		"SECOND", "MINUTE", "CELSIUS", "AMPERE", "KELVIN", "MOLE", "CANDELA",
+		"CT", "STR_TYPE", "BOOL_TYPE", "URL_TYPE", "FLOAT_TYPE", "FLOAT_128_TYPE",
+		"FLOAT_64_TYPE", "FLOAT_32_TYPE", "INT_TYPE", "INT_128_TYPE", "INT_64_TYPE",
+		"INT_32_TYPE", "UINT_TYPE", "UINT_128_TYPE", "UINT_64_TYPE", "UINT_32_TYPE",
+		"MAX", "MIN", "LENGTH", "MASS", "TEMPERATURE", "TIME", "NAME", "UUID",
+		"DESCRIPTION", "OPTIONAL", "COMMENT", "QUOTED_STRING", "NUMBER", "NUMERIC_LITERAL",
+		"UNQUOTED_STRING", "IDENTIFIER", "WS", "LINE_COMMENT", "NEWLINE", "MINUS",
+		"OPEN_PAR", "CLOSE_PAR", "OPEN_C_BRA", "CLOSE_C_BRA", "OPEN_S_BRA", "CLOSE_S_BRA",
+		"COMMA", "COLON", "MAPPING_TYPE", "ORDERED_MAPPING_TYPE", "SEQUENCE_TYPE",
 		"ORDERED_SEQUENCE_TYPE", "SCHEMA_TYPE",
 	];
 	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(UONLexer._LITERAL_NAMES, UONLexer._SYMBOLIC_NAMES, []);
@@ -150,125 +150,133 @@ export class UONLexer extends Lexer {
 	// tslint:enable:no-trailing-whitespace
 
 
-		private ignoreWord: boolean = false;
-		private tokens: any[] = [];
-		private indents: any[] = [];
+	private ignoreWord: boolean = false;
+	private tokens: any[] = [];
+	private indents: any[] = [];
 
-		private lastToken?: Token = undefined;
+	private lastToken?: Token = undefined;
 
-		@Override
-		public emit(token?: Token): Token {
-			if (token !== undefined) {
-				return super.emit(token);
+	@Override
+	public emit(token?: Token): Token {
+		if (token !== undefined) {
+			return super.emit(token);
+		}
+		return super.emit();
+	}
+
+	private processEOF_NextToken() {
+		this.schedule(this.commonToken(UONLexer.NEWLINE, "\n"));
+
+		if (this.indents.length !== 0) {
+
+			// Now emit as much DEDENT tokens as needed.
+			while (this.indents.length !== 0) {
+				this.schedule(this.createDedent());
+				this.indents.pop();
 			}
-			return super.emit();
 		}
 
-		private processEOF_NextToken() {
-			this.schedule(this.commonToken(UONLexer.NEWLINE, "\n"));
+		// Put the EOF back on the token stream.
+		this.schedule(this.commonToken(UONParser.EOF, "<EOF>"));
+	}
 
-			if (this.indents.length !== 0) {
+	private createDedent(): Token {
+		let dedent: CommonToken = this.commonToken(UONParser.DEDENT, "DEDENT");
+		dedent.line = this.lastToken?.line!!;
+		return dedent;
+	}
 
-				// Now emit as much DEDENT tokens as needed.
-				while (this.indents.length !== 0) {
-					this.schedule(this.createDedent());
-					this.indents.pop();
-				}
+	private createAndScheduleIndent(indent: any) {
+		const previous = this.indents.length ? 0 : this.indents[0];
+		if (indent > previous) {
+			this.indents.push(indent);
+			this.tokens.push(this.commonToken(UONParser.INDENT, "INDENT"));
+		}
+	}
+
+	private processNEWLINE_NextToken() {
+		console.log(this.text);
+		let spaces: string = this.text.replace(/(\r\n)+/, "");
+
+		this.schedule(this.commonToken(UONLexer.NEWLINE, "NEWLINE"));
+
+		let indent: number = this.getIndentationCount(spaces);
+		let previous: number = this.indents.length === 0 ? 0 : this.indents[0];
+
+		console.log("indent-previous", indent, previous);
+
+		if (indent === previous) {
+			// TODO
+		}
+		else if (indent > previous) {
+			this.indents.push(indent);
+			this.schedule(this.commonToken(UONParser.INDENT, "INDENT")); // spaces
+		} else {
+			while (this.indents.length !== 0 && this.indents[0] > indent) {
+				this.schedule(this.createDedent());
+				this.indents.shift();
 			}
-
-			// Put the EOF back on the token stream.
-			this.schedule(this.commonToken(UONParser.EOF, "<EOF>"));
 		}
 
-		private createDedent(): Token {
-			let dedent: CommonToken = this.commonToken(UONParser.DEDENT, "DEDENT");
-			dedent.line = this.lastToken?.line!!;
-			return dedent;
-		}
+	}
 
-		private processNEWLINE_NextToken() {
-			console.log(this.text);
-			let spaces: string = this.text.replace(/(\r\n)+/, "");
+	private getIndentationCount(spaces: string): number {
+		let count: number = 0;
 
-			this.schedule(this.commonToken(UONLexer.NEWLINE, "NEWLINE"));
+		for (let index = 0; index < spaces.length; index++) {
+			const ch = spaces[index];
 
-			let indent: number = this.getIndentationCount(spaces);
-			let previous: number = this.indents.length === 0 ? 0 : this.indents[0];
-
-			console.log("indent-previous", indent, previous);
-
-			if (indent === previous) {
-				// TODO
+			switch (ch) {
+				case "\t":
+					count = count + (8 - (count % 8));
+					break;
+				default:
+					// A normal space char.
+					count = count + 1;
 			}
-			else if (indent > previous) {
-				this.indents.push(indent);
-				this.schedule(this.commonToken(UONParser.INDENT, "INDENT")); // spaces
-			} else {
-				while (this.indents.length !== 0 && this.indents[0] > indent) {
-					this.schedule(this.createDedent());
-					this.indents.shift();
-				}
-			}
-
 		}
+		return count;
+	}
 
-		private getIndentationCount(spaces: string): number {
-			let count: number = 0;
-
-			for (let index = 0; index < spaces.length; index++) {
-				const ch = spaces[index];
-
-				switch (ch) {
-					case "\t":
-						count = count + (8 - (count % 8));
-						break;
-					default:
-						// A normal space char.
-						count = count + 1;
-				}
-			}
-			return count;
-		}
-
-		private schedule(token: any) {
-			this.tokens.push(token);
-		}
+	private schedule(token: any) {
+		this.tokens.push(token);
+	}
 
 
-		@Override
-		public nextToken(): Token {
-			if (this.tokens.length === 0) {
-				let next: Token = super.nextToken();
+	@Override
+	public nextToken(): Token {
+		if (this.tokens.length === 0) {
+			let next: Token = super.nextToken();
 
-				if (next.type === UONLexer.COMMA || next.type === UONLexer.OPEN_C_BRA) { // TODO
-					this.ignoreWord = true;
-				}
-
-				if (next.type === UONLexer.EOF) {
-					this.processEOF_NextToken();
-					next = this.tokens.shift();
-				} else if (next.type === UONLexer.NEWLINE) {
-					this.processNEWLINE_NextToken();
-					next = this.tokens.shift();
-				}
-
-				this.lastToken = next;
-
-			}
-			else {
-				this.lastToken = this.tokens.shift();
+			if (next.type === UONLexer.COMMA || next.type === UONLexer.OPEN_C_BRA) { // TODO
+				this.ignoreWord = true;
 			}
 
-			return this.lastToken!!;
+			if (next.type === UONLexer.EOF) {
+				this.processEOF_NextToken();
+				next = this.tokens.shift();
+			} else if (next.type === UONLexer.NEWLINE) {
+				this.processNEWLINE_NextToken();
+				next = this.tokens.shift();
+			}
+
+			this.lastToken = next;
+
+		}
+		else {
+			this.lastToken = this.tokens.shift();
 		}
 
-		public commonToken(number: number, text: string): CommonToken {
-			return new CommonToken(number, text, this._tokenFactorySourcePair);
-		}
+		return this.lastToken!!;
+	}
 
-		public atStartOfInput(): boolean {
-			return super.charPositionInLine === 0 && super.line === 1;
-		}
+	public commonToken(number: number, text: string): CommonToken {
+		return new CommonToken(number, text, this._tokenFactorySourcePair);
+	}
+
+	public atStartOfInput(): boolean {
+		return super.charPositionInLine === 0 && super.line === 1;
+	}
 
 
 	constructor(input: CharStream) {
@@ -294,30 +302,30 @@ export class UONLexer extends Lexer {
 	// @Override
 	public action(_localctx: RuleContext, ruleIndex: number, actionIndex: number): void {
 		switch (ruleIndex) {
-		case 61:
-			this.NEWLINE_action(_localctx, actionIndex);
-			break;
+			case 61:
+				this.NEWLINE_action(_localctx, actionIndex);
+				break;
 		}
 	}
 	private NEWLINE_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
-		case 0:
-			if(this.ignoreWord) {this.skip();}
-			break;
+			case 0:
+				if (this.ignoreWord) {this.skip();}
+				break;
 		}
 	}
 	// @Override
 	public sempred(_localctx: RuleContext, ruleIndex: number, predIndex: number): boolean {
 		switch (ruleIndex) {
-		case 61:
-			return this.NEWLINE_sempred(_localctx, predIndex);
+			case 61:
+				return this.NEWLINE_sempred(_localctx, predIndex);
 		}
 		return true;
 	}
 	private NEWLINE_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
-		case 0:
-			return this.atStartOfInput();
+			case 0:
+				return this.atStartOfInput();
 		}
 		return true;
 	}
@@ -733,7 +741,7 @@ export class UONLexer extends Lexer {
 		"\u01AC\x03\x02\x02\x02\u01AE\u01AF\x03\x02\x02\x02\u01AF\u01B1\x03\x02" +
 		"\x02\x02\u01B0\u01AE\x03\x02\x02\x02\u01B1\u01C7\x07$\x02\x02\u01B2\u01B3" +
 		"\x07$\x02\x02\u01B3\u01B4\x07$\x02\x02\u01B4\u01B8\x07$\x02\x02\u01B5" +
-		"\u01B7\x05c2\x02\u01B6\u01B5\x03\x02\x02\x02\u01B7\u01BA\x03\x02\x02\x02" +
+		"\u01B7\x05e3\x02\u01B6\u01B5\x03\x02\x02\x02\u01B7\u01BA\x03\x02\x02\x02" +
 		"\u01B8\u01B6\x03\x02\x02\x02\u01B8\u01B9\x03\x02\x02\x02\u01B9\u01BB\x03" +
 		"\x02\x02\x02\u01BA\u01B8\x03\x02\x02\x02\u01BB\u01BC\x07$\x02\x02\u01BC" +
 		"\u01BD\x07$\x02\x02\u01BD\u01C7\x07$\x02\x02\u01BE\u01C2\x07)\x02\x02" +

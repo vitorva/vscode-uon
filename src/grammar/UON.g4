@@ -42,6 +42,14 @@ tokens {
 		return dedent;
 	}
 
+	private createAndScheduleIndent(indent: any) {
+		const previous = this.indents.length ? 0 : this.indents[0];
+		if (indent > previous) {
+			this.indents.push(indent);
+			this.tokens.push(this.commonToken(UONParser.INDENT, "INDENT"));
+		}
+	}
+
 	private processNEWLINE_NextToken() {
 		console.log(this.text);
 		let spaces: string = this.text.replace(/(\r\n)+/, "");
@@ -350,7 +358,7 @@ COMMENT: 'comment';
 
 QUOTED_STRING:
     '"' DOUBLE_QUOTE_CHAR* '"'
-    | '"''"''"' DOUBLE_QUOTE_CHAR* '"''"''"'
+    | '"''"''"' MULTILINE_QUOTE_CHAR* '"''"''"'
     | '\'' SINGLE_QUOTE_CHAR* '\'';
 
 fragment DOUBLE_QUOTE_CHAR: ~["\\\r\n];
