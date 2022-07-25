@@ -2,15 +2,23 @@
 	"name": "vscode-uon",
 	"displayName": "UON",
 	"description": "UON Language Support",
+	"author": "Vitor Vaz Afonso",
 	"icon": "images/logo.png",
 	"version": "0.0.1",
 	"publisher": "vitorva",
+	"bugs": "https://github.com/vitorva/vscode-uon/issues",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/vitorva/vscode-uon"
+	  },
 	"engines": {
 		"vscode": "^1.65.0"
 	},
 	"categories": [
-		"Other"
-	],
+		"Programming Languages",
+		"Linters",
+		"Snippets"
+	  ],
 	"activationEvents": [
 		"onLanguage:uon"
 	],
