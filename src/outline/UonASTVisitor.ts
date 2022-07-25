@@ -35,8 +35,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return tmp;
     }
 
-
-    visitNumber_presentation_properties(ctx: Number_presentation_propertiesContext) {
+    valueProps(ctx: any) {
         const children = this.visitChildren(ctx);
 
         children.shift();
@@ -57,8 +56,12 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return properties;
     }
 
+    visitNumber_presentation_properties(ctx: Number_presentation_propertiesContext) {
+        return this.valueProps(ctx);
+    }
 
-    propertie(ctx: any){
+
+    propertie(ctx: any) {
         var children = this.visitChildren(ctx);
 
         let property = new vscode.DocumentSymbol(
@@ -75,24 +78,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
 
 
     visitTypes_properties(ctx: Types_propertiesContext) {
-        const children = this.visitChildren(ctx);
-
-        children.shift();
-        children.pop();
-
-        let properties = new vscode.DocumentSymbol(
-            "value props",
-            "",
-            vscode.SymbolKind.Property,
-            children[0].range, children[0].range);
-
-        for (let index = 0; index < children.length; index++) {
-            if (children[index].text != ",") {
-                properties.children.push(children[index]);
-            }
-        }
-
-        return properties;
+        return this.valueProps(ctx);
     }
 
     visitTypes_propertie(ctx: Types_propertieContext) {
@@ -113,7 +99,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
             children[0].range, children[0].range);
 
         for (let index = 0; index < children.length; index++) {
-            if (children[index].text != ",") {
+            if (children[index].text !== ",") {
                 properties.children.push(children[index]);
             }
         }
@@ -181,7 +167,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return children;
     }
 
-    visitString_property(ctx: String_propertyContext){
+    visitString_property(ctx: String_propertyContext) {
         return this.propertie(ctx);
     }
 
