@@ -127,13 +127,14 @@ function collectC3CompletionCandidates(
         UONLexer.QUOTED_STRING,
         UONLexer.UNQUOTED_STRING,
         UONLexer.NEWLINE,
+        UONLexer.NUMBER,
         UONParser.DEDENT,
         UONParser.INDENT,
     ]);
 
     // Ignore les tokens literal
     core.preferredRules = new Set([
-        UONParser.RULE_literal,
+        UONParser.RULE_literal
     ]);
 
     return core.collectCandidates(completionTokenIndex);

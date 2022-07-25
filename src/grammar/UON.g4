@@ -300,7 +300,7 @@ literal:
 	| null;
 
 // Appoche + scientifique
-number:  (NUMERIC_LITERAL | NUMBER);
+number:  (numeric_literal | NUMBER);
 
 // Lexer rules
 // UNITS
@@ -373,7 +373,7 @@ NUMBER:
 	| (('+'|'-')? '0' [xX] HEX+) // 0x12345678
 	| (('+'|'-')? '0' [oO] HEX+) ; // 0o12345678
 
-NUMERIC_LITERAL: 'inf' | 'nan' | '-inf' | '-nan' | '+inf' | '+nan';
+numeric_literal: 'inf' | 'nan' | '-inf' | '-nan' | '+inf' | '+nan';
 
 fragment INT: '0' | [1-9] [0-9]*;
 
