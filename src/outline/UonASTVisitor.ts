@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
 
 import { AbstractParseTreeVisitor, RuleNode, TerminalNode } from "antlr4ts/tree";
@@ -34,6 +35,8 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return aggregate.concat(nextResult);
     }
 
+    // proprités de valeur : ex !int, !str etc.
+
     valueProps(ctx: any) {
         const children = this.visitChildren(ctx);
 
@@ -55,6 +58,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return properties;
     }
 
+
     visitNumber_presentation_properties(ctx: Number_presentation_propertiesContext) {
         return this.valueProps(ctx);
     }
@@ -71,10 +75,11 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return property;
     }
 
+    // Propriété de présentation
+
     visitNumber_presentation_propertie(ctx: Number_presentation_propertieContext) {
         return this.propertie(ctx);
     }
-
 
     visitTypes_properties(ctx: Types_propertiesContext) {
         return this.valueProps(ctx);
@@ -156,10 +161,6 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         if (!(children[children.length - 1] instanceof vscode.DocumentSymbol)) { // ça veut dire qu'on a une quantité
             children[children.length - 2].name = children[children.length - 2].name + " " + children[children.length - 1].text;
             children.pop();
-        }
-
-        if (children[1] instanceof vscode.DocumentSymbol && children[1].name === "value props") {
-            children[2].children.push(children[1]);
         }
 
         return children;
@@ -251,27 +252,20 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         if (tail.kind === vscode.SymbolKind.Object || tail.kind === vscode.SymbolKind.Array) {
             // {} name
             tail.name = head.name;
-
-            for (let index = 0; index < children.length; index++) {
-                const element = children[index];
-                if (element instanceof vscode.DocumentSymbol && (element.name === "key props")) {
-                    tail.children.push(element);
-                }
-            }
-
-        } else { // On fait les modifs pour obtenir le résultat visuel suivant :
+        } else {
             //[abc] name paul
             const tmp = tail.name;
             tail.detail = tmp;
             tail.name = head.name;
+        }
 
-            for (let index = 0; index < children.length; index++) {
-                const element = children[index];
-                if (element instanceof vscode.DocumentSymbol && (element.name === "key props")) {
-                    tail.children.push(element);
-                }
+        for (let index = 0; index < children.length; index++) {
+            const element = children[index];
+            if (element instanceof vscode.DocumentSymbol && (element.name === "key props")) {
+                tail.children.push(element);
             }
         }
+
         return tail;
     }
 
