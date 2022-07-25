@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 import { AbstractParseTreeVisitor, RuleNode, TerminalNode } from "antlr4ts/tree";
-import { AttributeContext, AttributesContext, BooleanContext, Json_mapContext, Json_pairContext, Json_seqContext, NumberContext, Number_presentation_propertieContext, Number_presentation_propertiesContext, Number_propertyContext, PairContext, Presentation_propertiesContext, Presentation_propertyContext, Quantity_scalarContext, SchemaContext, Schema_presentationContext, Seq_itemContext, StringContext, String_scalarContext, Types_propertieContext, Types_propertiesContext, Validation_propertiesContext, Yaml_mapContext, Yaml_seqContext } from "../generated/UONParser";
+import { AttributeContext, AttributesContext, BooleanContext, Json_mapContext, Json_pairContext, Json_seqContext, NumberContext, Number_presentation_propertieContext, Number_presentation_propertiesContext, Number_propertyContext, PairContext, Presentation_propertiesContext, Presentation_propertyContext, Quantity_scalarContext, SchemaContext, Schema_presentationContext, Seq_itemContext, StringContext, String_propertyContext, String_scalarContext, Types_propertieContext, Types_propertiesContext, Validation_propertiesContext, Yaml_mapContext, Yaml_seqContext } from "../generated/UONParser";
 import { UONVisitor } from "../generated/UONVisitor";
 
 export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<any> {
@@ -57,15 +57,20 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return properties;
     }
 
-    visitNumber_presentation_propertie(ctx: Number_presentation_propertieContext) {
+
+    propertie(ctx: any){
         var children = this.visitChildren(ctx);
 
-        let presentationProperty = new vscode.DocumentSymbol(
+        let property = new vscode.DocumentSymbol(
             children[0].text,
             children[2].name,
             children[2].kind,
             children[2].range, children[2].range);
-        return presentationProperty;
+        return property;
+    }
+
+    visitNumber_presentation_propertie(ctx: Number_presentation_propertieContext) {
+        return this.propertie(ctx);
     }
 
 
@@ -91,14 +96,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     }
 
     visitTypes_propertie(ctx: Types_propertieContext) {
-        var children = this.visitChildren(ctx);
-
-        let presentationProperty = new vscode.DocumentSymbol(
-            children[0].text,
-            children[2].name,
-            children[2].kind,
-            children[2].range, children[2].range);
-        return presentationProperty;
+        return this.propertie(ctx);
     }
 
     visitPresentation_properties(ctx: Presentation_propertiesContext) {
@@ -124,14 +122,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     }
 
     visitPresentation_property(ctx: Presentation_propertyContext) {
-        var children = this.visitChildren(ctx);
-
-        let presentationProperty = new vscode.DocumentSymbol(
-            children[0].text,
-            children[2].name,
-            children[2].kind,
-            children[2].range, children[2].range);
-        return presentationProperty;
+        return this.propertie(ctx);
     }
 
     visitAttributes(ctx: AttributesContext) {
@@ -171,14 +162,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     }
 
     visitSchema_presentation(ctx: Schema_presentationContext) {
-        var children = this.visitChildren(ctx);
-
-        let schemaPresentation = new vscode.DocumentSymbol(
-            children[0].text,
-            children[2].name,
-            children[2].kind,
-            children[2].range, children[2].range);
-        return schemaPresentation;
+        return this.propertie(ctx);
     }
 
     visitQuantity_scalar(ctx: Quantity_scalarContext) {
@@ -197,15 +181,12 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return children;
     }
 
-    visitNumber_property(ctx: Number_propertyContext) {
-        var children = this.visitChildren(ctx);
+    visitString_property(ctx: String_propertyContext){
+        return this.propertie(ctx);
+    }
 
-        let numberProperty = new vscode.DocumentSymbol(
-            children[0].text,
-            children[2].name,
-            children[2].kind,
-            children[2].range, children[2].range);
-        return numberProperty;
+    visitNumber_property(ctx: Number_propertyContext) {
+        return this.propertie(ctx);
     }
 
 
