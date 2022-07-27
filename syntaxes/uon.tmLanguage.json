@@ -78,12 +78,6 @@
 					"name": "meta.structure.mapping.value.uon",
 					"patterns": [
 						{
-							"include": "#number_presentation"
-						},
-						{
-							"include": "#type_presentation"
-						},
-						{
 							"comment": "the uon object value",
 							"include": "#json_value"
 						},
@@ -104,9 +98,9 @@
 			"name": "punctuation.definition.yaml.sequence.item.uon"
 		},
 		"yaml_map": {
-			"match": "(([\\p{L}]([\\p{L}]|[\\p{N}]|[\\p{Pc}])*))( *:)",
+			"match": "([\\p{L}]([\\p{L}]|[\\p{N}]|[\\p{Pc}])*)",
 			"captures": {
-				"2": {
+				"0": {
 					"name": "entity.name.tag.uon"
 				}
 			}
@@ -452,7 +446,7 @@
 		"validation": {
 			"patterns": [
 				{
-					"begin": "(!float(128|64|32)?|!int(128|64|32)?|!uint(128|64|32)?)( *)\\(",
+					"begin": "(!float(128|64|32)?|!int(128|64|32)?|!uint(128|64|32)?)( *)?\\(",
 					"beginCaptures": {
 						"1": {
 							"name": "string.uon support.type.property-name.uon"
@@ -476,7 +470,7 @@
 					]
 				},
 				{
-					"begin": "(!str)( *)\\(",
+					"begin": "(!str)( *)?\\(",
 					"beginCaptures": {
 						"1": {
 							"name": "string.uon support.type.property-name.uon"
@@ -546,7 +540,7 @@
 			]
 		},
 		"type_presentation": {
-			"begin": "!([\\p{L}]|[\\p{L}]|[\\p{L}]|[\\p{L}]|$|-)+\\(",
+			"begin": "(!([\\p{L}]|[\\p{L}]|[\\p{L}]|[\\p{L}]|$|-)+)( *)?\\(",
 			"beginCaptures": {
 				"1": {
 					"name": "string.uon support.type.property-name.uon"
@@ -561,7 +555,7 @@
 			]
 		},
 		"number_presentation": {
-			"begin": "(!float(128|64|32)?|!int(128|64|32)?|!uint(128|64|32)?)\\(",
+			"begin": "(!float(128|64|32)?|!int(128|64|32)?|!uint(128|64|32)?)( *)?\\(",
 			"beginCaptures": {
 				"1": {
 					"name": "string.uon support.type.property-name.uon"
@@ -602,6 +596,15 @@
 				},
 				{
 					"include": "#yaml_map"
+				},
+				{
+					"include": "#string_description"
+				},
+				{
+					"include": "#number_presentation"
+				},
+				{
+					"include": "#type_presentation"
 				}
 			]
 		},
@@ -623,6 +626,12 @@
 			"patterns": [
 				{
 					"include": "#json_collection"
+				},
+				{
+					"include": "#number_presentation"
+				},
+				{
+					"include": "#type_presentation"
 				},
 				{
 					"include": "#scalar"

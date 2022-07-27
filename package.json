@@ -4,7 +4,7 @@
 	"description": "UON Language Support",
 	"author": "Vitor Vaz Afonso",
 	"icon": "images/logo.png",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"publisher": "vitorva",
 	"bugs": "https://github.com/vitorva/vscode-uon/issues",
 	"repository": {

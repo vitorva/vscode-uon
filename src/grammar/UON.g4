@@ -151,7 +151,7 @@ yaml_collection_nested: NEWLINE (INDENT yaml_collection DEDENT);
 
 json_map: (MAPPING_TYPE | ORDERED_MAPPING_TYPE)? OPEN_C_BRA (json_pair (COMMA json_pair)*)? CLOSE_C_BRA;
 
-json_seq: (SEQUENCE_TYPE | ORDERED_SEQUENCE_TYPE)? OPEN_S_BRA (json_value (COMMA json_value)*)? CLOSE_S_BRA;
+json_seq: (SEQUENCE_TYPE)? OPEN_S_BRA (json_value (COMMA json_value)*)? CLOSE_S_BRA;
 
 json_user_type: custom_type json_map;
 
@@ -201,7 +201,7 @@ number_presentation_properties: OPEN_PAR (number_presentation (COMMA number_pres
 number_presentation_propertie: unit;
 unit: 'unit' COLON number;
 
-// Schéma
+// Schema
 schema: custom_type COLON SCHEMA_TYPE (schema_presentations)? OPEN_C_BRA (attributes)? CLOSE_C_BRA;
 attributes: attribute (COMMA attribute)*;
 attribute: pair_key COLON validation_properties;
@@ -226,10 +226,8 @@ string_property: string_max | string_min;
 string_max: MAX COLON number;
 string_min: MIN COLON number;
 
-// url validation
 url_validation: URL_TYPE;
 
-// boolean validation
 boolean_validation: BOOL_TYPE;
 
 number_validation: number_validation_type (number_properties)?;
@@ -244,7 +242,7 @@ number_validation_type: FLOAT_TYPE | INT_TYPE | UINT_TYPE;
 quantity_validation: 'quantity' COLON quantity_validation_types;
 quantity_validation_types: LENGTH | MASS | TEMPERATURE | TIME; 
 
-// Scalaire
+// Scalar values
 scalar: quantity_scalar | string_scalar | boolean_scalar | url;
 
 quantity_scalar: numeric_scalar (quantity)?;
@@ -290,7 +288,7 @@ string :
 	| QUOTED_STRING
 	| UNQUOTED_STRING;
 
-// On fait ça pour pouvoir réutiliser des tokens dans du texte
+// To be able to reuse tokens in string
 literal:
 	LENGTH
 	| MASS
@@ -304,11 +302,10 @@ literal:
 	| boolean
 	| null;
 
-// Appoche + scientifique
 number:  (numeric_literal | NUMBER);
 
 // Lexer rules
-// UNITS
+
 METERS: 'm';
 KILOMETERS: 'km';
 
@@ -419,5 +416,4 @@ COLON: ':';
 MAPPING_TYPE: '!map';
 ORDERED_MAPPING_TYPE: '!omap';
 SEQUENCE_TYPE: '!seq';
-ORDERED_SEQUENCE_TYPE: '!oseq';
 SCHEMA_TYPE: '!schema';

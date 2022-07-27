@@ -1,8 +1,6 @@
 import * as vscode from 'vscode';
 
-/**
- * Provides code actions corresponding to diagnostic problems.
- */
+// Provides code actions corresponding to diagnostic problems.
  export class QuickFixProvider implements vscode.CodeActionProvider {
 
 	public static readonly providedCodeActionKinds = [
