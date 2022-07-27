@@ -72,7 +72,7 @@ export function completionFor(text: string): CompletionItem[] {
         if (candidate[1].length > 0) {
             for (let index = 0; index < candidate[1].length; index++) {
                 const element = candidate[1][index];
-                str = str + " " + parser.vocabulary.getDisplayName(element).replace(/'/g, "");
+                str = str + parser.vocabulary.getDisplayName(element).replace(/'/g, "");
                 tokensType.push(str);
             }
             keywords.push(new vscode.CompletionItem(str, vscode.CompletionItemKind.Keyword));

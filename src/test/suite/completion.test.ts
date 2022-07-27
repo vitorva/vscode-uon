@@ -48,11 +48,11 @@ suite("antlr4-c3", function () {
 
         // 1) At the input start.
         let candidates = core.collectCandidates(0);
-        expect(candidates.tokens.size, "Test 2").to.equal(29);
+        expect(candidates.tokens.size, "Test 2").to.equal(28);
         expect(candidates.tokens.has(UONLexer.MAPPING_TYPE), "Test 3").to.equal(true);
 
         candidates = core.collectCandidates(7);
-        expect(candidates.tokens.size, "Test 4").to.equal(42);
+        expect(candidates.tokens.size, "Test 4").to.equal(41);
     });
 
     test("Test completion 2", () => {
