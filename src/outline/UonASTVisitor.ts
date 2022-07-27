@@ -7,7 +7,7 @@ import { UONVisitor } from "../generated/UONVisitor";
 
 export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONVisitor<any> {
 
-    level = 0; // Pour savoir si on est à la racine du document ou non
+    level = 0; // To know if we are at the root of the document or not
 
     defaultResult() {
         return [];
@@ -35,7 +35,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return aggregate.concat(nextResult);
     }
 
-    // Fonction utilitaires
+    // Helper functions
     createDocumentSymbol(word: any, kind: any) {
         const text = word.text;
 
@@ -69,7 +69,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
             return response;
         }
 
-        // On récupère le premier enfant
+        // We get the first child back
         const head = children.shift();
 
         let structure;
@@ -90,10 +90,8 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
 
     pair(children: any, head: any, tail: any) {
         if (tail.kind === vscode.SymbolKind.Object || tail.kind === vscode.SymbolKind.Array) {
-            // {} name
-            tail.name = head.name;
-        } else {
-            //[abc] name paul
+            tail.name = head.name; // ex : {} name
+        } else { // ex : [abc] name paul
             const tmp = tail.name;
             tail.detail = tmp;
             tail.name = head.name;
@@ -109,7 +107,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return tail;
     }
 
-    // proprités de valeur : ex !int, !str etc.
+    // ex : !int( ...), !str(...), etc.
     valueProps(ctx: any) {
         const children = this.visitChildren(ctx);
 
@@ -143,12 +141,12 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
     }
 
 
-    // Propriété de présentation
+    // Presentation properties
     visitNumber_presentation_properties(ctx: Number_presentation_propertiesContext) {
         return this.valueProps(ctx);
     }
 
-    // valeur
+    // value
     visitNumber_presentation_propertie(ctx: Number_presentation_propertieContext) {
         return this.propertie(ctx);
     }
@@ -161,7 +159,6 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return this.propertie(ctx);
     }
 
-    // clé
     visitPresentation_properties(ctx: Presentation_propertiesContext) {
 
         const children = this.visitChildren(ctx);
@@ -230,7 +227,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return tail;
     }
 
-    // validation
+    // Validation
     visitString_property(ctx: String_propertyContext) {
         return this.propertie(ctx);
     }
@@ -296,11 +293,11 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return this.structure(ctx, vscode.SymbolKind.Array);
     }
 
-    // Terminaux
+    // Terminals
     visitQuantity_scalar(ctx: Quantity_scalarContext) {
         var children = this.visitChildren(ctx);
 
-        if (!(children[children.length - 1] instanceof vscode.DocumentSymbol)) { // ça veut dire qu'on a une quantité
+        if (!(children[children.length - 1] instanceof vscode.DocumentSymbol)) { // Treatment of a quantity
             children[children.length - 2].name = children[children.length - 2].name + " " + children[children.length - 1].text;
             children.pop();
         }
@@ -326,7 +323,7 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         return bool;
     }
 
-    // On crée la structure minimale utile
+    // We create the minimal useful structure
     visitTerminal(node: TerminalNode) {
         var text;
 

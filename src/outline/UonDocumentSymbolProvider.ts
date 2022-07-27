@@ -44,8 +44,6 @@ export class UonDocumentSymbolProvider implements DocumentSymbolProvider {
             parser.buildParseTree = true;
             let tree = parser.uon();  // parse Tree
 
-            console.log("tree.toStringTree", tree.toStringTree(parser));
-
             // Create the visitor
             const uonASTVisitor = new UonASTVisitor();
 
@@ -56,7 +54,7 @@ export class UonDocumentSymbolProvider implements DocumentSymbolProvider {
             let nodes = [symbols];
 
             for (var i = 0; i < ast.length; i++) {
-                if (ast[i] instanceof vscode.DocumentSymbol) { // Pour ignorer les tokens de retour à la ligne
+                if (ast[i] instanceof vscode.DocumentSymbol) {
                     nodes[nodes.length - 1].push(ast[i]);
                 }
             }

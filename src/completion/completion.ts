@@ -8,7 +8,6 @@ import { UONParser } from '../generated/UONParser';
 import hoverJson = require("../hover.json");
 import { ErrorCompletionListener } from '../error/ErrorCompletionListener';
 
-
 export function completionFor(text: string): CompletionItem[] {
     //Antlr setup
     let inputStream = CharStreams.fromString(text);
@@ -32,7 +31,7 @@ export function completionFor(text: string): CompletionItem[] {
     if (errorCompletionListener.error > 0) {
         const lines = text.split('\r\n');
 
-        if (errorCompletionListener.line + 1 < lines.length) { // ne traite pas une erreur sur la ligne ou se trouve le curseur (dernière ligne)
+        if (errorCompletionListener.line + 1 < lines.length) { // Does not process an error on the line where the cursor is located (last line)
             const left = lines.slice(0, errorCompletionListener.line);
             const right = lines.slice(errorCompletionListener.line + 1, lines.length);
             const newText = left.concat(right);
@@ -69,7 +68,7 @@ export function completionFor(text: string): CompletionItem[] {
 
         tokensType.push(candidate[0]);
 
-        // Fonctionne uniquement s'l n'y a seulement qu'une suite possible
+        // Works only if there is only one possible sequence 
         if (candidate[1].length > 0) {
             for (let index = 0; index < candidate[1].length; index++) {
                 const element = candidate[1][index];
@@ -84,7 +83,7 @@ export function completionFor(text: string): CompletionItem[] {
 
     const tokenStreamType = getTokensStreamType(tokenStream);
 
-    //snippets 
+    // Snippets 
     if (tokensType.includes(UONLexer.STR_TYPE) && tokenStreamType.includes(UONLexer.SCHEMA_TYPE) === false) {
         let snippetCompletion = new vscode.CompletionItem('!str(comment: ... , description: .., optional: ...)');
         snippetCompletion.insertText = new vscode.SnippetString('!str(comment: ${1}, description: ${2}, optional: ${3})');
@@ -130,7 +129,7 @@ function collectC3CompletionCandidates(
         UONParser.INDENT,
     ]);
 
-    // Ignore les tokens literal
+    // Ignore literal tokens
     core.preferredRules = new Set([
         UONParser.RULE_literal
     ]);
@@ -139,14 +138,14 @@ function collectC3CompletionCandidates(
 }
 
 function findCursorTokenIndex(tokenStream: CommonTokenStream): number {
-    let tokenIndex = tokenStream.size -3;
+    let tokenIndex = tokenStream.size - 3;
 
-    if(tokenStream.get(tokenStream.size -2).type === UONParser.DEDENT){
-        for (let i = tokenIndex ; i >= 0; i--) {
+    if (tokenStream.get(tokenStream.size - 2).type === UONParser.DEDENT) {
+        for (let i = tokenIndex; i >= 0; i--) {
             tokenIndex = i;
-            if(tokenStream.get(i).type !== UONParser.DEDENT && tokenStream.get(i).text !== "\n" ){
+            if (tokenStream.get(i).type !== UONParser.DEDENT && tokenStream.get(i).text !== "\n") {
                 return tokenIndex;
-            }  
+            }
         }
     }
 
