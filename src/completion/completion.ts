@@ -131,7 +131,8 @@ function collectC3CompletionCandidates(
 
     // Ignore literal tokens
     core.preferredRules = new Set([
-        UONParser.RULE_literal
+        UONParser.RULE_literal,
+        UONParser.RULE_yaml_value
     ]);
 
     return core.collectCandidates(completionTokenIndex);

@@ -102,6 +102,9 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
             if (element instanceof vscode.DocumentSymbol && (element.name === "key props")) {
                 tail.children.push(element);
             }
+            if (element instanceof vscode.DocumentSymbol && (element.name === "value props")) {
+                tail.children.push(element);
+            }
         }
 
         return tail;
@@ -262,6 +265,10 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         const head = children[0];
         let tail = children[children.length - 1];
 
+        //if( children[children.length - 2].name === "value props"){
+        //    const tmp = tail.children.push(children[children.length - 2]);
+        //}
+
         return this.pair(children, head, tail);
     }
 
@@ -278,19 +285,25 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         var children = this.visitChildren(ctx);
 
         const head = children[0];
+
         const tail = children[children.length - 2];
+
+        //if( children[children.length - 3].name === "value props"){
+        //    const tmp = tail.children.push(children[children.length - 3]);
+        //}
+
 
         return this.pair(children, head, tail);
     }
 
     visitSeq_item(ctx: Seq_itemContext) {
         var children = this.visitChildren(ctx);
-        children[0].text = " ";
         return children;
     }
 
     visitYaml_seq(ctx: Yaml_seqContext) {
-        return this.structure(ctx, vscode.SymbolKind.Array);
+        var children = this.structure(ctx, vscode.SymbolKind.Array);
+        return children;
     }
 
     // Terminals

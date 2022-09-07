@@ -62,7 +62,7 @@ tokens {
 		this.schedule(this.commonToken(UONLexer.NEWLINE, "NEWLINE"));
 
 		let indent: number = this.getIndentationCount(spaces);
-		let previous: number = this.indents.length === 0 ? 0 : this.indents[0];
+		let previous: number = this.indents.length === 0 ? 0 : this.indents[this.indents.length-1];
 
 		console.log("indent-previous", indent, previous);
 
@@ -73,9 +73,9 @@ tokens {
 			this.indents.push(indent);
 			this.schedule(this.commonToken(UONParser.INDENT, "INDENT")); // spaces
 		} else {
-			while (this.indents.length !== 0 && this.indents[0] > indent) {
+			while (this.indents.length !== 0 && this.indents[this.indents.length-1] > indent) {
 				this.schedule(this.createDedent());
-				this.indents.shift();
+				this.indents.pop();
 			}
 		}
 
@@ -175,7 +175,7 @@ yaml_seq
    : (SEQUENCE_TYPE)? seq_item+
    ;
 
-seq_item: MINUS yaml_value;
+seq_item: MINUS (yaml_value | yaml_seq) ;
 
 pair: pair_key COLON yaml_value;
 

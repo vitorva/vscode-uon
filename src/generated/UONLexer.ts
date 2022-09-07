@@ -207,7 +207,7 @@ export class UONLexer extends Lexer {
 			this.schedule(this.commonToken(UONLexer.NEWLINE, "NEWLINE"));
 
 			let indent: number = this.getIndentationCount(spaces);
-			let previous: number = this.indents.length === 0 ? 0 : this.indents[0];
+			let previous: number = this.indents.length === 0 ? 0 : this.indents[this.indents.length-1];
 
 			console.log("indent-previous", indent, previous);
 
@@ -218,9 +218,9 @@ export class UONLexer extends Lexer {
 				this.indents.push(indent);
 				this.schedule(this.commonToken(UONParser.INDENT, "INDENT")); // spaces
 			} else {
-				while (this.indents.length !== 0 && this.indents[0] > indent) {
+				while (this.indents.length !== 0 && this.indents[this.indents.length-1] > indent) {
 					this.schedule(this.createDedent());
-					this.indents.shift();
+					this.indents.pop();
 				}
 			}
 
