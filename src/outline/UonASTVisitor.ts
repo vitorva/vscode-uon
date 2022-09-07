@@ -265,10 +265,6 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         const head = children[0];
         let tail = children[children.length - 1];
 
-        //if( children[children.length - 2].name === "value props"){
-        //    const tmp = tail.children.push(children[children.length - 2]);
-        //}
-
         return this.pair(children, head, tail);
     }
 
@@ -287,11 +283,6 @@ export class UonASTVisitor extends AbstractParseTreeVisitor<any> implements UONV
         const head = children[0];
 
         const tail = children[children.length - 2];
-
-        //if( children[children.length - 3].name === "value props"){
-        //    const tmp = tail.children.push(children[children.length - 3]);
-        //}
-
 
         return this.pair(children, head, tail);
     }

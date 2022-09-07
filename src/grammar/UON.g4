@@ -47,16 +47,8 @@ tokens {
 		return dedent;
 	}
 
-	private createAndScheduleIndent(indent: any) {
-		const previous = this.indents.length ? 0 : this.indents[0];
-		if (indent > previous) {
-			this.indents.push(indent);
-			this.tokens.push(this.commonToken(UONParser.INDENT, "INDENT"));
-		}
-	}
 
 	private processNEWLINE_NextToken() {
-		console.log(this.text);
 		let spaces: string = this.text.replace(/(\r\n)+/, "");
 
 		this.schedule(this.commonToken(UONLexer.NEWLINE, "NEWLINE"));
@@ -64,10 +56,8 @@ tokens {
 		let indent: number = this.getIndentationCount(spaces);
 		let previous: number = this.indents.length === 0 ? 0 : this.indents[this.indents.length-1];
 
-		console.log("indent-previous", indent, previous);
-
 		if (indent === previous) {
-			// TODO
+			// do nothing
 		}
 		else if (indent > previous) {
 			this.indents.push(indent);
@@ -140,7 +130,7 @@ tokens {
 	}
 }
 
-uon: NEWLINE* root_value;
+uon: NEWLINE* (root_value)?;
 
 root_value: json_collection | yaml_collection| schema;
 
